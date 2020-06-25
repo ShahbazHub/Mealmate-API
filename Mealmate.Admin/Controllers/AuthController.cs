@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,18 @@ namespace Mealmate.Admin.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public IActionResult SignIn(LoginRequest request)
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult SignOut()
+        {
+            return RedirectToAction("SignIn");
+        }
+
     }
 }
