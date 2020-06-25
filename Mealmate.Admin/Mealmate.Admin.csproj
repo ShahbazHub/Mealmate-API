@@ -9,4 +9,13 @@
     <ProjectReference Include="..\Mealmate.Entities\Mealmate.Entities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Views\" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\scripts\" />
+  </ItemGroup>
+
 </Project>
