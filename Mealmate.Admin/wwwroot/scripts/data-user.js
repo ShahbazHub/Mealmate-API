@@ -1,46 +1,99 @@
 "use strict";
-// Class definition
-
 var KTData = function () {
-	// Private functions
 
-	// demo initializer
-	var demo = function () {
+	var initTable1 = function () {
+		var table = $('#kt_datatable');
 
-		var datatable = $('#kt_datatable').KTDatatable({
-			data: {
-				saveState: { cookie: false },
+		// begin first table
+		table.DataTable({
+			responsive: true,
+
+			// DOM Layout settings
+			dom: 'f' + `<'row'<'col-sm-12'tr>>
+			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
+
+			lengthMenu: [5, 10, 25, 50],
+
+			pageLength: 10,
+			pagingType: 'full_numbers',
+
+			language: {
+				'lengthMenu': 'Display _MENU_',
 			},
-			search: {
-				input: $('#kt_datatable_search_query'),
-				key: 'generalSearch'
+
+			// Order settings
+			order: [[1, 'desc']],
+
+			headerCallback: function (thead, data, start, end, display) {
+				thead.getElementsByTagName('th')[0].innerHTML = `
+                    <label class="checkbox checkbox-single">
+                        <input type="checkbox" value="" class="group-checkable"/>
+                        <span></span>
+                    </label>`;
 			},
-			columns: [],
+
+			columnDefs: [
+				{
+					targets: 0,
+					width: '30px',
+					className: 'dt-left',
+					orderable: false,
+					render: function (data, type, full, meta) {
+						return `
+                        <label class="checkbox checkbox-single">
+                            <input type="checkbox" value="" class="checkable"/>
+                            <span></span>
+                        </label>`;
+					},
+				}
+			],
 		});
 
+		table.on('change', '.group-checkable', function () {
+			var set = $(this).closest('table').find('td:first-child .checkable');
+			var checked = $(this).is(':checked');
 
-
-		$('#kt_datatable_search_status').on('change', function () {
-			datatable.search($(this).val().toLowerCase(), 'Status');
+			$(set).each(function () {
+				if (checked) {
+					$(this).prop('checked', true);
+					$(this).closest('tr').addClass('active');
+				}
+				else {
+					$(this).prop('checked', false);
+					$(this).closest('tr').removeClass('active');
+				}
+			});
 		});
 
-		$('#kt_datatable_search_type').on('change', function () {
-			datatable.search($(this).val().toLowerCase(), 'Role');
+		table.on('change', 'tbody tr .checkbox', function () {
+			$(this).parents('tr').toggleClass('active');
 		});
-
-		$('#kt_datatable_search_status, #kt_datatable_search_type').selectpicker();
-
 	};
 
 	return {
-		// Public functions
+
+		//main function to initiate the module
 		init: function () {
-			// init dmeo
-			demo();
-		},
+			initTable1();
+		}
 	};
 }();
 
 jQuery(document).ready(function () {
 	KTData.init();
 });
+
+function loadUsers() {
+	$.ajax({
+		url: '/Admin/AppUser/Detail/',
+		type: 'GET',
+		success: function (response) {
+			console.log(response);
+			$("#user-data").html(response);
+			KTData.init();
+		},
+		error: function (err) {
+			console.log(err);
+		}
+	});
+}

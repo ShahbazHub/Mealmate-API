@@ -229,7 +229,9 @@
                         </div>
                         <!--end::Dropdown-->
                         <!--begin::Button-->
-                        <a href="#" class="btn btn-primary font-weight-bolder">
+                        <button data-url="/Admin/AppUser/Create"
+                                data-toggle="ajax-modal-user" id="BtnNewUser"
+                                class="btn btn-primary font-weight-bolder">
                             <span class="svg-icon svg-icon-md">
                                 <!--begin::Svg Icon | path:assets/media/svg/icons/Design/Flatten.svg-->
                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -240,8 +242,9 @@
                                     </g>
                                 </svg>
                                 <!--end::Svg Icon-->
-                            </span>New Record
-                        </a>
+                            </span>
+                            New Record
+                        </button>
                         <!--end::Button-->
                     </div>
                 </div>
@@ -249,47 +252,69 @@
                     <!--begin::Search Form-->
                     <div class="mb-7">
                         <div class="row align-items-center">
-                            <div class="col-lg-9 col-xl-8">
+                            <div class="col-12">
                                 <div class="row align-items-center">
-                                    <div class="col-md-4 my-2 my-md-0">
+                                    <div class="col-md-3 my-2 my-md-0">
                                         <div class="input-icon">
-                                            <input type="text" class="form-control" placeholder="Search..." id="kt_datatable_search_query" />
+                                            <input type="text" class="form-control" placeholder="Username" id="kt_datatable_search_username" />
                                             <span>
                                                 <i class="flaticon2-search-1 text-muted"></i>
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 my-2 my-md-0">
+                                    <div class="col-md-3 my-2 my-md-0">
+                                        <div class="input-icon">
+                                            <input type="text" class="form-control" placeholder="Email" id="kt_datatable_search_email" />
+                                            <span>
+                                                <i class="flaticon2-search-1 text-muted"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 my-2 my-md-0">
                                         <div class="d-flex align-items-center">
-                                            <label class="mr-3 mb-0 d-none d-md-block">Status:</label>
-                                            <select class="form-control" id="kt_datatable_search_status">
-                                                <option value="">All</option>
+                                            <select class="custom-select" id="kt_datatable_search_status">
+                                                <option value="">Select Status</option>
                                                 <option value="1">Active</option>
                                                 <option value="2">Passive</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 my-2 my-md-0">
+                                    <div class="col-md-3 my-2 my-md-0">
                                         <div class="d-flex align-items-center">
-                                            <label class="mr-3 mb-0 d-none d-md-block">Roles:</label>
-                                            <select class="form-control" id="kt_datatable_search_type">
-                                                <option value="">All</option>
+                                            <select class="custom-select" id="kt_datatable_search_type">
+                                                <option value="">Select Role</option>
                                                 <option value="1">Admin</option>
                                                 <option value="2">Front Desk</option>
                                                 <option value="3">Waiter</option>
                                             </select>
                                         </div>
                                     </div>
+
+                                    <div class="col-12 mt-5 mt-lg-2 ">
+                                        <a href="#" class="btn btn-light-primary px-6 font-weight-bold float-right"
+                                           id="BtnSearch">Search</a>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-3 col-xl-4 mt-5 mt-lg-0">
-                                <a href="#" class="btn btn-light-primary px-6 font-weight-bold">Search</a>
-                            </div>
+
                         </div>
                     </div>
                     <!--end::Search Form-->
+                    <hr />
                     <!--begin: Datatable-->
-                    
+                    <div id="user-data">
+                        <div class="alert alert-custom alert-notice alert-light-primary fade show" role="alert">
+                            <div class="alert-icon"><i class="flaticon-warning"></i></div>
+                            <div class="alert-text">
+                                Apply filters to view users.
+                            </div>
+                            <div class="alert-close">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true"><i class="ki ki-close"></i></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <!--end: Datatable-->
                 </div>
             </div>
@@ -301,15 +326,64 @@
 </div>
 <!--end::Content-->
 
+<div id="modal-placeholder"></div>
 
 @section Scripts{
+    <!--begin::Page Vendors(used by this page)-->
+    <script src="~/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <!--end::Page Vendors-->
     <!--begin::Page Scripts(used by this page)-->
-    <script src="~/assets/js/pages/crud/ktdatatable/base/data-ajax.js"></script>
+    <script src="~/scripts/data-user.js"></script>
     <!--end::Page Scripts-->
     <script>
         $(function () {
             $("ul.menu-nav li:eq(2)").addClass("menu-item-active");
-        })
 
+            $("#BtnSearch").on("click", function (e) {
+                e.preventDefault();
+                // let id = $("#RoleId option:selected").val();
+
+                loadUsers();
+            });
+
+            var placeholderElement = $('#modal-placeholder');
+            $('button[data-toggle="ajax-modal-user"]').click(function (event) {
+                event.preventDefault();
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    placeholderElement.html(data);
+                    placeholderElement.find('.modal').modal('show');
+                });
+            });
+
+            placeholderElement.on('click', '[data-save="modal-user"]', function (event) {
+                event.preventDefault();
+
+                var form = $(this).parents('.modal').find('form');
+                var actionUrl = form.attr('action');
+                var dataToSend = form.serialize();
+
+                $.post(actionUrl, dataToSend).done(function (data) {
+                    var newBody = $('.modal-body', data);
+                    placeholderElement.find('.modal-body').replaceWith(newBody);
+
+                    // find IsValid input field and check it's value
+                    // if it's valid then hide modal window
+                    var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+                    if (isValid) {
+                        toastr.success("Record saved successfully");
+                        placeholderElement.find('.modal').modal('hide');
+
+                        loadUsers();
+                    }
+                });
+            });
+
+            $("#user-data").delegate(".js-update", "click", function (e) {
+                e.preventDefault();
+
+
+            });
+        });
     </script>
 }
