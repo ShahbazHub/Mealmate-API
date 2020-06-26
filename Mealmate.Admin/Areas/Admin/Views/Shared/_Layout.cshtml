@@ -101,17 +101,86 @@ License: You must have a valid license purchased only from themeforest(the above
                                             </a>
                                         </li>
                                         <li class="menu-item" aria-haspopup="true">
-                                            <a asp-area="" asp-controller="Order" asp-action="Index" class="menu-link">
-                                                <span class="menu-text">Orders</span>
-                                                <span class="menu-desc"></span>
-                                            </a>
-                                        </li>
-
-                                        <li class="menu-item" aria-haspopup="true">
                                             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="menu-link">
                                                 <span class="menu-text">Admin</span>
                                                 <span class="menu-desc"></span>
                                             </a>
+                                        </li>
+                                        <li class="menu-item" aria-haspopup="true">
+                                            <a asp-area="Admin" asp-controller="Auth" asp-action="Index" class="menu-link">
+                                                <span class="menu-text">Users</span>
+                                                <span class="menu-desc"></span>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item" aria-haspopup="true">
+                                            <a asp-area="Admin" asp-controller="Menu" asp-action="Index" class="menu-link">
+                                                <span class="menu-text">Menus</span>
+                                                <span class="menu-desc"></span>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item" aria-haspopup="true">
+                                            <a asp-area="Admin" asp-controller="QRCode" asp-action="Index" class="menu-link">
+                                                <span class="menu-text">QR Codes</span>
+                                                <span class="menu-desc"></span>
+                                            </a>
+                                        </li>
+                                        <li class="menu-item menu-item-submenu menu-item-rel"
+                                            data-menu-toggle="click"
+                                            aria-haspopup="true">
+                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                                <span class="menu-text">Settings</span>
+                                                <span class="menu-desc"></span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                            <div class="menu-submenu menu-submenu-classic menu-submenu-left">
+                                                <ul class="menu-subnav">
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="#"
+                                                           class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="fa fa-th-list"></i>
+                                                            </span>
+                                                            <span class="menu-text">Restaurant</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="#"
+                                                           class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="fa fa-th-list"></i>
+                                                            </span>
+                                                            <span class="menu-text">QR Code Types</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="#"
+                                                           class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="fa fa-th-list"></i>
+                                                            </span>
+                                                            <span class="menu-text">Menu Types</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="#"
+                                                           class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="fa fa-th-list"></i>
+                                                            </span>
+                                                            <span class="menu-text">Ingredients</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="menu-item" aria-haspopup="true">
+                                                        <a href="#"
+                                                           class="menu-link">
+                                                            <span class="svg-icon menu-icon">
+                                                                <i class="fa fa-th-list"></i>
+                                                            </span>
+                                                            <span class="menu-text">Order States</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </li>
                                     </ul>
                                     <!--end::Header Nav-->
@@ -2283,6 +2352,7 @@ License: You must have a valid license purchased only from themeforest(the above
     <!--end::Page Scripts-->
 
     @RenderSection("Scripts", required: false)
+
 </body>
 <!--end::Body-->
 </html>
