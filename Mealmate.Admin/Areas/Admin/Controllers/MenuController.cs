@@ -96,5 +96,143 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
             return View(model);
         }
         #endregion
+
+        #region Read
+        [HttpGet()]
+        public IActionResult Detail(List<int> MenuTypes, List<int> Ingredients)
+        {
+            return ViewComponent("Mealmate.Admin.Areas.Admin.ViewComponents.MenuList",
+                new { MenuTypes, Ingredients });
+        }
+        #endregion
+
+        #region Create
+        [HttpGet()]
+        public IActionResult Create()
+        {
+            var model = new MenuCreateViewModel()
+            {
+                MenuTypes = new List<SelectListItem>()
+                {
+                    new SelectListItem()
+                    {
+                        Text = "Breakfast",
+                        Value = "1"
+                    },
+                    new SelectListItem()
+                    {
+                        Text = "Lunch",
+                        Value = "2"
+                    },
+                    new SelectListItem()
+                    {
+                        Text = "Dinner",
+                        Value = "3"
+                    },
+                    new SelectListItem()
+                    {
+                        Text = "Sides",
+                        Value = "4"
+                    }
+                }
+            };
+            return View(model);
+        }
+        #endregion
+
+        #region Menu Item Generation
+        [HttpGet()]
+        public IActionResult MenuItem()
+        {
+            return PartialView("MenuItem",
+                new MenuItemCreateViewModel()
+                {
+                    Price = 0,
+                    Quantity = 0,
+                    Ingredients = new List<SelectListItem>()
+                    {
+                        new SelectListItem()
+                        {
+                            Text = "Egg",
+                            Value = "1"
+                        },
+                        new SelectListItem()
+                        {
+                            Text = "Fish",
+                            Value = "2"
+                        },
+                        new SelectListItem()
+                        {
+                            Text = "Lupin",
+                            Value = "3"
+                        },
+                        new SelectListItem()
+                        {
+                            Text = "Milk",
+                            Value = "4"
+                        },
+                        new SelectListItem()
+                        {
+                            Text = "Mustard",
+                            Value = "5"
+                        },
+                        new SelectListItem()
+                        {
+                            Text = "Peanut",
+                            Value = "6"
+                        }
+                    }
+                });
+        }
+        #endregion
+
+        #region Update
+        [HttpGet()]
+        public IActionResult Update(int id)
+        {
+            var model = new MenuUpdateViewModel()
+            {
+                MenuId = id,
+                MenuTypes = new List<SelectListItem>()
+                {
+                    new SelectListItem()
+                    {
+                        Text = "Breakfast",
+                        Value = "1"
+                    },
+                    new SelectListItem()
+                    {
+                        Text = "Lunch",
+                        Value = "2"
+                    },
+                    new SelectListItem()
+                    {
+                        Text = "Dinner",
+                        Value = "3"
+                    },
+                    new SelectListItem()
+                    {
+                        Text = "Sides",
+                        Value = "4"
+                    }
+                }
+            };
+            return View(model);
+        }
+        #endregion
+
+        #region Toggle
+        [HttpDelete()]
+        public IActionResult Toggle(int id)
+        {
+            bool Status = true;
+            string Message = string.Empty;
+
+
+            Message = "Record updated successfully";
+
+            return Json(new { status = Status, message = Message });
+        }
+        #endregion
     }
 }

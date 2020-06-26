@@ -228,7 +228,7 @@
                         </div>
                         <!--end::Dropdown-->
                         <!--begin::Button-->
-                        <button data-url="/Admin/Menu/Create"
+                        <a asp-area="Admin" asp-controller="Menu" asp-action="Create"
                                 data-toggle="ajax-modal-user" id="BtnNewMenu"
                                 class="btn btn-primary font-weight-bolder">
                             <span class="svg-icon svg-icon-md">
@@ -243,7 +243,7 @@
                                 <!--end::Svg Icon-->
                             </span>
                             New Record
-                        </button>
+                        </a>
                         <!--end::Button-->
                     </div>
                 </div>
@@ -331,9 +331,52 @@
 
 
 @section Scripts{
+    <!--begin::Page Vendors(used by this page)-->
+    <script src="~/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="~/lib/bootbox/bootbox.js"></script>
+    <!--end::Page Vendors-->
+    <!--begin::Page Scripts(used by this page)-->
+    <script src="~/scripts/data-menu.js"></script>
+    <!--end::Page Scripts-->
     <script>
         $(function () {
             $("ul.menu-nav li:eq(3)").addClass("menu-item-active");
+
+            $("#BtnSearch").on("click", function (event) {
+                event.preventDefault();
+
+                loadMenus([], []);
+            });
+
+
+            $("#menu-data").delegate(".js-toggle", "click", function (event) {
+                event.preventDefault();
+                let btn = $(this);
+                let id = btn.attr('data-id');
+
+                bootbox.confirm("Are you sure to toggle the menu status?", function (result) {
+                    if (result) {
+
+                        $.ajax({
+                            url: btn.attr('href'),
+                            type: 'DELETE',
+                            data: { id: id },
+                            success: function (response) {
+                                if (response.status == true) {
+                                    toastr.success(response.message);
+                                    loadMenus();
+                                }
+                                else {
+                                    toastr.error(response.message);
+                                }
+                            },
+                            error: function () {
+                                toastr.error("Error has occured");
+                            }
+                        });
+                    }
+                });
+            });
         })
     </script>
 }

@@ -1,0 +1,30 @@
+﻿@using HtmlHelpers.BeginCollectionItemCore;
+@model MenuItemCreateViewModel
+@{
+    Layout = null;
+}
+
+
+@using (Html.BeginCollectionItem("MenuItems"))
+{
+    <div class="row form-group js-item">
+        <div class="col-md-8">
+            <button type="button" id="BtnRemove"
+                    class="btn btn-sm btn-clean btn-icon btn-icon-md js-remove">
+                <i class="fa fa-trash-alt text-danger"></i>
+            </button>
+            <label class="col-form-label">Ingredient</label>
+            <select class="custom-select" asp-for="IngredientId" asp-items="Model.Ingredients">
+                <option value="">Select From List</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="col-form-label">Price</label>
+            <input type="text" asp-for="Price" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="col-form-label">Quantity</label>
+            <input type="text" asp-for="Quantity" class="form-control" />
+        </div>
+    </div>
+}

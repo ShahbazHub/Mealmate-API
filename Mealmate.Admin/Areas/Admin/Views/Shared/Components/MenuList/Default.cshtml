@@ -1,0 +1,80 @@
+﻿@model IEnumerable<MenuListViewModel>
+@{
+    Layout = null;
+}
+
+
+<table class="table table-responsive-lg table-checkable" id="kt_datatable">
+    <thead>
+        <tr>
+            <th>
+                <label class="kt-checkbox kt-checkbox--single kt-checkbox--solid">
+                    <input type="checkbox" value="" class="kt-group-checkable">
+                    <span></span>
+                </label>
+            </th>
+            <th title="Field #1">Menu</th>
+            <th title="Field #2">Menu Type</th>
+            <th title="Field #3">Statue</th>
+            <th title="Field #4">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var StateBadge = item.MenuStateId == 1 ? "success" : "danger";
+            var State = item.MenuStateId == 1 ? "Active" : "Passive";
+            <tr>
+                <td>
+                    <label class="kt-checkbox kt-checkbox--single kt-checkbox--solid">
+                        <input type="checkbox" value="" class="kt-checkable">
+                        <span></span>
+                    </label>
+                </td>
+                <td>
+                    @item.Title
+                </td>
+                <td>
+                    @item.MenuType
+                </td>
+                <td>
+                    <span class="label label-lg font-weight-bold label-light-@StateBadge label-inline">
+                        @State
+                    </span>
+                </td>
+                <td>
+                    <a asp-area="Admin" asp-controller="Menu" asp-action="Ingredient"
+                       data-id="@item.MenuId"
+                       class="btn btn-sm btn-clean btn-icon btn-icon-md js-ingredient" title="Ingredients">
+                        <i class="fa fa-cogs text-warning"></i>
+                    </a>
+
+                    <a asp-area="Admin" asp-controller="Menu" asp-action="Update"
+                       asp-route-id="@item.MenuId"
+                       class="btn btn-sm btn-clean btn-icon btn-icon-md js-update" title="Edit">
+                        <i class="fa fa-pencil-alt"></i>
+                    </a>
+
+                    @if (item.MenuStateId == 1)
+                    {
+                        <a asp-area="Admin" asp-controller="Menu" asp-action="Toggle"
+                           data-id="@item.MenuId"
+                           class="btn btn-sm btn-clean btn-icon btn-icon-md js-toggle"
+                           title="Set passive">
+                            <i class="fa fa-thumbs-down text-danger"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-area="Admin" asp-controller="Menu" asp-action="Toggle"
+                           data-id="@item.MenuId"
+                           class="btn btn-sm btn-clean btn-icon btn-icon-md js-toggle"
+                           title="Set active">
+                            <i class="fa fa-thumbs-up text-success"></i>
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
