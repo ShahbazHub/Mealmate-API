@@ -1,0 +1,50 @@
+﻿@model IEnumerable<UserListViewModel>
+@{
+    Layout = null;
+}
+
+
+@if (Model != null)
+{
+    <table class="datatable datatable-bordered datatable-head-custom" id="kt_datatable">
+        <thead>
+            <tr>
+                <th title="Field #1">Name</th>
+                <th title="Field #2">Username</th>
+                <th title="Field #3">Email</th>
+                <th title="Field #4">Phone</th>
+                <th title="Field #7">Status</th>
+                <th title="Field #8">Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Name
+                    </td>
+                    <td>
+                        @item.Username
+                    </td>
+                    <td>
+                        @item.Email
+                    </td>
+                    <td>
+                        @item.Phone
+                    </td>
+                    <td>
+                        
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+
+}
