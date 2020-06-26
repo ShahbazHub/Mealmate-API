@@ -88,7 +88,6 @@ function loadUsers() {
 		url: '/Admin/AppUser/Detail/',
 		type: 'GET',
 		success: function (response) {
-			console.log(response);
 			$("#user-data").html(response);
 			KTData.init();
 		},

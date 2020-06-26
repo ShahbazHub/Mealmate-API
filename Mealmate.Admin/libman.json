@@ -1,5 +1,11 @@
 {
   "version": "1.0",
   "defaultProvider": "cdnjs",
-  "libraries": []
+  "libraries": [
+    {
+      "library": "bootbox.js@5.4.0",
+      "files": [ "bootbox.js", "bootbox.min.js", "bootbox.min.js.map" ],
+      "destination": "wwwroot/lib/bootbox"
+    }
+  ]
 }

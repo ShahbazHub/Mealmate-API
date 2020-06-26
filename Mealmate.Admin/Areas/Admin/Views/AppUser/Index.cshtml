@@ -284,7 +284,7 @@
                                             <select class="custom-select" id="kt_datatable_search_type">
                                                 <option value="">Select Role</option>
                                                 <option value="1">Admin</option>
-                                                <option value="2">Front Desk</option>
+                                                <option value="2">Front Desk / Operator</option>
                                                 <option value="3">Waiter</option>
                                             </select>
                                         </div>
@@ -331,6 +331,7 @@
 @section Scripts{
     <!--begin::Page Vendors(used by this page)-->
     <script src="~/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="~/lib/bootbox/bootbox.js"></script>
     <!--end::Page Vendors-->
     <!--begin::Page Scripts(used by this page)-->
     <script src="~/scripts/data-user.js"></script>
@@ -379,10 +380,53 @@
                 });
             });
 
-            $("#user-data").delegate(".js-update", "click", function (e) {
-                e.preventDefault();
+            $("#user-data").delegate(".js-update", "click", function (event) {
+                event.preventDefault();
+                let btn = $(this);
+                let id = btn.attr('data-id');
 
+                console.log(id);
+                $.ajax({
+                    url: btn.attr('href'),
+                    type: 'GET',
+                    data: { id: id },
+                    success: function (response) {
+                        var placeholderElement = $('#modal-placeholder');
+                        placeholderElement.html(response);
+                        placeholderElement.find('.modal').modal('show');
+                    },
+                    error: function () {}
+                });
 
+            });
+
+            $("#user-data").delegate(".js-toggle", "click", function (event) {
+                event.preventDefault();
+                let btn = $(this);
+                let id = btn.attr('data-id');
+
+                bootbox.confirm("Are you sure to toggle the user status?", function (result) {
+                    if (result) {
+
+                        $.ajax({
+                            url: btn.attr('href'),
+                            type: 'DELETE',
+                            data: { id: id },
+                            success: function (response) {
+                                if (response.status == true) {
+                                    toastr.success(response.message);
+                                    loadUsers();
+                                }
+                                else {
+                                    toastr.error(response.message);
+                                }
+                            },
+                            error: function () {
+                                toastr.error("Error has occured");
+                            }
+                        });
+                    }
+                });
             });
         });
     </script>

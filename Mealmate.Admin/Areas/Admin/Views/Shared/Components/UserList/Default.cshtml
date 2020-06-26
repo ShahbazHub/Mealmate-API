@@ -41,15 +41,15 @@
                     </span>
                 </td>
                 <td>
-                    <a asp-area="Admin" asp-controller="User" asp-action="Update"
-                       asp-route-id="@item.AppUserId"
+                    <a asp-area="Admin" asp-controller="AppUser" asp-action="Update"
+                       data-id="@item.AppUserId"
                        class="btn btn-sm btn-clean btn-icon btn-icon-md js-update" title="Edit">
                         <i class="fa fa-pencil-alt"></i>
                     </a>
 
                     @if (item.StateId == 1)
                     {
-                        <a asp-area="Admin" asp-controller="User" asp-action="Toggle"
+                        <a asp-area="Admin" asp-controller="AppUser" asp-action="Toggle"
                            data-id="@item.AppUserId"
                            class="btn btn-sm btn-clean btn-icon btn-icon-md js-toggle"
                            title="Set passive">
@@ -58,7 +58,7 @@
                     }
                     else
                     {
-                        <a asp-area="Admin" asp-controller="User" asp-action="Toggle"
+                        <a asp-area="Admin" asp-controller="AppUser" asp-action="Toggle"
                            data-id="@item.AppUserId"
                            class="btn btn-sm btn-clean btn-icon btn-icon-md js-toggle"
                            title="Set active">

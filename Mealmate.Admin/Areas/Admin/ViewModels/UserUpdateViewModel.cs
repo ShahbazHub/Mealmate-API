@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Admin.Areas.Admin.ViewModels
 {
-    public class UserCreateViewModel
+    public class UserUpdateViewModel
     {
+        public int AppUserId { get; set; }
         public string Name { get; set; }
         public string Username { get; set; }
         
@@ -17,7 +18,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewModels
         public string Phone { get; set; }
 
         public List<RoleAssignListViewModel> Roles { get; set; }
-        public UserCreateViewModel()
+        public UserUpdateViewModel()
         {
             Roles = new List<RoleAssignListViewModel>();
         }
