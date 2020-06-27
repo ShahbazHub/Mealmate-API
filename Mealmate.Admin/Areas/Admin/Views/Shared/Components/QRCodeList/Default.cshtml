@@ -1,0 +1,89 @@
+﻿@model IEnumerable<QRCodeListViewModel>
+@{
+    Layout = null;
+}
+
+
+<table class="table table-responsive-lg table-checkable" id="kt_datatable">
+    <thead>
+        <tr>
+            <th>
+                <label class="kt-checkbox kt-checkbox--single kt-checkbox--solid">
+                    <input type="checkbox" value="" class="kt-group-checkable">
+                    <span></span>
+                </label>
+            </th>
+            <th title="Field #1">Generated</th>
+            <th title="Field #2">Code Type</th>
+            <th title="Field #3">Restaurant, Hall, &amp; Table</th>
+            <th title="Field #4">Status</th>
+            <th title="Field #5">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var StateBadge = item.QRCodeStateId == 1 ? "success" : "danger";
+            var State = item.QRCodeStateId == 1 ? "Active" : "Passive";
+            <tr>
+                <td>
+                    <label class="kt-checkbox kt-checkbox--single kt-checkbox--solid">
+                        <input type="checkbox" value="" class="kt-checkable">
+                        <span></span>
+                    </label>
+                </td>
+                <td>
+                    <div class="small">
+                        <strong >@item.Generated.ToString("yyyy-MM-dd")</strong>
+                        <div>
+                            @item.Generated.ToShortTimeString()
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    @item.QRCodeType
+                </td>
+                <td>
+                    <div>
+                        <strong>@item.Table</strong>
+                        <div>
+                            @item.Hall, @item.Restaurant
+                        </div>
+                    </div>
+                    
+                </td>
+                <td>
+                    <span class="label label-lg font-weight-bold label-light-@StateBadge label-inline">
+                        @State
+                    </span>
+                </td>
+                <td>
+                    <a asp-area="Admin" asp-controller="QRCode" asp-action="Print"
+                       data-id="@item.QRCodeId"
+                       class="btn btn-sm btn-clean btn-icon btn-icon-md js-ingredient" title="Print">
+                        <i class="fa fa-print text-success"></i>
+                    </a>
+
+                    @if (item.QRCodeStateId == 1)
+                    {
+                        <a asp-area="Admin" asp-controller="QRCode" asp-action="Toggle"
+                           data-id="@item.QRCodeId"
+                           class="btn btn-sm btn-clean btn-icon btn-icon-md js-toggle"
+                           title="Set passive">
+                            <i class="fa fa-thumbs-down text-danger"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-area="Admin" asp-controller="QRCode" asp-action="Toggle"
+                           data-id="@item.QRCodeId"
+                           class="btn btn-sm btn-clean btn-icon btn-icon-md js-toggle"
+                           title="Set active">
+                            <i class="fa fa-thumbs-up text-success"></i>
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

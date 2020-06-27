@@ -1,0 +1,293 @@
+﻿@model QRCodeCreateViewModel
+@{
+    ViewBag.Title = "Create QR Codes";
+}
+<!--begin::Dashboard-->
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+    <!--begin::Subheader-->
+    <div class="subheader min-h-lg-175px pt-5 pb-7 subheader-transparent" id="kt_subheader">
+        <div class="container d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
+            <!--begin::Details-->
+            <div class="d-flex align-items-center flex-wrap mr-2">
+                <!--begin::Heading-->
+                <div class="d-flex flex-column">
+                    <!--begin::Title-->
+                    <h2 class="text-white font-weight-bold my-2 mr-5">QR Codes Management</h2>
+                    <!--end::Title-->
+                    <!--begin::Breadcrumb-->
+                    <div class="d-flex align-items-center font-weight-bold my-2">
+                        <!--begin::Item-->
+                        <a asp-area="" asp-controller="Home" asp-action="Index"
+                           class="opacity-75 hover-opacity-100">
+                            <i class="flaticon2-shelter text-white icon-1x"></i>
+                        </a>
+                        <!--end::Item-->
+                        <!--begin::Item-->
+                        <span class="label label-dot label-sm bg-white opacity-75 mx-3"></span>
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Index"
+                           class="text-white text-hover-white opacity-75 hover-opacity-100">
+                            Administration
+                        </a>
+                        <!--end::Item-->
+                        <!--begin::Item-->
+                        <span class="label label-dot label-sm bg-white opacity-75 mx-3"></span>
+                        <a asp-area="Admin" asp-controller="QRCode" asp-action="Index"
+                           class="text-white text-hover-white opacity-75 hover-opacity-100">
+                            QR Codes
+                        </a>
+                        <!--end::Item-->
+                        <!--begin::Item-->
+                        <span class="label label-dot label-sm bg-white opacity-75 mx-3"></span>
+                        <a asp-area="Admin" asp-controller="QRCode" asp-action="Create"
+                           class="text-white text-hover-white opacity-75 hover-opacity-100">
+                            Generate
+                        </a>
+                        <!--end::Item-->
+                    </div>
+                    <!--end::Breadcrumb-->
+                </div>
+                <!--end::Heading-->
+            </div>
+            <!--end::Details-->
+            <!--begin::Toolbar-->
+            <div class="d-flex align-items-center">
+                <!--begin::Button-->
+                <a href="#" class="btn btn-transparent-white font-weight-bold py-3 px-6 mr-2">Reports</a>
+                <!--end::Button-->
+                <!--begin::Dropdown-->
+                <div class="dropdown dropdown-inline ml-2" data-toggle="tooltip" title="Quick actions" data-placement="top">
+                    <a href="#" class="btn btn-white font-weight-bold py-3 px-6" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actions</a>
+                    <div class="dropdown-menu p-0 m-0 dropdown-menu-md dropdown-menu-right">
+                        <!--begin::Navigation-->
+                        <ul class="navi navi-hover py-5">
+                            <li class="navi-item">
+                                <a href="#" class="navi-link">
+                                    <span class="navi-icon">
+                                        <i class="flaticon2-drop"></i>
+                                    </span>
+                                    <span class="navi-text">New Group</span>
+                                </a>
+                            </li>
+                            <li class="navi-item">
+                                <a href="#" class="navi-link">
+                                    <span class="navi-icon">
+                                        <i class="flaticon2-list-3"></i>
+                                    </span>
+                                    <span class="navi-text">Contacts</span>
+                                </a>
+                            </li>
+                            <li class="navi-item">
+                                <a href="#" class="navi-link">
+                                    <span class="navi-icon">
+                                        <i class="flaticon2-rocket-1"></i>
+                                    </span>
+                                    <span class="navi-text">Groups</span>
+                                    <span class="navi-link-badge">
+                                        <span class="label label-light-primary label-inline font-weight-bold">new</span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="navi-item">
+                                <a href="#" class="navi-link">
+                                    <span class="navi-icon">
+                                        <i class="flaticon2-bell-2"></i>
+                                    </span>
+                                    <span class="navi-text">Calls</span>
+                                </a>
+                            </li>
+                            <li class="navi-item">
+                                <a href="#" class="navi-link">
+                                    <span class="navi-icon">
+                                        <i class="flaticon2-gear"></i>
+                                    </span>
+                                    <span class="navi-text">Settings</span>
+                                </a>
+                            </li>
+                            <li class="navi-separator my-3"></li>
+                            <li class="navi-item">
+                                <a href="#" class="navi-link">
+                                    <span class="navi-icon">
+                                        <i class="flaticon2-magnifier-tool"></i>
+                                    </span>
+                                    <span class="navi-text">Help</span>
+                                </a>
+                            </li>
+                            <li class="navi-item">
+                                <a href="#" class="navi-link">
+                                    <span class="navi-icon">
+                                        <i class="flaticon2-bell-2"></i>
+                                    </span>
+                                    <span class="navi-text">Privacy</span>
+                                    <span class="navi-link-badge">
+                                        <span class="label label-light-danger label-rounded font-weight-bold">5</span>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                        <!--end::Navigation-->
+                    </div>
+                </div>
+                <!--end::Dropdown-->
+            </div>
+            <!--end::Toolbar-->
+        </div>
+    </div>
+    <!--end::Subheader-->
+    <!--begin::Entry-->
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container">
+            <div class="alert alert-custom alert-white alert-shadow gutter-b" role="alert">
+                <div class="alert-icon">
+                    <span class="svg-icon svg-icon-primary svg-icon-xl">
+                        <!--begin::Svg Icon | path:assets/media/svg/icons/Tools/Compass.svg-->
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <rect x="0" y="0" width="24" height="24"></rect>
+                                <path d="M7.07744993,12.3040451 C7.72444571,13.0716094 8.54044565,13.6920474 9.46808594,14.1079953 L5,23 L4.5,18 L7.07744993,12.3040451 Z M14.5865511,14.2597864 C15.5319561,13.9019016 16.375416,13.3366121 17.0614026,12.6194459 L19.5,18 L19,23 L14.5865511,14.2597864 Z M12,3.55271368e-14 C12.8284271,3.53749572e-14 13.5,0.671572875 13.5,1.5 L13.5,4 L10.5,4 L10.5,1.5 C10.5,0.671572875 11.1715729,3.56793164e-14 12,3.55271368e-14 Z" fill="#000000" opacity="0.3"></path>
+                                <path d="M12,10 C13.1045695,10 14,9.1045695 14,8 C14,6.8954305 13.1045695,6 12,6 C10.8954305,6 10,6.8954305 10,8 C10,9.1045695 10.8954305,10 12,10 Z M12,13 C9.23857625,13 7,10.7614237 7,8 C7,5.23857625 9.23857625,3 12,3 C14.7614237,3 17,5.23857625 17,8 C17,10.7614237 14.7614237,13 12,13 Z" fill="#000000" fill-rule="nonzero"></path>
+                            </g>
+                        </svg>
+                        <!--end::Svg Icon-->
+                    </span>
+                </div>
+                <div class="alert-text">
+                    <p>The Metronic Datatable component supports initialization from HTML table. It also defines the schema model of the data source. In addition to the visualization, the Datatable provides built-in support for operations over data such as sorting, filtering and paging performed in user browser (frontend).</p>For more information visit
+                    <a class="font-weight-bold" href="https://keenthemes.com/metronic/?page=docs&amp;section=datatable" target="_blank">Metronic KTDatatable Documentation</a>.
+                </div>
+            </div>
+
+
+            <form asp-area="Admin" asp-controller="QRCode" asp-action="Create">
+                @Html.AntiForgeryToken()
+                <div class="card card-custom">
+                    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+                        <div class="card-title">
+                            <h3 class="card-label">
+                                Generation
+                                <span class="d-block text-muted pt-2 font-size-sm">
+                                    Generation of new QR Codes for restaurant
+                                </span>
+                            </h3>
+                        </div>
+                        <div class="card-toolbar">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!--begin::Search Form-->
+                        <div class="mb-7">
+                            <div class="row align-items-center">
+                                <div class="col-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-lg-12 col-md-12 mt-5">
+                                            <h5 style="border-bottom: 1px solid rgba(0,0,0, 0.1); padding-bottom: 5px;">QR Code Types</h5>
+                                        </div>
+
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="kt-checkbox-inline">
+                                                @for (int i = 0; i < Model.QRCodeTypes.Count; i++)
+                                                {
+
+                                                    <label class="checkbox mr-4">
+                                                        <input type="checkbox" asp-for="@Model.QRCodeTypes[i].IsSelected">
+                                                        @Model.QRCodeTypes[i].Name
+                                                        <span></span>
+                                                    </label>
+
+                                                    <input type="hidden" asp-for="@Model.QRCodeTypes[i].QRCodeTypeId" />
+                                                    <input type="hidden" asp-for="@Model.QRCodeTypes[i].Name" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 mt-5">
+                                            <h5 style="border-bottom: 1px solid rgba(0,0,0, 0.1); padding-bottom: 5px;">Restaurant &amp; Hall</h5>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 mt-5">
+                                            <select class="custom-select" asp-for="HallId" asp-items="Model.Halls">
+                                                <option value="">Select From List</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 mt-5">
+                                            <h5 style="border-bottom: 1px solid rgba(0,0,0, 0.1); padding-bottom: 5px;">Tables</h5>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="kt-checkbox-inline">
+                                                @for (int i = 0; i < Model.Tables.Count; i++)
+                                                {
+
+                                                    <label class="checkbox mr-4">
+                                                        <input type="checkbox" asp-for="@Model.Tables[i].IsSelected">
+                                                        @Model.Tables[i].Number
+                                                        <span></span>
+                                                    </label>
+
+                                                    <input type="hidden" asp-for="@Model.Tables[i].TableId" />
+                                                    <input type="hidden" asp-for="@Model.Tables[i].Number" />
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 mt-5">
+                                            <hr />
+                                        </div>
+                                        <div class="col-12 mt-5 mt-lg-2 ">
+                                            <button type="submit" class="btn btn-success px-6 font-weight-bold float-right"
+                                               id="BtnGenerate">
+                                                Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!--end::Search Form-->
+                        <hr />
+                        <!--begin: Datatable-->
+                        <div id="qrcode-data">
+                            <div class="alert alert-custom alert-notice alert-light-primary fade show" role="alert">
+                                <div class="alert-icon"><i class="flaticon-warning"></i></div>
+                                <div class="alert-text">
+                                    Apply filters to generate new QR Codes.
+                                </div>
+                                <div class="alert-close">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true"><i class="ki ki-close"></i></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end: Datatable-->
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <!--end::Container-->
+    </div>
+    <!--end::Entry-->
+</div>
+<!--end::Content-->
+
+
+@section Scripts{
+    <!--begin::Page Vendors(used by this page)-->
+    <script src="~/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="~/lib/bootbox/bootbox.js"></script>
+    <!--end::Page Vendors-->
+    <!--begin::Page Scripts(used by this page)-->
+    <script src="~/scripts/data-qrcode.js"></script>
+    <!--end::Page Scripts-->
+
+    <script>
+        $(function () {
+            $("ul.menu-nav li:eq(4)").addClass("menu-item-active");
+
+            $("#BtnSearch").on("click", function (event) {
+                event.preventDefault();
+
+                loadQRCodes([], []);
+            });
+        })
+    </script>
+}

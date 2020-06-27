@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Mealmate.Admin.Areas.Admin.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,377 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
         #region Landing page
         public IActionResult Index()
         {
-            return View();
+            var restaurants = new List<SelectListGroup>()
+            {
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 1"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 2"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 3"
+                }
+            };
+
+            var model = new QRCodeIndexViewModel()
+            {
+                QRCodeTypes = new List<QRCodeTypeAssignListViewModel>()
+                {
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 1,
+                        Name = "Bill Request"
+                    },
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 2,
+                        Name = "Rest room Request"
+                    },
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 3,
+                        Name = "Order Request"
+                    }
+                },
+                Tables = new List<TableAssignListViewModel>()
+                {
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 1,
+                        Number = "T-1"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 2,
+                        Number = "T-2"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId =3,
+                        Number = "T-3"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 4,
+                        Number = "T-4"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 5,
+                        Number = "T-5"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 6,
+                        Number = "T-6"
+                    }
+                },
+                Halls = new List<SelectListItem>()
+                {
+                    new SelectListItem()
+                    {
+                        Group = restaurants[0],
+                        Text = "Hall No. 1",
+                        Value = "11"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[0],
+                        Text = "Hall No. 2",
+                        Value = "12"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[1],
+                        Text = "Hall No. 1",
+                        Value = "21"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[1],
+                        Text = "Hall No. 2",
+                        Value = "22"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[2],
+                        Text = "Hall No. 1",
+                        Value = "31"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[2],
+                        Text = "Hall No. 2",
+                        Value = "32"
+                    }
+                }
+            };
+
+            return View(model);
+        }
+        #endregion
+
+        #region Read
+        [HttpGet()]
+        public IActionResult Detail(List<int> QRCodeTypes, List<int> Tables)
+        {
+            return ViewComponent("Mealmate.Admin.Areas.Admin.ViewComponents.QRCodeList",
+                new { QRCodeTypes, Tables });
+        }
+        #endregion
+
+        #region Create
+        [HttpGet()]
+        public IActionResult Create()
+        {
+            var restaurants = new List<SelectListGroup>()
+            {
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 1"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 2"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 3"
+                }
+            };
+
+            var model = new QRCodeCreateViewModel()
+            {
+                QRCodeTypes = new List<QRCodeTypeAssignListViewModel>()
+                {
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 1,
+                        Name = "Bill Request"
+                    },
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 2,
+                        Name = "Rest room Request"
+                    },
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 3,
+                        Name = "Order Request"
+                    }
+                },
+                Tables = new List<TableAssignListViewModel>()
+                {
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 1,
+                        Number = "T-1"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 2,
+                        Number = "T-2"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId =3,
+                        Number = "T-3"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 4,
+                        Number = "T-4"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 5,
+                        Number = "T-5"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 6,
+                        Number = "T-6"
+                    }
+                },
+                Halls = new List<SelectListItem>()
+                {
+                    new SelectListItem()
+                    {
+                        Group = restaurants[0],
+                        Text = "Hall No. 1",
+                        Value = "11"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[0],
+                        Text = "Hall No. 2",
+                        Value = "12"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[1],
+                        Text = "Hall No. 1",
+                        Value = "21"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[1],
+                        Text = "Hall No. 2",
+                        Value = "22"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[2],
+                        Text = "Hall No. 1",
+                        Value = "31"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[2],
+                        Text = "Hall No. 2",
+                        Value = "32"
+                    }
+                }
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(QRCodeCreateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index", new { area = "Admin", controller = "QRCode" });
+            }
+
+            var restaurants = new List<SelectListGroup>()
+            {
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 1"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 2"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 3"
+                }
+            };
+
+            model.QRCodeTypes = new List<QRCodeTypeAssignListViewModel>()
+                {
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 1,
+                        Name = "Bill Request"
+                    },
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 2,
+                        Name = "Rest room Request"
+                    },
+                    new QRCodeTypeAssignListViewModel()
+                    {
+                        QRCodeTypeId = 3,
+                        Name = "Order Request"
+                    }
+                };
+            model.Tables = new List<TableAssignListViewModel>()
+                {
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 1,
+                        Number = "T-1"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 2,
+                        Number = "T-2"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId =3,
+                        Number = "T-3"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 4,
+                        Number = "T-4"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 5,
+                        Number = "T-5"
+                    },
+                    new TableAssignListViewModel()
+                    {
+                        TableId = 6,
+                        Number = "T-6"
+                    }
+                };
+            model.Halls = new List<SelectListItem>()
+                {
+                    new SelectListItem()
+                    {
+                        Group = restaurants[0],
+                        Text = "Hall No. 1",
+                        Value = "11"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[0],
+                        Text = "Hall No. 2",
+                        Value = "12"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[1],
+                        Text = "Hall No. 1",
+                        Value = "21"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[1],
+                        Text = "Hall No. 2",
+                        Value = "22"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[2],
+                        Text = "Hall No. 1",
+                        Value = "31"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[2],
+                        Text = "Hall No. 2",
+                        Value = "32"
+                    }
+                };
+
+            return View(model);
+        }
+        #endregion
+
+        #region Toggle
+        [HttpDelete()]
+        public IActionResult Toggle(int id)
+        {
+            bool Status = true;
+            string Message = string.Empty;
+
+
+            Message = "Record updated successfully";
+
+            return Json(new { status = Status, message = Message });
         }
         #endregion
     }
