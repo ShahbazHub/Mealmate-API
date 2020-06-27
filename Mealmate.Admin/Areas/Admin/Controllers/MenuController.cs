@@ -110,6 +110,22 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
         [HttpGet()]
         public IActionResult Create()
         {
+            var restaurants = new List<SelectListGroup>()
+            {
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 1"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 2"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 3"
+                }
+            };
+
             var model = new MenuCreateViewModel()
             {
                 MenuTypes = new List<SelectListItem>()
@@ -134,9 +150,139 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                         Text = "Sides",
                         Value = "4"
                     }
+                },
+                Halls = new List<SelectListItem>()
+                {
+                    new SelectListItem()
+                    {
+                        Group = restaurants[0],
+                        Text = "Hall No. 1",
+                        Value = "11"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[0],
+                        Text = "Hall No. 2",
+                        Value = "12"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[1],
+                        Text = "Hall No. 1",
+                        Value = "21"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[1],
+                        Text = "Hall No. 2",
+                        Value = "22"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[2],
+                        Text = "Hall No. 1",
+                        Value = "31"
+                    },
+                    new SelectListItem()
+                    {
+                        Group = restaurants[2],
+                        Text = "Hall No. 2",
+                        Value = "32"
+                    }
                 }
             };
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(MenuCreateViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index", new { area = "Admin", controller = "Menu" });
+            }
+
+            var restaurants = new List<SelectListGroup>()
+            {
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 1"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 2"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Restaurant No. 3"
+                }
+            };
+
+            model.MenuTypes = new List<SelectListItem>()
+            {
+                new SelectListItem()
+                {
+                    Text = "Breakfast",
+                    Value = "1"
+                },
+                new SelectListItem()
+                {
+                    Text = "Lunch",
+                    Value = "2"
+                },
+                new SelectListItem()
+                {
+                    Text = "Dinner",
+                    Value = "3"
+                },
+                new SelectListItem()
+                {
+                    Text = "Sides",
+                    Value = "4"
+                }
+            };
+
+            model.Halls = new List<SelectListItem>()
+            {
+                new SelectListItem()
+                {
+                    Group = restaurants[0],
+                    Text = "Hall No. 1",
+                    Value = "11"
+                },
+                new SelectListItem()
+                {
+                    Group = restaurants[0],
+                    Text = "Hall No. 2",
+                    Value = "12"
+                },
+                new SelectListItem()
+                {
+                    Group = restaurants[1],
+                    Text = "Hall No. 1",
+                    Value = "21"
+                },
+                new SelectListItem()
+                {
+                    Group = restaurants[1],
+                    Text = "Hall No. 2",
+                    Value = "22"
+                },
+                new SelectListItem()
+                {
+                    Group = restaurants[2],
+                    Text = "Hall No. 1",
+                    Value = "31"
+                },
+                new SelectListItem()
+                {
+                    Group = restaurants[2],
+                    Text = "Hall No. 2",
+                    Value = "32"
+                }
+            };
+            return View();
         }
         #endregion
 

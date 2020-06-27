@@ -1,5 +1,6 @@
-﻿@{
-    ViewBag.Title = "Home";
+﻿
+@{
+    ViewBag.Title = "Create Restaurant";
 }
 <!--begin::Dashboard-->
 <!--begin::Content-->
@@ -12,7 +13,7 @@
                 <!--begin::Heading-->
                 <div class="d-flex flex-column">
                     <!--begin::Title-->
-                    <h2 class="text-white font-weight-bold my-2 mr-5">Administration</h2>
+                    <h2 class="text-white font-weight-bold my-2 mr-5">Restaurant Management</h2>
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <div class="d-flex align-items-center font-weight-bold my-2">
@@ -24,13 +25,24 @@
                         <!--end::Item-->
                         <!--begin::Item-->
                         <span class="label label-dot label-sm bg-white opacity-75 mx-3"></span>
-                        <a asp-area="" asp-controller="Home" asp-action="Index"
-                           class="text-white text-hover-white opacity-75 hover-opacity-100">Dashboard</a>
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Index"
+                           class="text-white text-hover-white opacity-75 hover-opacity-100">
+                            Administration
+                        </a>
                         <!--end::Item-->
                         <!--begin::Item-->
                         <span class="label label-dot label-sm bg-white opacity-75 mx-3"></span>
-                        <a asp-area="Admin" asp-controller="Home" asp-action="Index"
-                           class="text-white text-hover-white opacity-75 hover-opacity-100">Administration</a>
+                        <a asp-area="Admin" asp-controller="Restaurant" asp-action="Index"
+                           class="text-white text-hover-white opacity-75 hover-opacity-100">
+                            Restaurants
+                        </a>
+                        <!--end::Item-->
+                        <!--begin::Item-->
+                        <span class="label label-dot label-sm bg-white opacity-75 mx-3"></span>
+                        <a asp-area="Admin" asp-controller="Restaurant" asp-action="Create"
+                           class="text-white text-hover-white opacity-75 hover-opacity-100">
+                            Create New
+                        </a>
                         <!--end::Item-->
                     </div>
                     <!--end::Breadcrumb-->
@@ -145,6 +157,25 @@
                     <a class="font-weight-bold" href="https://keenthemes.com/metronic/?page=docs&amp;section=datatable" target="_blank">Metronic KTDatatable Documentation</a>.
                 </div>
             </div>
+
+            <div class="card card-custom">
+                <div class="card-header flex-wrap border-0 pt-6 pb-0">
+                    <div class="card-title">
+                        <h3 class="card-label">
+                            New Restaurant
+                            <span class="d-block text-muted pt-2 font-size-sm">
+                                Registration of new restaurant
+                            </span>
+                        </h3>
+                    </div>
+                    <div class="card-toolbar">
+                        
+                    </div>
+                </div>
+                <div class="card-body">
+                </div>
+            </div>
+
         </div>
         <!--end::Container-->
     </div>
@@ -154,9 +185,17 @@
 
 
 @section Scripts{
+    <!--begin::Page Vendors(used by this page)-->
+    <script src="~/assets/plugins/custom/datatables/datatables.bundle.js"></script>
+    <script src="~/lib/bootbox/bootbox.js"></script>
+    <!--end::Page Vendors-->
+    <!--begin::Page Scripts(used by this page)-->
+    <!--end::Page Scripts-->
+
     <script>
         $(function () {
-            $("ul.menu-nav li:eq(1)").addClass("menu-item-active");
+            $("ul.menu-nav li:eq(5)").addClass("menu-item-active");
+
         })
     </script>
 }

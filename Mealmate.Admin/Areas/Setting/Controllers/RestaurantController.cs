@@ -29,5 +29,21 @@ namespace Mealmate.Admin.Areas.Setting.Controllers
             return ViewComponent("Mealmate.Admin.Areas.Setting.ViewComponents.RestaurantList");
         }
         #endregion
+
+        #region Create
+        [HttpGet()]
+        public IActionResult Create()
+        {
+            return View();
+        }
+        #endregion
+
+        #region Update
+        [HttpGet()]
+        public IActionResult Update(int id)
+        {
+            return View();
+        }
+        #endregion
     }
 }
