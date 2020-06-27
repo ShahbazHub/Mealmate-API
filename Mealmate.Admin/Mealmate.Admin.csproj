@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Setting\Data\" />
   </ItemGroup>
 
   <ItemGroup>
