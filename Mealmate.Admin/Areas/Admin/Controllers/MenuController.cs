@@ -21,6 +21,19 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
         {
             var model = new MenuIndexViewModel()
             {
+                Branches = new List<SelectListItem>()
+                {
+                    new SelectListItem()
+                    {
+                        Text = "Saddar Rawalpindi, Pakistan",
+                        Value = "1"
+                    },
+                    new SelectListItem()
+                    {
+                        Text = "Blue Area Islamabad, Pakistan",
+                        Value = "2"
+                    }
+                },
                 Ingredients = new List<IngredientAssignListViewModel>()
                 {
                     new IngredientAssignListViewModel()
@@ -110,24 +123,25 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
         [HttpGet()]
         public IActionResult Create()
         {
-            var restaurants = new List<SelectListGroup>()
+            var branches = new List<SelectListGroup>()
             {
                 new SelectListGroup()
                 {
-                    Name = "Restaurant No. 1"
+                    Name = "Branch No. 1"
                 },
                 new SelectListGroup()
                 {
-                    Name = "Restaurant No. 2"
+                    Name = "Branch No. 2"
                 },
                 new SelectListGroup()
                 {
-                    Name = "Restaurant No. 3"
+                    Name = "Branch No. 3"
                 }
             };
 
             var model = new MenuCreateViewModel()
             {
+                
                 MenuTypes = new List<SelectListItem>()
                 {
                     new SelectListItem()
@@ -155,37 +169,37 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                 {
                     new SelectListItem()
                     {
-                        Group = restaurants[0],
+                        Group = branches[0],
                         Text = "Hall No. 1",
                         Value = "11"
                     },
                     new SelectListItem()
                     {
-                        Group = restaurants[0],
+                        Group = branches[0],
                         Text = "Hall No. 2",
                         Value = "12"
                     },
                     new SelectListItem()
                     {
-                        Group = restaurants[1],
+                        Group = branches[1],
                         Text = "Hall No. 1",
                         Value = "21"
                     },
                     new SelectListItem()
                     {
-                        Group = restaurants[1],
+                        Group = branches[1],
                         Text = "Hall No. 2",
                         Value = "22"
                     },
                     new SelectListItem()
                     {
-                        Group = restaurants[2],
+                        Group = branches[2],
                         Text = "Hall No. 1",
                         Value = "31"
                     },
                     new SelectListItem()
                     {
-                        Group = restaurants[2],
+                        Group = branches[2],
                         Text = "Hall No. 2",
                         Value = "32"
                     }
@@ -203,22 +217,21 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                 return RedirectToAction("Index", new { area = "Admin", controller = "Menu" });
             }
 
-            var restaurants = new List<SelectListGroup>()
+            var branches = new List<SelectListGroup>()
             {
                 new SelectListGroup()
                 {
-                    Name = "Restaurant No. 1"
+                    Name = "Branch No. 1"
                 },
                 new SelectListGroup()
                 {
-                    Name = "Restaurant No. 2"
+                    Name = "Branch No. 2"
                 },
                 new SelectListGroup()
                 {
-                    Name = "Restaurant No. 3"
+                    Name = "Branch No. 3"
                 }
             };
-
             model.MenuTypes = new List<SelectListItem>()
             {
                 new SelectListItem()
@@ -247,37 +260,37 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
             {
                 new SelectListItem()
                 {
-                    Group = restaurants[0],
+                    Group = branches[0],
                     Text = "Hall No. 1",
                     Value = "11"
                 },
                 new SelectListItem()
                 {
-                    Group = restaurants[0],
+                    Group = branches[0],
                     Text = "Hall No. 2",
                     Value = "12"
                 },
                 new SelectListItem()
                 {
-                    Group = restaurants[1],
+                    Group = branches[1],
                     Text = "Hall No. 1",
                     Value = "21"
                 },
                 new SelectListItem()
                 {
-                    Group = restaurants[1],
+                    Group = branches[1],
                     Text = "Hall No. 2",
                     Value = "22"
                 },
                 new SelectListItem()
                 {
-                    Group = restaurants[2],
+                    Group = branches[2],
                     Text = "Hall No. 1",
                     Value = "31"
                 },
                 new SelectListItem()
                 {
-                    Group = restaurants[2],
+                    Group = branches[2],
                     Text = "Hall No. 2",
                     Value = "32"
                 }

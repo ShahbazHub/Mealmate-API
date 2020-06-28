@@ -15,7 +15,7 @@
             </th>
             <th title="Field #1">Generated</th>
             <th title="Field #2">Code Type</th>
-            <th title="Field #3">Restaurant, Hall, &amp; Table</th>
+            <th title="Field #3">Branch, Hall, &amp; Table</th>
             <th title="Field #4">Status</th>
             <th title="Field #5">Actions</th>
         </tr>
@@ -33,9 +33,9 @@
                     </label>
                 </td>
                 <td>
-                    <div class="small">
+                    <div>
                         <strong >@item.Generated.ToString("yyyy-MM-dd")</strong>
-                        <div>
+                        <div class="small">
                             @item.Generated.ToShortTimeString()
                         </div>
                     </div>
@@ -46,8 +46,8 @@
                 <td>
                     <div>
                         <strong>@item.Table</strong>
-                        <div>
-                            @item.Hall, @item.Restaurant
+                        <div class="small">
+                            @item.Hall, @item.Branch
                         </div>
                     </div>
                     

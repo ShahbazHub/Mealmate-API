@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Mealmate.Admin.Areas.Setting.ViewModels
+namespace Mealmate.Admin.Areas.Restaurant.ViewModels
 {
-    public class RestaurantListViewModel
+    public class BranchListViewModel
     {
-        public int RestaurantId { get; set; }
+        public int BranchId { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }

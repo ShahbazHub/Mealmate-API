@@ -4,18 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Mealmate.Admin.Areas.Setting.Controllers
+namespace Mealmate.Admin.Areas.Restaurant.Controllers
 {
-    [Area("Setting")]
-    public class RestaurantController : Controller
+    [Area("Restaurant")]
+    public class BranchController : Controller
     {
-        public RestaurantController()
+        public BranchController()
         {
 
         }
 
-        #region Landing Page
-        [HttpGet]
+        #region Branch Home
         public IActionResult Index()
         {
             return View();
@@ -26,21 +25,13 @@ namespace Mealmate.Admin.Areas.Setting.Controllers
         [HttpGet()]
         public IActionResult Detail()
         {
-            return ViewComponent("Mealmate.Admin.Areas.Setting.ViewComponents.RestaurantList");
+            return ViewComponent("Mealmate.Admin.Areas.Restaurant.ViewComponents.BranchList");
         }
         #endregion
 
         #region Create
         [HttpGet()]
         public IActionResult Create()
-        {
-            return View();
-        }
-        #endregion
-
-        #region Update
-        [HttpGet()]
-        public IActionResult Update(int id)
         {
             return View();
         }

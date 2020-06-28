@@ -155,9 +155,9 @@
                 <div class="card-header flex-wrap border-0 pt-6 pb-0">
                     <div class="card-title">
                         <h3 class="card-label">
-                            Generated QR Codes
+                            Registered QR Codes
                             <span class="d-block text-muted pt-2 font-size-sm">
-                                List of available QR Codes in restaurant
+                                List of available QR Codes in branch
                             </span>
                         </h3>
                     </div>
@@ -255,27 +255,7 @@
                             <div class="col-12">
                                 <div class="row align-items-center">
                                     <div class="col-lg-12 col-md-12 mt-5">
-                                        <h5 style="border-bottom: 1px solid rgba(0,0,0, 0.1); padding-bottom: 5px;">QR Code Types</h5>
-                                    </div>
-
-                                    <div class="col-lg-12 col-md-12">
-                                        <div class="kt-checkbox-inline">
-                                            @for (int i = 0; i < Model.QRCodeTypes.Count; i++)
-                                            {
-
-                                                <label class="checkbox mr-4">
-                                                    <input type="checkbox" asp-for="@Model.QRCodeTypes[i].IsSelected">
-                                                    @Model.QRCodeTypes[i].Name
-                                                    <span></span>
-                                                </label>
-
-                                                <input type="hidden" asp-for="@Model.QRCodeTypes[i].QRCodeTypeId" />
-                                                <input type="hidden" asp-for="@Model.QRCodeTypes[i].Name" />
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 mt-5">
-                                        <h5 style="border-bottom: 1px solid rgba(0,0,0, 0.1); padding-bottom: 5px;">Restaurant &amp; Hall</h5>
+                                        <h5 style="border-bottom: 1px solid rgba(0,0,0, 0.1); padding-bottom: 5px;">Branch &amp; Hall</h5>
                                     </div>
                                     <div class="col-lg-12 col-md-12 mt-5">
                                         <select class="custom-select" asp-for="HallId" asp-items="Model.Halls">

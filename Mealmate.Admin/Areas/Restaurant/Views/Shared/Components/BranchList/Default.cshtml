@@ -1,13 +1,13 @@
-﻿@model IEnumerable<RestaurantListViewModel>
+﻿@model IEnumerable<BranchListViewModel>
 @{
     Layout = null;
 }
 
 
-<table class="table table-responsive-lg table-checkable" id="kt_datatable">
+<table class="table table-responsive-lg table-checkable" id="kt_datatable_branch">
     <thead>
         <tr>
-            <th title="Field #1">Restaurant</th>
+            <th title="Field #1">Name</th>
             <th title="Field #2">Address</th>
             <th title="Field #3">Email</th>
             <th title="Field #4">Phone</th>
@@ -45,21 +45,21 @@
                     </span>
                 </td>
                 <td>
-                    <a asp-area="Setting" asp-controller="Restaurant" asp-action="Update"
-                       asp-route-id="@item.RestaurantId"
+                    <a asp-area="Restaurant" asp-controller="Branch" asp-action="Update"
+                       asp-route-id="@item.BranchId"
                        class="btn btn-sm btn-clean btn-icon btn-icon-md js-update" title="Edit">
                         <i class="fa fa-pencil-alt"></i>
                     </a>
-                    <a asp-area="Setting" asp-controller="Hall" asp-action="Detail"
-                       data-id="@item.RestaurantId"
+                    <a asp-area="Restaurant" asp-controller="Hall" asp-action="Detail"
+                       data-id="@item.BranchId"
                        class="btn btn-sm btn-clean btn-icon btn-icon-md js-hall" title="Halls">
                         <i class="fa fa-home text-success"></i>
                     </a>
 
                     @if (item.StateId == 1)
                     {
-                        <a asp-area="Setting" asp-controller="Restaurant" asp-action="Toggle"
-                           data-id="@item.RestaurantId"
+                        <a asp-area="Restaurant" asp-controller="Branch" asp-action="Toggle"
+                           data-id="@item.BranchId"
                            class="btn btn-sm btn-clean btn-icon btn-icon-md js-toggle"
                            title="Set passive">
                             <i class="fa fa-thumbs-down text-danger"></i>
@@ -67,8 +67,8 @@
                     }
                     else
                     {
-                        <a asp-area="Setting" asp-controller="Restaurant" asp-action="Toggle"
-                           data-id="@item.RestaurantId"
+                        <a asp-area="Restaurant" asp-controller="Branch" asp-action="Toggle"
+                           data-id="@item.BranchId"
                            class="btn btn-sm btn-clean btn-icon btn-icon-md js-toggle"
                            title="Set active">
                             <i class="fa fa-thumbs-up text-success"></i>

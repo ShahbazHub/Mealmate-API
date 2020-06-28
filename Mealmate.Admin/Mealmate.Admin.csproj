@@ -16,7 +16,12 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Restaurant\Data\" />
+    <Folder Include="Areas\Setting\Controllers\" />
     <Folder Include="Areas\Setting\Data\" />
+    <Folder Include="Areas\Setting\ViewComponents\" />
+    <Folder Include="Areas\Setting\ViewModels\" />
+    <Folder Include="Areas\Setting\Views\Shared\Components\" />
   </ItemGroup>
 
   <ItemGroup>

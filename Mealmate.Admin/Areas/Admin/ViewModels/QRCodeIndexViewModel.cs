@@ -8,8 +8,6 @@ namespace Mealmate.Admin.Areas.Admin.ViewModels
 {
     public class QRCodeIndexViewModel
     {
-        public List<QRCodeTypeAssignListViewModel> QRCodeTypes { get; set; }
-
         public int HallId { get; set; }
         public IEnumerable<SelectListItem> Halls { get; set; }
 

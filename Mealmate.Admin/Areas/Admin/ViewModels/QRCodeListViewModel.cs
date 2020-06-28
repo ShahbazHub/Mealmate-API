@@ -11,7 +11,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewModels
         public DateTime Generated { get; set; }
         public string Hall { get; set; }
         public string Table { get; set; }
-        public string Restaurant { get; set; }
+        public string Branch { get; set; }
 
         public int QRCodeTypeId { get; set; }
         public string QRCodeType { get; set; }

@@ -29,7 +29,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 1",
                     QRCodeType = "Bill Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
@@ -40,7 +40,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 1",
                     QRCodeType = "Restroom Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
@@ -51,7 +51,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 1",
                     QRCodeType = "Order Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
@@ -62,7 +62,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 2",
                     QRCodeType = "Bill Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
@@ -73,7 +73,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 2",
                     QRCodeType = "Restroom Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
@@ -84,7 +84,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 2",
                     QRCodeType = "Order Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
@@ -95,7 +95,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 3",
                     QRCodeType = "Bill Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
@@ -106,7 +106,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 3",
                     QRCodeType = "Restroom Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
@@ -117,7 +117,7 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Table = "T - 3",
                     QRCodeType = "Order Request",
                     Hall = "Hall No. 1",
-                    Restaurant = "Restaurant No. 1",
+                    Branch = "Branch No. 1",
                     QRCodeStateId = 1,
                     QRCodeState = "Active",
                     Generated = DateTime.Now
