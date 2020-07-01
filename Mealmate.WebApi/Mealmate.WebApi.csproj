@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mealmate.BusinessLayer\Mealmate.BusinessLayer.csproj" />
-    <ProjectReference Include="..\Mealmate.Entities\Mealmate.Entities.csproj" />
   </ItemGroup>
 
 </Project>

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mealmate.DataAccess\Mealmate.DataAccess.csproj" />
-    <ProjectReference Include="..\Mealmate.Entities\Mealmate.Entities.csproj" />
+    <ProjectReference Include="..\Mealmate.Data\Mealmate.Data.csproj" />
   </ItemGroup>
 
 </Project>
