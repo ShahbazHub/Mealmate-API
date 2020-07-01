@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mealmate.WebApi", "Mealmate
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mealmate.Admin", "Mealmate.Admin\Mealmate.Admin.csproj", "{767FAEE2-F49B-4A22-B656-40CC93F0C0CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mealmate.Repository", "Mealmate.Repository\Mealmate.Repository.csproj", "{C0259C32-F79B-4DE8-9DB6-6E6A0CD320A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{767FAEE2-F49B-4A22-B656-40CC93F0C0CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{767FAEE2-F49B-4A22-B656-40CC93F0C0CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{767FAEE2-F49B-4A22-B656-40CC93F0C0CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0259C32-F79B-4DE8-9DB6-6E6A0CD320A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0259C32-F79B-4DE8-9DB6-6E6A0CD320A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0259C32-F79B-4DE8-9DB6-6E6A0CD320A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0259C32-F79B-4DE8-9DB6-6E6A0CD320A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
