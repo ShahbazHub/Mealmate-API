@@ -36,5 +36,12 @@ namespace Mealmate.Admin.Areas.Restaurant.Controllers
             return View();
         }
         #endregion
+        #region Update
+        [HttpGet()]
+        public IActionResult Update()
+        {
+            return View();
+        }
+        #endregion
     }
 }

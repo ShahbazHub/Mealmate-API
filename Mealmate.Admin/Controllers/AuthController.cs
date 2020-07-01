@@ -1,4 +1,5 @@
 ﻿using Mealmate.Admin.ViewModels;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mealmate.Admin.Controllers
@@ -10,6 +11,16 @@ namespace Mealmate.Admin.Controllers
 
         }
 
+        #region SignUp
+        [HttpPost]
+        public IActionResult SignUp([Bind("SignUp")] LoginPageViewModel model)
+        {
+            var signUpViewModel = model.SignUp;
+
+            return RedirectToAction("Auth", "SignIn");
+        }
+        #endregion
+
         #region Sign In
         [HttpGet()]
         public IActionResult SignIn()
@@ -18,8 +29,10 @@ namespace Mealmate.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult SignIn(SignInViewModel model)
+        public IActionResult SignIn([Bind(include: "SignIn")] LoginPageViewModel model)
         {
+            var signInViewModel = model.SignIn;
+
             return RedirectToAction("Index", "Home");
         }
         #endregion
@@ -33,7 +46,13 @@ namespace Mealmate.Admin.Controllers
         #endregion
 
         #region Forgot Password
+        [HttpPost]
+        public IActionResult ForgetPassword([Bind(include: "Forget")] LoginPageViewModel model)
+        {
+            var forgetPasswordViewModel = model.Forget;
 
+            return RedirectToAction("Auth", "SignIn");
+        }
         #endregion
 
         #region Recover Password
