@@ -269,7 +269,7 @@ var KTApexChartsDemo = function () {
 				width: [1, 1, 4]
 			},
 			title: {
-				text: 'XYZ - Stock Analysis (2009 - 2016)',
+				text: 'Mealmate - Sales Analysis (2009 - 2016)',
 				align: 'left',
 				offsetX: 110
 			},

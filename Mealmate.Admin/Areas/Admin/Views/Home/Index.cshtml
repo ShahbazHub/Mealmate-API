@@ -254,7 +254,7 @@
                     <div class="card card-custom gutter-b">
                         <div class="card-header">
                             <div class="card-title">
-                                <h3 class="card-label">Stock Analysis</h3>
+                                <h3 class="card-label">Sales Analysis</h3>
                             </div>
                         </div>
                         <div class="card-body">
@@ -272,14 +272,14 @@
         <!--end::Entry-->
     </div>
     <!--end::Content-->
+</div>
 
-
-    @section Scripts{
-        <script>
-            $(function () {
-                $("ul.menu-nav li:eq(1)").addClass("menu-item-active");
-            })
-        </script>
-    }
-    <script src="assets/plugins/jquery/dist/jquery.min.js"></script>
-    <script src="assets/js/pages/features/charts/apexcharts.js"></script>
+@section Scripts{
+    <script src="~/assets/plugins/jquery/dist/jquery.min.js"></script>
+    <script src="~/assets/js/pages/features/charts/apexcharts.js"></script>
+    <script>
+        $(function () {
+            $("ul.menu-nav li:eq(1)").addClass("menu-item-active");
+        })
+    </script>
+}

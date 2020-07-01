@@ -13,17 +13,17 @@
                     class="btn btn-sm btn-clean btn-icon btn-icon-md js-remove">
                 <i class="fa fa-trash-alt text-danger"></i>
             </button>
-            <label class="col-form-label">Ingredient</label>
+            <label class="col-form-label font-weight-bolder">Ingredient</label>
             <select class="custom-select" asp-for="IngredientId" asp-items="Model.Ingredients">
                 <option value="">Select From List</option>
             </select>
         </div>
         <div class="col-md-2">
-            <label class="col-form-label">Price</label>
+            <label class="col-form-label font-weight-bolder">Price</label>
             <input type="text" asp-for="Price" class="form-control" />
         </div>
         <div class="col-md-2">
-            <label class="col-form-label">Quantity</label>
+            <label class="col-form-label font-weight-bolder">Quantity</label>
             <input type="text" asp-for="Quantity" class="form-control" />
         </div>
     </div>

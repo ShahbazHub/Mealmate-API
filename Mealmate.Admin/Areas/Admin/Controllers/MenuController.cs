@@ -39,27 +39,27 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                     new IngredientAssignListViewModel()
                     {
                         IngredientId = 1,
-                        Name = "Egg"
+                        Name = "Avocado"
                     },
                     new IngredientAssignListViewModel()
                     {
                         IngredientId = 2,
-                        Name = "Fish"
+                        Name = "Tomato"
                     },
                     new IngredientAssignListViewModel()
                     {
                         IngredientId = 3,
-                        Name = "Lupin"
+                        Name = "Toast"
                     },
                     new IngredientAssignListViewModel()
                     {
                         IngredientId = 4,
-                        Name = "Milk"
+                        Name = "Cayenne"
                     },
                     new IngredientAssignListViewModel()
                     {
                         IngredientId = 5,
-                        Name = "Mustard"
+                        Name = "Lemon"
                     },
                     new IngredientAssignListViewModel()
                     {
@@ -203,6 +203,57 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                         Text = "Hall No. 2",
                         Value = "32"
                     }
+                },
+                Dietaries = new List<DietaryAssignListViewModel>()
+                {
+                    new DietaryAssignListViewModel()
+                    {
+                        DietaryId = 1,
+                        Name = "Gluten Free"
+                    },
+                    new DietaryAssignListViewModel()
+                    {
+                        DietaryId = 2,
+                        Name = "Celiac"
+                    },
+                    new DietaryAssignListViewModel()
+                    {
+                        DietaryId = 3,
+                        Name = "Vegetarian"
+                    },
+                    new DietaryAssignListViewModel()
+                    {
+                        DietaryId = 4,
+                        Name = "Vegan"
+                    }
+                },
+                Allergens = new List<AllergenAssignListViewModel>()
+                {
+                    new AllergenAssignListViewModel()
+                    {
+                        AllergenId = 1,
+                        Name = "Egg"
+                    },
+                    new AllergenAssignListViewModel()
+                    {
+                        AllergenId = 2,
+                        Name = "Celery"
+                    },
+                    new AllergenAssignListViewModel()
+                    {
+                        AllergenId = 3,
+                        Name = "Fish"
+                    },
+                    new AllergenAssignListViewModel()
+                    {
+                        AllergenId = 4,
+                        Name = "Lupin"
+                    },
+                    new AllergenAssignListViewModel()
+                    {
+                        AllergenId = 5,
+                        Name = "Milk"
+                    }
                 }
             };
             return View(model);
@@ -295,6 +346,59 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                     Value = "32"
                 }
             };
+
+            model.Dietaries = new List<DietaryAssignListViewModel>()
+            {
+                new DietaryAssignListViewModel()
+                {
+                    DietaryId = 1,
+                    Name = "Gluten Free"
+                },
+                new DietaryAssignListViewModel()
+                {
+                    DietaryId = 2,
+                    Name = "Celiac"
+                },
+                new DietaryAssignListViewModel()
+                {
+                    DietaryId = 3,
+                    Name = "Vegetarian"
+                },
+                new DietaryAssignListViewModel()
+                {
+                    DietaryId = 4,
+                    Name = "Vegan"
+                }
+            };
+
+            model.Allergens = new List<AllergenAssignListViewModel>()
+            {
+                new AllergenAssignListViewModel()
+                {
+                    AllergenId = 1,
+                    Name = "Egg"
+                },
+                new AllergenAssignListViewModel()
+                {
+                    AllergenId = 2,
+                    Name = "Celery"
+                },
+                new AllergenAssignListViewModel()
+                {
+                    AllergenId = 3,
+                    Name = "Fish"
+                },
+                new AllergenAssignListViewModel()
+                {
+                    AllergenId = 4,
+                    Name = "Lupin"
+                },
+                new AllergenAssignListViewModel()
+                {
+                    AllergenId = 5,
+                    Name = "Milk"
+                }
+            };
             return View();
         }
         #endregion
@@ -312,27 +416,27 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                     {
                         new SelectListItem()
                         {
-                            Text = "Egg",
+                            Text = "Avocado",
                             Value = "1"
                         },
                         new SelectListItem()
                         {
-                            Text = "Fish",
+                            Text = "Tomato",
                             Value = "2"
                         },
                         new SelectListItem()
                         {
-                            Text = "Lupin",
+                            Text = "Toast",
                             Value = "3"
                         },
                         new SelectListItem()
                         {
-                            Text = "Milk",
+                            Text = "Cayenne",
                             Value = "4"
                         },
                         new SelectListItem()
                         {
-                            Text = "Mustard",
+                            Text = "Lemon",
                             Value = "5"
                         },
                         new SelectListItem()

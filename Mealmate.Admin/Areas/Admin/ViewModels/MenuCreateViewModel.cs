@@ -16,6 +16,9 @@ namespace Mealmate.Admin.Areas.Admin.ViewModels
         public int HallId { get; set; }
         public IEnumerable<SelectListItem> Halls { get; set; }
 
+        public List<AllergenAssignListViewModel> Allergens { get; set; }
+        public List<DietaryAssignListViewModel> Dietaries { get; set; }
+
         public List<MenuItemCreateViewModel> MenuItems { get; set; }
 
         public MenuCreateViewModel()
