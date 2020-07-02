@@ -13,8 +13,8 @@ namespace Mealmate.Admin.Areas.Admin.ViewModels
         public int MenuTypeId { get; set; }
         public IEnumerable<SelectListItem> MenuTypes { get; set; }
 
-        public int HallId { get; set; }
-        public IEnumerable<SelectListItem> Halls { get; set; }
+        public int LocationId { get; set; }
+        public IEnumerable<SelectListItem> Locations { get; set; }
 
         public List<AllergenAssignListViewModel> Allergens { get; set; }
         public List<DietaryAssignListViewModel> Dietaries { get; set; }

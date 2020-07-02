@@ -7,24 +7,63 @@
 
 @using (Html.BeginCollectionItem("MenuItems"))
 {
-    <div class="row form-group js-item">
-        <div class="col-md-8">
-            <button type="button" id="BtnRemove"
-                    class="btn btn-sm btn-clean btn-icon btn-icon-md js-remove">
-                <i class="fa fa-trash-alt text-danger"></i>
-            </button>
-            <label class="col-form-label font-weight-bolder">Ingredient</label>
-            <select class="custom-select" asp-for="IngredientId" asp-items="Model.Ingredients">
-                <option value="">Select From List</option>
-            </select>
+
+    <div class="js-item">
+        <div class="row form-group">
+            <div class="col-md-12">
+                <h5 style="border-bottom: 1px solid rgba(0,0,0, 0.1); padding-bottom: 5px;">Menu Item Option</h5>
+            </div>
         </div>
-        <div class="col-md-2">
-            <label class="col-form-label font-weight-bolder">Price</label>
-            <input type="text" asp-for="Price" class="form-control" />
-        </div>
-        <div class="col-md-2">
-            <label class="col-form-label font-weight-bolder">Quantity</label>
-            <input type="text" asp-for="Quantity" class="form-control" />
+        <div class="row form-group">
+            <div class="col-md-2">
+                <div class="col-md-12">
+                    @*<label class="col-form-label font-weight-bolder">Select an image for the menu item</label>*@
+
+                    <div class="image-input image-input-outline" id="kt_image_5" style="background-image: url(/images/dish.jpeg)">
+                        <div class="image-input-wrapper" style="background-image: none;"></div>
+                        <label class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="change" data-toggle="tooltip" title="" data-original-title="Change avatar">
+                            <i class="fa fa-pen icon-sm text-muted"></i>
+                            <input type="file" name="profile_avatar" accept=".png, .jpg, .jpeg">
+                            <input type="hidden" name="profile_avatar_remove" value="0">
+                        </label>
+                        <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="cancel" data-toggle="tooltip" title="" data-original-title="Cancel avatar">
+                            <i class="ki ki-bold-close icon-xs text-muted"></i>
+                        </span>
+                        <span class="btn btn-xs btn-icon btn-circle btn-white btn-hover-text-primary btn-shadow" data-action="remove" data-toggle="tooltip" title="" data-original-title="Remove avatar">
+                            <i class="ki ki-bold-close icon-xs text-muted"></i>
+                        </span>
+                    </div>
+                    <span class="form-text text-muted">Image for the Menu item</span>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-8">
+
+                        <label class="col-form-label font-weight-bolder">Option name</label>
+                        <input type="text" asp-for="Option" class="form-control" />
+
+                    </div>
+                    <div class="col-md-2">
+                        <label class="col-form-label font-weight-bolder">Price</label>
+                        <input type="text" asp-for="Price" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="col-form-label font-weight-bolder">Quantity</label>
+                        <input type="text" asp-for="Quantity" class="form-control" />
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="button" id="BtnRemove"
+                                class="btn btn-sm font-weight-bolder btn-light-danger js-remove float-right">
+                            <i class="la la-trash-o"></i>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 }

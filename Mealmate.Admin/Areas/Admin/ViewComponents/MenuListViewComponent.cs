@@ -29,7 +29,9 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Title = "Blueberry and banana french toast",
                     MenuTypeId = 1,
                     MenuType = "Breakfast",
-                    MenuStateId = 1
+                    MenuStateId = 1,
+                    Branch = "Branch No. 1",
+                    Location = "Location No. 1"
                 },
                 new MenuListViewModel()
                 {
@@ -37,7 +39,9 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Title = "Acai bowl with fresh seasonal fruit",
                     MenuTypeId = 2,
                     MenuType = "Lunch",
-                    MenuStateId = 1
+                    MenuStateId = 1,
+                    Branch = "Branch No. 1",
+                    Location = "Location No. 2"
                 },
                 new MenuListViewModel()
                 {
@@ -45,7 +49,9 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Title = "Avocado and italian plum tomatoes on toast",
                     MenuTypeId = 3,
                     MenuType = "Dinner",
-                    MenuStateId = 1
+                    MenuStateId = 1,
+                    Branch = "Branch No. 2",
+                    Location = "Location No. 1"
                 },
                 new MenuListViewModel()
                 {
@@ -53,7 +59,9 @@ namespace Mealmate.Admin.Areas.Admin.ViewComponents
                     Title = "Shakshuka",
                     MenuTypeId = 4,
                     MenuType = "Sides",
-                    MenuStateId = 1
+                    MenuStateId = 1,
+                    Branch = "Branch No. 2",
+                    Location = "Location No. 2"
                 }
             };
 

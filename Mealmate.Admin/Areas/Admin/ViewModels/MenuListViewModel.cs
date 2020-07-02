@@ -13,5 +13,8 @@ namespace Mealmate.Admin.Areas.Admin.ViewModels
         public string MenuType { get; set; }
         public int MenuStateId { get; set; }
         public string MenuState { get; set; }
+
+        public string Branch { get; set; }
+        public string Location { get; set; }
     }
 }

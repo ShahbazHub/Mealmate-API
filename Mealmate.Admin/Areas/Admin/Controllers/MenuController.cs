@@ -19,52 +19,62 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
         #region Landing page
         public IActionResult Index()
         {
+            var branches = new List<SelectListGroup>()
+            {
+                new SelectListGroup()
+                {
+                    Name = "Branch No. 1"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Branch No. 2"
+                },
+                new SelectListGroup()
+                {
+                    Name = "Branch No. 3"
+                }
+            };
+
             var model = new MenuIndexViewModel()
             {
-                Branches = new List<SelectListItem>()
+
+                Locations = new List<SelectListItem>()
                 {
                     new SelectListItem()
                     {
-                        Text = "Saddar Rawalpindi, Pakistan",
-                        Value = "1"
+                        Group = branches[0],
+                        Text = "Location No. 1",
+                        Value = "11"
                     },
                     new SelectListItem()
                     {
-                        Text = "Blue Area Islamabad, Pakistan",
-                        Value = "2"
-                    }
-                },
-                Ingredients = new List<IngredientAssignListViewModel>()
-                {
-                    new IngredientAssignListViewModel()
-                    {
-                        IngredientId = 1,
-                        Name = "Avocado"
+                        Group = branches[0],
+                        Text = "Location No. 2",
+                        Value = "12"
                     },
-                    new IngredientAssignListViewModel()
+                    new SelectListItem()
                     {
-                        IngredientId = 2,
-                        Name = "Tomato"
+                        Group = branches[1],
+                        Text = "Location No. 1",
+                        Value = "21"
                     },
-                    new IngredientAssignListViewModel()
+                    new SelectListItem()
                     {
-                        IngredientId = 3,
-                        Name = "Toast"
+                        Group = branches[1],
+                        Text = "Location No. 2",
+                        Value = "22"
                     },
-                    new IngredientAssignListViewModel()
+                    new SelectListItem()
                     {
-                        IngredientId = 4,
-                        Name = "Cayenne"
+                        Group = branches[2],
+                        Text = "Location No. 1",
+                        Value = "31"
                     },
-                    new IngredientAssignListViewModel()
+                    new SelectListItem()
                     {
-                        IngredientId = 5,
-                        Name = "Lemon"
-                    },
-                    new IngredientAssignListViewModel()
-                    {
-                        IngredientId = 1,
-                        Name = "Peanut"
+                        Group = branches[2],
+                        Text = "Location No. 2",
+                        Value = "32"
                     }
                 },
                 MenuTypes = new List<MenuTypeAssignListViewModel>()
@@ -165,42 +175,42 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                         Value = "4"
                     }
                 },
-                Halls = new List<SelectListItem>()
+                Locations = new List<SelectListItem>()
                 {
                     new SelectListItem()
                     {
                         Group = branches[0],
-                        Text = "Hall No. 1",
+                        Text = "Location No. 1",
                         Value = "11"
                     },
                     new SelectListItem()
                     {
                         Group = branches[0],
-                        Text = "Hall No. 2",
+                        Text = "Location No. 2",
                         Value = "12"
                     },
                     new SelectListItem()
                     {
                         Group = branches[1],
-                        Text = "Hall No. 1",
+                        Text = "Location No. 1",
                         Value = "21"
                     },
                     new SelectListItem()
                     {
                         Group = branches[1],
-                        Text = "Hall No. 2",
+                        Text = "Location No. 2",
                         Value = "22"
                     },
                     new SelectListItem()
                     {
                         Group = branches[2],
-                        Text = "Hall No. 1",
+                        Text = "Location No. 1",
                         Value = "31"
                     },
                     new SelectListItem()
                     {
                         Group = branches[2],
-                        Text = "Hall No. 2",
+                        Text = "Location No. 2",
                         Value = "32"
                     }
                 },
@@ -307,42 +317,42 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                 }
             };
 
-            model.Halls = new List<SelectListItem>()
+            model.Locations = new List<SelectListItem>()
             {
                 new SelectListItem()
                 {
                     Group = branches[0],
-                    Text = "Hall No. 1",
+                    Text = "Location No. 1",
                     Value = "11"
                 },
                 new SelectListItem()
                 {
                     Group = branches[0],
-                    Text = "Hall No. 2",
+                    Text = "Location No. 2",
                     Value = "12"
                 },
                 new SelectListItem()
                 {
                     Group = branches[1],
-                    Text = "Hall No. 1",
+                    Text = "Location No. 1",
                     Value = "21"
                 },
                 new SelectListItem()
                 {
                     Group = branches[1],
-                    Text = "Hall No. 2",
+                    Text = "Location No. 2",
                     Value = "22"
                 },
                 new SelectListItem()
                 {
                     Group = branches[2],
-                    Text = "Hall No. 1",
+                    Text = "Location No. 1",
                     Value = "31"
                 },
                 new SelectListItem()
                 {
                     Group = branches[2],
-                    Text = "Hall No. 2",
+                    Text = "Location No. 2",
                     Value = "32"
                 }
             };
@@ -411,40 +421,7 @@ namespace Mealmate.Admin.Areas.Admin.Controllers
                 new MenuItemCreateViewModel()
                 {
                     Price = 0,
-                    Quantity = 0,
-                    Ingredients = new List<SelectListItem>()
-                    {
-                        new SelectListItem()
-                        {
-                            Text = "Avocado",
-                            Value = "1"
-                        },
-                        new SelectListItem()
-                        {
-                            Text = "Tomato",
-                            Value = "2"
-                        },
-                        new SelectListItem()
-                        {
-                            Text = "Toast",
-                            Value = "3"
-                        },
-                        new SelectListItem()
-                        {
-                            Text = "Cayenne",
-                            Value = "4"
-                        },
-                        new SelectListItem()
-                        {
-                            Text = "Lemon",
-                            Value = "5"
-                        },
-                        new SelectListItem()
-                        {
-                            Text = "Peanut",
-                            Value = "6"
-                        }
-                    }
+                    Quantity = 0
                 });
         }
         #endregion
