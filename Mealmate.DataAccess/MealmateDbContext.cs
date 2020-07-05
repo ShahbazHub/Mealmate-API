@@ -1,5 +1,6 @@
 ﻿using Mealmate.DataAccess.Configurations;
 using Mealmate.Entities.Identity;
+using Mealmate.Entities.Infrastructure;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace Mealmate.DataAccess.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            // ConnectionStrings__MealmateConnectionString
             optionsBuilder.UseSqlServer(_config["ConnectionStrings:MealmateConnectionString"]);
         }
 
@@ -32,7 +34,12 @@ namespace Mealmate.DataAccess.Contexts
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
+
+            // Infrastructure Tables
+            modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
         }
+
+        public DbSet<Restaurant> Restaurants { get; set; }
 
     }
 }

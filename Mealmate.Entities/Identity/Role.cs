@@ -7,7 +7,7 @@ namespace Mealmate.Entities.Identity
 {
     public class Role : IdentityRole<int>
     {
-        public DateTime Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
         public Role()
         {

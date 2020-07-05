@@ -29,12 +29,8 @@ namespace Mealmate.DataAccess.Configurations
                 .HasColumnType("VARCHAR(250)")
                 .IsRequired();
 
-            builder.Property(p => p.DateOfBirth)
-                .HasColumnType("DATE")
-                .IsRequired();
-
             builder.Property(p => p.Created)
-                .HasColumnType("DATETIME")
+                .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()
                 .HasDefaultValueSql("GETDATE()");
 

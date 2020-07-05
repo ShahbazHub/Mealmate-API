@@ -14,7 +14,7 @@ namespace Mealmate.DataAccess.Configurations
         {
             builder.ToTable("Role", "Identity");
             builder.Property(p => p.Created)
-                .HasColumnType("DATETIME")
+                .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()
                 .HasDefaultValueSql("GETDATE()");
 
