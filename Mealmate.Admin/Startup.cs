@@ -26,8 +26,8 @@ namespace Mealmate.Admin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddTransient<UserDataSeeder>();
-            services.AddTransient<RoleDataSeeder>();
+            //services.AddTransient<UserDataSeeder>();
+            //services.AddTransient<RoleDataSeeder>();
 
             services.ConfigureApplicationCookie(config =>
             {

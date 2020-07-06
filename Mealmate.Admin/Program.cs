@@ -19,7 +19,7 @@ namespace Mealmate.Admin
                                 .Build();
 
             // Run data seeding
-            RunSeeding(host);
+            //RunSeeding(host);
 
             // Running web host
             host.Run();
