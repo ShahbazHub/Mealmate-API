@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Mealmate.DataAccess.DataSeeders;
+
+using Mealmate.BusinessLayer.DataSeeders;
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,16 +14,15 @@ namespace Mealmate.Admin
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args)
-                                .Build();
+            var host = CreateHostBuilder(args).Build();
 
             // Run data seeding
             //RunSeeding(host);
 
             // Running web host
             host.Run();
-        }
 
+        }
         private static void RunSeeding(IHost host)
         {
             using var scope = host.Services.CreateScope();
@@ -48,6 +46,7 @@ namespace Mealmate.Admin
                 throw new Exception("Error while seeding roles' data", ex);
             }
         }
+
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)

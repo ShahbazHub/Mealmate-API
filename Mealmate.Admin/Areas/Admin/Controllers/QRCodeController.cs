@@ -1,4 +1,6 @@
 ﻿using Mealmate.Admin.Areas.Admin.ViewModels;
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 namespace Mealmate.Admin.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class QRCodeController : Controller
     {
         public QRCodeController()

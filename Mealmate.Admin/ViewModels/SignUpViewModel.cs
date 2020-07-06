@@ -9,6 +9,7 @@ namespace Mealmate.Admin.ViewModels
     public class SignUpViewModel
     {
         public string RestaurantName { get; set; }
+        public string Description { get; set; }
         public string Owner { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }

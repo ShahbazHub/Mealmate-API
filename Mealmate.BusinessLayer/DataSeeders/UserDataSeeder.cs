@@ -1,5 +1,4 @@
 ﻿using Mealmate.DataAccess.Contexts;
-using Mealmate.Entities;
 using Mealmate.Entities.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -10,40 +9,45 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Mealmate.DataAccess.DataSeeders
+namespace Mealmate.BusinessLayer.DataSeeders
 {
-    public class RoleDataSeeder
+    public class UserDataSeeder
     {
         private readonly MealmateDbContext _context;
-        private readonly RoleManager<Role> _roleManager;
+        private readonly UserManager<User> _userManager;
         private readonly IWebHostEnvironment _hosting;
 
-        public RoleDataSeeder(MealmateDbContext context,
-            RoleManager<Role> roleManager,
+        public UserDataSeeder(MealmateDbContext context,
+            UserManager<User> userManager,
             IWebHostEnvironment hosting)
         {
             _context = context;
-            _roleManager = roleManager;
+            _userManager = userManager;
             _hosting = hosting;
         }
 
         public async Task Seed()
         {
-            string fileName = "role-data";
+            string fileName = "user-data";
             await _context.Database.EnsureCreatedAsync();
 
-            if (!_roleManager.Roles.Any())
+            if (!_userManager.Users.Any())
             {
-                var file = Path.Combine(_hosting.ContentRootPath, $"Data/{fileName}.json"); 
+                var file = Path.Combine(_hosting.ContentRootPath, $"Data/{fileName}.json");
                 var json = File.ReadAllText(file);
 
-                var roles = JsonConvert.DeserializeObject<List<Role>>(json);
+                var users = JsonConvert.DeserializeObject<List<User>>(json);
 
-                foreach (var role in roles)
+                foreach (var user in users)
                 {
-                    var result = await _roleManager.CreateAsync(role);
+                    var result = await _userManager.CreateAsync(
+                                            user: user,
+                                            password: "password");
+
+
                 }
             }
+
         }
     }
 }

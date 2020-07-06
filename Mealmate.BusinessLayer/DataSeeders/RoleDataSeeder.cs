@@ -1,4 +1,5 @@
 ﻿using Mealmate.DataAccess.Contexts;
+using Mealmate.Entities;
 using Mealmate.Entities.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -9,45 +10,40 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Mealmate.DataAccess.DataSeeders
+namespace Mealmate.BusinessLayer.DataSeeders
 {
-    public class UserDataSeeder
+    public class RoleDataSeeder
     {
         private readonly MealmateDbContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly IWebHostEnvironment _hosting;
 
-        public UserDataSeeder(MealmateDbContext context,
-            UserManager<User> userManager,
+        public RoleDataSeeder(MealmateDbContext context,
+            RoleManager<Role> roleManager,
             IWebHostEnvironment hosting)
         {
             _context = context;
-            _userManager = userManager;
+            _roleManager = roleManager;
             _hosting = hosting;
         }
 
         public async Task Seed()
         {
-            string fileName = "user-data";
+            string fileName = "role-data";
             await _context.Database.EnsureCreatedAsync();
 
-            if (!_userManager.Users.Any())
+            if (!_roleManager.Roles.Any())
             {
-                var file = Path.Combine(_hosting.ContentRootPath, $"Data/{fileName}.json");
+                var file = Path.Combine(_hosting.ContentRootPath, $"Data/{fileName}.json"); 
                 var json = File.ReadAllText(file);
 
-                var users = JsonConvert.DeserializeObject<List<User>>(json);
+                var roles = JsonConvert.DeserializeObject<List<Role>>(json);
 
-                foreach (var user in users)
+                foreach (var role in roles)
                 {
-                    var result = await _userManager.CreateAsync(
-                                            user: user,
-                                            password: "password");
-
-
+                    var result = await _roleManager.CreateAsync(role);
                 }
             }
-
         }
     }
 }
