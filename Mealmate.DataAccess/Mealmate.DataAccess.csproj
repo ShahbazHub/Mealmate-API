@@ -21,8 +21,4 @@
     <PackageReference Include="System.Linq" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Mealmate.Entities\Mealmate.Entities.csproj" />
-  </ItemGroup>
-
 </Project>
