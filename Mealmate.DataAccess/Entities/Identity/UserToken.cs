@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mealmate.Entities.Identity
+namespace Mealmate.DataAccess.Entities.Identity
 {
-    public class UserClaim : IdentityUserClaim<int>
+    public class UserToken : IdentityUserToken<int>
     {
         public virtual User User { get; set; }
     }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mealmate.Entities.Identity
+namespace Mealmate.DataAccess.Entities.Identity
 {
     public class Role : IdentityRole<int>
     {

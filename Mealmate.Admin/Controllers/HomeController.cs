@@ -1,20 +1,11 @@
-﻿using Mealmate.BusinessLayer.UnitOfWork;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Mealmate.Admin.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
-
-        public HomeController(IUnitOfWork unitOfWork)
+        public HomeController()
         {
-            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()

@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Mealmate.Entities.Identity
+namespace Mealmate.DataAccess.Entities.Identity
 {
-    public class RoleClaim : IdentityRoleClaim<int>
+    public class UserRole : IdentityUserRole<int>
     {
+        public virtual User User { get; set; }
         public virtual Role Role { get; set; }
     }
 }

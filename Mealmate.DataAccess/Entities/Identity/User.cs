@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mealmate.Entities.Infrastructure;
+using Mealmate.DataAccess.Entities.Mealmate;
 using Microsoft.AspNetCore.Identity;
 
-namespace Mealmate.Entities.Identity
+namespace Mealmate.DataAccess.Entities.Identity
 {
     public class User : IdentityUser<int>
     {

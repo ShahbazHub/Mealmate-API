@@ -1,19 +1,17 @@
-﻿using Mealmate.Entities.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Mealmate.Entities.Infrastructure
+namespace Mealmate.WebApi.Models
 {
-    public class Restaurant
+    public class RestaurantModel
     {
         public int RestaurantId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
-
         public int OwnerId { get; set; }
-        public virtual User Owner { get; set; }
+
     }
 }

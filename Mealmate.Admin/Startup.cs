@@ -1,6 +1,3 @@
-using Mealmate.BusinessLayer.UnitOfWork;
-using Mealmate.DataAccess.Contexts;
-using Mealmate.Entities.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -32,36 +29,7 @@ namespace Mealmate.Admin
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(_config);
-
             services.AddMvc();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            services.AddDbContext<MealmateDbContext>();
-            services.AddIdentity<User, Role>()
-                    .AddEntityFrameworkStores<MealmateDbContext>();
-
-            services.ConfigureApplicationCookie(config =>
-            {
-                config.LoginPath = "/Auth/SignIn";
-                config.LogoutPath = "/Auth/SignOut";
-                config.SlidingExpiration = true;
-
-                config.AccessDeniedPath = "/Auth/AccessDenied";
-                config.ReturnUrlParameter = "returnUrl";
-            });
-
-            services.Configure<IdentityOptions>(config =>
-            {
-                config.Password.RequireDigit = false;
-                config.Password.RequireLowercase = false;
-                config.Password.RequiredLength = 8;
-                config.Password.RequiredUniqueChars = 0;
-                config.Password.RequireNonAlphanumeric = false;
-                config.Password.RequireUppercase = false;
-
-                config.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
-                config.User.RequireUniqueEmail = true;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
