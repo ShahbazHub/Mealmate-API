@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Mealmate.BusinessLayer.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,13 @@ namespace Mealmate.Admin.Controllers
 {
     public class HomeController : Controller
     {
-        public HomeController()
-        {
+        private readonly IUnitOfWork _unitOfWork;
 
+        public HomeController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
         }
-        [Authorize]
+
         public IActionResult Index()
         {
             return View();

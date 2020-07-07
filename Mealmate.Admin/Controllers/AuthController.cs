@@ -1,29 +1,26 @@
 ﻿using Mealmate.Admin.ViewModels;
-using Mealmate.DataAccess.Contexts;
+using Mealmate.BusinessLayer.UnitOfWork;
 using Mealmate.Entities.Identity;
-using Mealmate.Entities.Infrastructure;
-using Mealmate.Repository;
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Mealmate.Admin.Controllers
 {
     public class AuthController : Controller
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthController(UserManager<User> userManager, IUnitOfWork unitOfWork, SignInManager<User> signInManager)
+        public AuthController(
+            UserManager<User> userManager, 
+            SignInManager<User> signInManager, 
+            IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             _userManager = userManager;
             _signInManager = signInManager;
-            _unitOfWork = unitOfWork;
         }
 
         #region SignUp
@@ -31,24 +28,24 @@ namespace Mealmate.Admin.Controllers
         public async Task<IActionResult> SignUp([Bind("SignUp")] LoginPageViewModel model)
         {
             var signUpViewModel = model.SignUp;
-            var userID = _userManager.FindByEmailAsync(signUpViewModel.Email).Id;
+            var result = await _userManager.FindByEmailAsync(signUpViewModel.Email);
             try
             {
-                var result = await _userManager.CreateAsync(new Entities.Identity.User
-                {
-                    Email = signUpViewModel.Email,
-                    Name = signUpViewModel.Owner,
-                    UserName = signUpViewModel.Email,
-                    EmailConfirmed = true
+                //var result = await _userManager.CreateAsync(new Entities.Identity.User
+                //{
+                //    Email = signUpViewModel.Email,
+                //    Name = signUpViewModel.Owner,
+                //    UserName = signUpViewModel.Email,
+                //    EmailConfirmed = true
 
-                }, signUpViewModel.Password);
+                //}, signUpViewModel.Password);
 
-                if (result.Succeeded)
-                {
-                    await _signInManager.PasswordSignInAsync(signUpViewModel.Email, signUpViewModel.Password, false, false);
+                //if (result.Succeeded)
+                //{
+                //    await _signInManager.PasswordSignInAsync(signUpViewModel.Email, signUpViewModel.Password, false, false);
 
-                    return RedirectToActionPermanent("Index", "Home");
-                }
+                //    return RedirectToActionPermanent("Index", "Home");
+                //}
 
             }
             catch (System.Exception ex)
