@@ -115,5 +115,8 @@ namespace Mealmate.WebApi.Controllers
             return Ok();
         }
         #endregion
+
+        #region Sign Out
+        #endregion
     }
 }
