@@ -92,7 +92,9 @@ namespace Mealmate.WebApi
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
                         .GetBytes(_config["AppSettings:Token"])),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ValidIssuer = _config["AppSettings:Issuer"],
+                    ValidAudience = _config["AppSettings:Audience"]
                 };
             });
 
