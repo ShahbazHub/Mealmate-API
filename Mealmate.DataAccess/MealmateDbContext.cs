@@ -35,11 +35,29 @@ namespace Mealmate.DataAccess
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
 
-            // Infrastructure Tables
+            // Mealmate tables
             modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
+            modelBuilder.ApplyConfiguration(new BranchConfiguration());
+            modelBuilder.ApplyConfiguration(new LocationConfiguration());
+            modelBuilder.ApplyConfiguration(new TableConfiguration());
+            modelBuilder.ApplyConfiguration(new QRCodeConfiguration());
+            modelBuilder.ApplyConfiguration(new MenuConfiguration());
+            modelBuilder.ApplyConfiguration(new MenuItemConfiguration());
+            modelBuilder.ApplyConfiguration(new MenuItemOptionConfiguration());
+
+            // Lookups
+            modelBuilder.ApplyConfiguration(new OptionItemConfiguration());
+
         }
 
         public DbSet<Restaurant> Restaurants { get; set; }
+        public DbSet<Branch> Branches { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Table> Tables { get; set; }
+        public DbSet<QRCode> QRCodes { get; set; }
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<MenuItemOption> MenuItemOptions { get; set; }
 
     }
 }

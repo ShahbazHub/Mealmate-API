@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Mealmate.BusinessLayer.Interface;
-using Mealmate.DataAccess.Entities.Mealmate;
+// using Mealmate.DataAccess.Entities.Mealmate;
 using Mealmate.WebApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +28,9 @@ namespace Mealmate.WebApi.Controllers
         [HttpGet()]
         public ActionResult Get()
         {
-            var result = _restaurantService.Get();
+            //var result = _restaurantService.Get();
 
-            return Ok(_mapper.Map<IEnumerable<RestaurantModel>>(result));
+            return Ok();
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Mealmate.BusinessLayer.Common
             using (var scope = new TransactionScope())
             {
                 var temp = _unitOfWork.RestaurantRepository.GetById(id);
-                if (temp!= null)
+                if (temp != null)
                 {
                     _unitOfWork.RestaurantRepository.Delete(temp);
                     _unitOfWork.Complete();
@@ -68,7 +68,7 @@ namespace Mealmate.BusinessLayer.Common
                     var temp = _unitOfWork.RestaurantRepository.GetById(id);
                     if (temp != null)
                     {
-                        temp.Created= model.Created;
+                        temp.Created = model.Created;
                         temp.Description = model.Description;
                         _unitOfWork.RestaurantRepository.Update(temp);
                         _unitOfWork.Complete();

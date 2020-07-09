@@ -4,37 +4,36 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mealmate.DataAccess.Configurations
 {
-    public class RestaurantConfiguration : IEntityTypeConfiguration<Restaurant>
+    public class TableConfiguration : IEntityTypeConfiguration<Table>
     {
-        public void Configure(EntityTypeBuilder<Restaurant> builder)
+        public void Configure(EntityTypeBuilder<Table> builder)
         {
-            builder.ToTable("Restaurant", "Mealmate");
-            builder.HasKey(p => p.RestaurantId)
-                   .HasName("PK_Restaurant");
+            builder.ToTable("Table", "Mealmate");
+            builder.HasKey(p => p.TableId)
+                   .HasName("PK_Table");
 
-            builder.Property(p => p.RestaurantId)
+            builder.Property(p => p.TableId)
                 .ValueGeneratedOnAdd();
+
+            builder.Property(p => p.LocationId)
+                .HasColumnType("INT")
+                .IsRequired();
 
             builder.Property(p => p.Name)
                 .HasColumnType("NVARCHAR(250)")
                 .IsRequired();
-
-            builder.Property(p => p.Description)
-                .HasColumnType("NVARCHAR(1000)");
 
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()
                 .HasDefaultValueSql("GETDATE()");
 
-            builder.HasOne(p => p.Owner)
-                .WithMany(p => p.Restaurants)
-                .HasForeignKey(p => p.OwnerId)
-                .HasConstraintName("FK_Restaurant_User")
+            builder.HasOne(p => p.Location)
+                .WithMany(p => p.Tables)
+                .HasForeignKey(p => p.LocationId)
+                .HasConstraintName("FK_Table_Location")
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
-
-
         }
     }
 }

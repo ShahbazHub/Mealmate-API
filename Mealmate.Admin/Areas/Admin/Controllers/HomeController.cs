@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 namespace Mealmate.Admin.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
     public class HomeController : Controller
     {
         public HomeController()

@@ -15,5 +15,12 @@ namespace Mealmate.DataAccess.Entities.Mealmate
 
         public int OwnerId { get; set; }
         public virtual User Owner { get; set; }
+
+        public virtual ICollection<Branch> Branches { get; set; }
+
+        public Restaurant()
+        {
+            Branches = new HashSet<Branch>();
+        }
     }
 }
