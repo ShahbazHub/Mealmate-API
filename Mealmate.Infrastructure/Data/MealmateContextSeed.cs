@@ -34,7 +34,6 @@ namespace Mealmate.Infrastructure.Data
             await _mealmateContext.Database.MigrateAsync();
             await _mealmateContext.Database.EnsureCreatedAsync();
 
-
             //// users
             await SeedUsersAsync();
         }

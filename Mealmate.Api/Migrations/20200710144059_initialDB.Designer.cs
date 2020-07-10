@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    [Migration("20200710114114_InitialDB")]
-    partial class InitialDB
+    [Migration("20200710144059_initialDB")]
+    partial class initialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

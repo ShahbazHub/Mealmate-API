@@ -47,9 +47,10 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new TableConfiguration());
 
             //Identity Schema
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
+
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
