@@ -17,13 +17,12 @@ namespace Mealmate.Infrastructure.IoC
     {
         public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
         {
+
             // repositories
             builder.RegisterType<RestaurantRepository>().As<IRestaurantRepository>().InstancePerRequest();
-            
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerRequest();
             builder.RegisterGeneric(typeof(EnumRepository<>)).As(typeof(IEnumRepository<>)).InstancePerRequest();
             builder.RegisterGeneric(typeof(RepositoryBase<,>)).As(typeof(IRepositoryBase<,>)).InstancePerRequest();
-
             builder.RegisterGeneric(typeof(LoggerAdapter<>)).As(typeof(IAppLogger<>)).InstancePerRequest();
 
             builder.RegisterType<MealmateContextSeed>();

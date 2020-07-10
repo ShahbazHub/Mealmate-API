@@ -1,11 +1,9 @@
 ﻿using Mealmate.Core.Entities;
 using Mealmate.Core.Repositories;
+using System;
 using Mealmate.Core.Repositories.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Mealmate.Infrastructure.Data
@@ -14,49 +12,45 @@ namespace Mealmate.Infrastructure.Data
     {
         private readonly MealmateContext _mealmateContext;
         private readonly UserManager<User> _userManager;
-        private readonly IRestaurantRepository _restaurantRepository;
-        //private readonly IRepository<Address> _addressRepository;
+        //private readonly IRestaurantRepository _restaurantRepository;
+        //private readonly IRepository<Table> _tableRepository;
 
         public MealmateContextSeed(
-            MealmateContext aspnetRunContext,
-            UserManager<User> userManager,
-            IRestaurantRepository restaurantRepository
-            //IRepository<Address> addressRepository
+            MealmateContext mealmateContext,
+            UserManager<User> userManager
+            //IRestaurantRepository restaurantRepository,
+            //IRepository<Table> tableRepository
             )
         {
-            _mealmateContext = aspnetRunContext;
+            _mealmateContext = mealmateContext;
             _userManager = userManager;
-            _restaurantRepository = restaurantRepository;
-            //_addressRepository = addressRepository;
+            //_restaurantRepository = restaurantRepository;
+            //_tableRepository = tableRepository;
         }
 
         public async Task SeedAsync()
         {
-            // TODO: Only run this if using a real database
-            // _aspnetRunContext.Database.Migrate();
-            // _aspnetRunContext.Database.EnsureCreated();
+            //// TODO: Only run this if using a real database
+            await _mealmateContext.Database.MigrateAsync();
+            await _mealmateContext.Database.EnsureCreatedAsync();
 
 
-            // users
+            //// users
             await SeedUsersAsync();
         }
-
-
-        
-
         private async Task SeedUsersAsync()
         {
-            var user = await _userManager.FindByEmailAsync("aspnetrun@outlook.com");
+            var user = await _userManager.FindByEmailAsync("email@gmail.com");
             if (user == null)
             {
                 user = new User
                 {
-                    Name = "Waseem Ahmad",
-                    Email = "waseem.ahmad.mughal@gmail.com",
-                    UserName = "wamughal"
+                    Name = "Administrator",
+                    Email = "admin@gmail.com",
+                    UserName = "admin"
                 };
 
-                var result = await _userManager.CreateAsync(user, "P@ssw0rd!");
+                var result = await _userManager.CreateAsync(user, "Server@123");
                 if (result != IdentityResult.Success)
                 {
                     throw new InvalidOperationException("Could not create user in Seeding");

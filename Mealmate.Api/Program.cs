@@ -1,11 +1,11 @@
+using System;
+using Autofac;
 using Mealmate.Infrastructure.Data;
-
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using System;
 
 namespace Mealmate.Api
 {
@@ -13,17 +13,18 @@ namespace Mealmate.Api
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args)
-                .Build();
+            var host = CreateWebHostBuilder(args).Build();
 
+            
+            
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
                 try
                 {
-                    var MealmateContextSeed = services.GetRequiredService<MealmateContextSeed>();
-                    MealmateContextSeed.SeedAsync().Wait();
+                    var seeder = services.GetRequiredService<MealmateContextSeed>();
+                    seeder.SeedAsync().Wait();
                 }
                 catch (Exception ex)
                 {

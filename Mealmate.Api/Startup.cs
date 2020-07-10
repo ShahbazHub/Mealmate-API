@@ -27,6 +27,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Autofac.Core;
 
 namespace Mealmate.Api
 {
@@ -75,6 +76,7 @@ namespace Mealmate.Api
         [Obsolete]
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+
             app.UseCors("CorsPolicy");
 
             if (env.IsDevelopment())
@@ -88,7 +90,6 @@ namespace Mealmate.Api
             }
 
             app.UseHttpsRedirection();
-
 
             app.UseMiddleware<LoggingMiddleware>();
 
@@ -134,7 +135,6 @@ namespace Mealmate.Api
                     .AllowAnyHeader()
                     .AllowCredentials());
             });
-
             return services;
         }
 
@@ -152,6 +152,7 @@ namespace Mealmate.Api
                         {
                             sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
                             sqlOptions.MigrationsAssembly("Mealmate.Api");
+                            sqlOptions.MigrationsHistoryTable("__MigrationsHistory", "Migration");
                         }
                     ),
                     ServiceLifetime.Scoped
