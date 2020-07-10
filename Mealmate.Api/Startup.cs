@@ -54,7 +54,17 @@ namespace Mealmate.Api
                 .AddCustomMvc()
                 .AddCustomDbContext(MealmateSettings)
                 .AddCustomIdentity()
-                .AddSwaggerDocument()
+                .AddSwaggerDocument(config =>
+                {
+                    config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "Mealmate HTTP API";
+                    document.Info.Description = "The Mealmate Service HTTP API";
+                    document.Info.TermsOfService = "Terms Of Service";
+                };
+
+                })
                 .AddCustomConfiguration(Configuration)
                 .AddCustomAuthentication(MealmateSettings)
                 .AddCustomIntegrations(HostingEnvironment);
@@ -77,8 +87,8 @@ namespace Mealmate.Api
             }
 
             app.UseHttpsRedirection();
-           
-          
+
+
             app.UseMiddleware<LoggingMiddleware>();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
@@ -130,20 +140,20 @@ namespace Mealmate.Api
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, MealmateSettings MealmateSettings)
         {
             // use in-memory database
-            services.AddDbContext<MealmateContext>(c => c.UseInMemoryDatabase("Mealmate"));
-            
+            //services.AddDbContext<MealmateContext>(c => c.UseInMemoryDatabase("Mealmate"));
+
             // Add Mealmate DbContext
-            //services
-            //    .AddEntityFrameworkSqlServer()
-            //    .AddDbContext<MealmateContext>(options =>
-            //            options.UseSqlServer(MealmateSettings.ConnectionString,
-            //            sqlOptions =>
-            //            {
-            //                sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-            //            }
-            //        ),
-            //        ServiceLifetime.Scoped
-            //     );
+            services
+                .AddEntityFrameworkSqlServer()
+                .AddDbContext<MealmateContext>(options =>
+                        options.UseSqlServer(MealmateSettings.ConnectionString,
+                        sqlOptions =>
+                        {
+                            sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                        }
+                    ),
+                    ServiceLifetime.Scoped
+                 );
 
             return services;
         }
