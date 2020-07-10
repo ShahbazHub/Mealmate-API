@@ -54,17 +54,18 @@ namespace Mealmate.Api
                 .AddCustomMvc()
                 .AddCustomDbContext(MealmateSettings)
                 .AddCustomIdentity()
-                .AddSwaggerDocument(config =>
-                {
-                    config.PostProcess = document =>
-                {
-                    document.Info.Version = "v1";
-                    document.Info.Title = "Mealmate HTTP API";
-                    document.Info.Description = "The Mealmate Service HTTP API";
-                    document.Info.TermsOfService = "Terms Of Service";
-                };
+                .AddCustomSwagger()
+                //.AddSwaggerDocument(config =>
+                //{
+                //    config.PostProcess = document =>
+                //{
+                //    document.Info.Version = "v1";
+                //    document.Info.Title = "Mealmate HTTP API";
+                //    document.Info.Description = "The Mealmate Service HTTP API";
+                //    document.Info.TermsOfService = "Terms Of Service";
+                //};
 
-                })
+                //})
                 .AddCustomConfiguration(Configuration)
                 .AddCustomAuthentication(MealmateSettings)
                 .AddCustomIntegrations(HostingEnvironment);
@@ -180,32 +181,32 @@ namespace Mealmate.Api
             return services;
         }
 
-        //public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
-        //{
-        //    services.AddSwaggerDocument(config =>
-        //    {
-        //        config.PostProcess = document =>
-        //        {
-        //            document.Info.Version = "v1";
-        //            document.Info.Title = "Mealmate HTTP API";
-        //            document.Info.Description = "The Mealmate Service HTTP API";
-        //            document.Info.TermsOfService = "Terms Of Service";
-        //            document.Info.Contact = new NSwag.SwaggerContact
-        //            {
-        //                Name = "Mealmate",
-        //                Email = string.Empty,
-        //                Url = string.Empty
-        //            };
-        //            document.Info.License = new NSwag.SwaggerLicense
-        //            {
-        //                Name = "Use under LICX",
-        //                Url = "https://example.com/license"
-        //            };
-        //        };
-        //    });
+        public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "Mealmate HTTP API";
+                    document.Info.Description = "The Mealmate Service HTTP API";
+                    document.Info.TermsOfService = "Terms Of Service";
+                    //document.Info.Contact = new NSwag.SwaggerContact
+                    //{
+                    //    Name = "Mealmate",
+                    //    Email = string.Empty,
+                    //    Url = string.Empty
+                    //};
+                    //document.Info.License = new NSwag.SwaggerLicense
+                    //{
+                    //    Name = "Use under LICX",
+                    //    Url = "https://example.com/license"
+                    //};
+                };
+            });
 
-        //    return services;
-        //}
+            return services;
+        }
 
         public static IServiceCollection AddCustomConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
