@@ -2,10 +2,13 @@
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -21,7 +24,10 @@ namespace Mealmate.Api.Controllers
         private readonly IMediator _mediator;
         private readonly IRestaurantService _restaurantService;
 
-        public RestaurantController(IMediator mediator, IRestaurantService restaurantService)
+        public RestaurantController(
+            IMediator mediator,
+            IRestaurantService restaurantService
+            )
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _restaurantService = restaurantService ?? throw new ArgumentNullException(nameof(restaurantService));
@@ -30,52 +36,12 @@ namespace Mealmate.Api.Controllers
         [Route("[action]")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurants()
+        public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurants(int ownerId)
         {
-            var Restaurants = await _restaurantService.GetRestaurantList();
+            var Restaurants = await _restaurantService.Get(ownerId);
 
             return Ok(Restaurants);
         }
-
-        [Route("[action]")]
-        [HttpPost]
-        [ProducesResponseType(typeof(IPagedList<RestaurantModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IPagedList<RestaurantModel>>> SearchRestaurants(SearchPageRequest request)
-        {
-            var RestaurantPagedList = await _restaurantService.SearchRestaurants(request.Args);
-
-            return Ok(RestaurantPagedList);
-        }
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(RestaurantModel), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<RestaurantModel>> GetRestaurantById(GetRestaurantByIdRequest request)
-        //{
-        //    var Restaurant = await _restaurantService.GetRestaurantById(request.Id);
-
-        //    return Ok(Restaurant);
-        //}
-
-        [Route("[action]")]
-        [HttpPost]
-        [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurantsByName(GetResturantsByNameRequest request)
-        {
-            var Restaurants = await _restaurantService.GetRestaurantsByName(request.Name);
-
-            return Ok(Restaurants);
-        }
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurantsByCategoryId(GetRestaurantsByCategoryIdRequest request)
-        //{
-        //    var Restaurants = await _restaurantService.GetRestaurantsByCategoryId(request.CategoryId);
-
-        //    return Ok(Restaurants);
-        //}
 
         [Route("[action]")]
         [HttpPost]
@@ -109,5 +75,45 @@ namespace Mealmate.Api.Controllers
 
             return Ok(commandResult);
         }
+
+        //[Route("[action]")]
+        //[HttpPost]
+        //[ProducesResponseType(typeof(IPagedList<RestaurantModel>), (int)HttpStatusCode.OK)]
+        //public async Task<ActionResult<IPagedList<RestaurantModel>>> SearchRestaurants(SearchPageRequest request)
+        //{
+        //    var RestaurantPagedList = await _restaurantService.SearchRestaurants(request.Args);
+
+        //    return Ok(RestaurantPagedList);
+        //}
+
+        //[Route("[action]")]
+        //[HttpPost]
+        //[ProducesResponseType(typeof(RestaurantModel), (int)HttpStatusCode.OK)]
+        //public async Task<ActionResult<RestaurantModel>> GetRestaurantById(GetRestaurantByIdRequest request)
+        //{
+        //    var Restaurant = await _restaurantService.GetRestaurantById(request.Id);
+
+        //    return Ok(Restaurant);
+        //}
+
+        //[Route("[action]")]
+        //[HttpPost]
+        //[ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
+        //public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurantsByName(GetResturantsByNameRequest request)
+        //{
+        //    var Restaurants = await _restaurantService.GetRestaurantsByName(request.Name);
+
+        //    return Ok(Restaurants);
+        //}
+
+        //[Route("[action]")]
+        //[HttpPost]
+        //[ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
+        //public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurantsByCategoryId(GetRestaurantsByCategoryIdRequest request)
+        //{
+        //    var Restaurants = await _restaurantService.GetRestaurantsByCategoryId(request.CategoryId);
+
+        //    return Ok(Restaurants);
+        //}
     }
 }

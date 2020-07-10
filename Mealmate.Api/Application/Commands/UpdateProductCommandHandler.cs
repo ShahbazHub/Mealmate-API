@@ -17,7 +17,7 @@ namespace Mealmate.Api.Application.Commands
 
         public async Task<Unit> Handle(UpdateRestaurantRequest request, CancellationToken cancellationToken)
         {
-            await _restaurantService.UpdateRestaurant(request.Restaurant);
+            await _restaurantService.Update(request.Restaurant);
 
             return Unit.Value;
         }
