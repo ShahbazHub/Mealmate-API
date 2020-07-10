@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RestaurantController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -29,8 +29,8 @@ namespace Mealmate.Api.Controllers
             IRestaurantService restaurantService
             )
         {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _restaurantService = restaurantService ?? throw new ArgumentNullException(nameof(restaurantService));
+            _mediator = mediator;
+            _restaurantService = restaurantService;
         }
 
         [Route("[action]")]
@@ -47,7 +47,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(RestaurantModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<RestaurantModel>> CreateRestaurant(CreateRestaurantRequest request)
+        public async Task<ActionResult<RestaurantModel>> CreateRestaurant(CreateRequest<RestaurantModel> request)
         {
             var commandResult = await _mediator.Send(request);
 
@@ -58,7 +58,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateRestaurant(UpdateRestaurantRequest request)
+        public async Task<ActionResult> UpdateRestaurant(UpdateRequest<RestaurantModel> request)
         {
             var commandResult = await _mediator.Send(request);
 
@@ -69,7 +69,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> DeleteRestaurantById(DeleteRestaurantByIdRequest request)
+        public async Task<ActionResult> DeleteRestaurantById(DeleteByIdRequest request)
         {
             var commandResult = await _mediator.Send(request);
 

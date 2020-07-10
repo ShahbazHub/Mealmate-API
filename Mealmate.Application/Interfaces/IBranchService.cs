@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Mealmate.BusinessLayer.Interface
+namespace Mealmate.Application.Interfaces
 {
     public interface IBranchService
     {

@@ -2,7 +2,7 @@
 
 namespace Mealmate.Api.Requests
 {
-    public class DeleteRestaurantByIdRequest : IRequest
+    public class DeleteByIdRequest : IRequest
     {
         public int Id { get; set; }
     }

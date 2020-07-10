@@ -27,7 +27,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Autofac.Core;
+using AutoMapper;
 
 namespace Mealmate.Api
 {
@@ -56,17 +56,6 @@ namespace Mealmate.Api
                 .AddCustomDbContext(MealmateSettings)
                 .AddCustomIdentity()
                 .AddCustomSwagger()
-                //.AddSwaggerDocument(config =>
-                //{
-                //    config.PostProcess = document =>
-                //{
-                //    document.Info.Version = "v1";
-                //    document.Info.Title = "Mealmate HTTP API";
-                //    document.Info.Description = "The Mealmate Service HTTP API";
-                //    document.Info.TermsOfService = "Terms Of Service";
-                //};
-
-                //})
                 .AddCustomConfiguration(Configuration)
                 .AddCustomAuthentication(MealmateSettings)
                 .AddCustomIntegrations(HostingEnvironment);
@@ -114,19 +103,19 @@ namespace Mealmate.Api
         {
             // Add framework services.
             services
-                .AddMvc(configure=> {
+                .AddMvc(configure =>
+                {
                     configure.EnableEndpointRouting = false;
                 })
                 .AddFluentValidation(fv =>
                 {
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 })
-                //.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                //.AddJsonOptions(options =>
-                //{
-                //    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                //})
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                })
                 .AddControllersAsServices();
 
             services.AddCors(options =>

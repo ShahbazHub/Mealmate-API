@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Mealmate.Api.Application.Commands
 {
-    public class CreateRestaurantCommandHandler : IRequestHandler<CreateRestaurantRequest, RestaurantModel>
+    public class CreateRestaurantCommandHandler : IRequestHandler<CreateRequest<RestaurantModel>, RestaurantModel>
     {
         private readonly IRestaurantService _restaurantService;
 
@@ -18,9 +18,9 @@ namespace Mealmate.Api.Application.Commands
             _restaurantService = restaurantService;
         }
 
-        public async Task<RestaurantModel> Handle(CreateRestaurantRequest request, CancellationToken cancellationToken)
+        public async Task<RestaurantModel> Handle(CreateRequest<RestaurantModel> request, CancellationToken cancellationToken)
         {
-            var RestaurantModel = await _restaurantService.Create(request.Restaurant);
+            var RestaurantModel = await _restaurantService.Create(request.Model);
 
             return RestaurantModel;
         }

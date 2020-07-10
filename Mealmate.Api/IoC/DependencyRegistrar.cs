@@ -6,6 +6,8 @@ using Autofac;
 using FluentValidation;
 using MediatR;
 using System.Reflection;
+using Mealmate.Application.Services;
+using Mealmate.Application.Interfaces;
 
 namespace Mealmate.Api.IoC
 {
@@ -13,6 +15,8 @@ namespace Mealmate.Api.IoC
     {
         public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
         {
+            builder.RegisterType<RestaurantService>().As<IRestaurantService>().InstancePerLifetimeScope();
+
             // Register all the Command classes (they implement IRequestHandler) in assembly holding the Commands
             builder.RegisterAssemblyTypes(typeof(CreateRestaurantCommandHandler).GetTypeInfo().Assembly)
                 .AsClosedTypesOf(typeof(IRequestHandler<,>));

@@ -5,7 +5,9 @@ using Mealmate.Core.Specifications;
 using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Paging;
 using Mealmate.Infrastructure.Repository.Base;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,12 +57,12 @@ namespace Mealmate.Infrastructure.Repository
                         case "name":
                             orderByList.Add(new Tuple<SortingOption, Expression<Func<Restaurant, object>>>(sortingOption, p => p.Name));
                             break;
-                        //case "unitPrice":
-                        //    orderByList.Add(new Tuple<SortingOption, Expression<Func<Restaurant, object>>>(sortingOption, p => p.UnitPrice));
-                        //    break;
-                        //case "category.name":
-                        //    orderByList.Add(new Tuple<SortingOption, Expression<Func<Restaurant, object>>>(sortingOption, p => p.Category.Name));
-                        //    break;
+                            //case "unitPrice":
+                            //    orderByList.Add(new Tuple<SortingOption, Expression<Func<Restaurant, object>>>(sortingOption, p => p.UnitPrice));
+                            //    break;
+                            //case "category.name":
+                            //    orderByList.Add(new Tuple<SortingOption, Expression<Func<Restaurant, object>>>(sortingOption, p => p.Category.Name));
+                            //    break;
                     }
                 }
             }
@@ -85,12 +87,12 @@ namespace Mealmate.Infrastructure.Repository
                         case "name":
                             filterList.Add(new Tuple<FilteringOption, Expression<Func<Restaurant, bool>>>(filteringOption, p => p.Name.Contains((string)filteringOption.Value)));
                             break;
-                        //case "unitPrice":
-                        //    filterList.Add(new Tuple<FilteringOption, Expression<Func<Restaurant, bool>>>(filteringOption, p => p.UnitPrice == (int)filteringOption.Value));
-                        //    break;
-                        //case "category.name":
-                        //    filterList.Add(new Tuple<FilteringOption, Expression<Func<Restaurant, bool>>>(filteringOption, p => p.Category.Name.Contains((string)filteringOption.Value)));
-                        //    break;
+                            //case "unitPrice":
+                            //    filterList.Add(new Tuple<FilteringOption, Expression<Func<Restaurant, bool>>>(filteringOption, p => p.UnitPrice == (int)filteringOption.Value));
+                            //    break;
+                            //case "category.name":
+                            //    filterList.Add(new Tuple<FilteringOption, Expression<Func<Restaurant, bool>>>(filteringOption, p => p.Category.Name.Contains((string)filteringOption.Value)));
+                            //    break;
                     }
                 }
             }

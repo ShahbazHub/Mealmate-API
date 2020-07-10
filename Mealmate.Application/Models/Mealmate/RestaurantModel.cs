@@ -10,6 +10,6 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
 
         public int OwnerId { get; set; }
-        public UserModel Owner { get; set; }
+        public BranchModel Branch { get; set; }
     }
 }

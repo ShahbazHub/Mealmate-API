@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Mealmate.Api.Application.Validations
 {
-    public class DeleteRestaurantRequestValidator : AbstractValidator<DeleteRestaurantByIdRequest>
+    public class DeleteRestaurantRequestValidator : AbstractValidator<DeleteByIdRequest>
     {
         public DeleteRestaurantRequestValidator()
         {
