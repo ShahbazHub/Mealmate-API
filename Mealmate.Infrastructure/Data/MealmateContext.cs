@@ -15,34 +15,16 @@ namespace Mealmate.Infrastructure.Data
 {
     public class MealmateContext : IdentityDbContext<User, Role, int>
     {
-        public MealmateContext()
-        {
-
-        }
         public MealmateContext(DbContextOptions<MealmateContext> options)
             : base(options)
         {
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Integrated Security=true;Initial Catalog=MealMateDB2;");
-        }
         private IDbContextTransaction _currentTransaction;
         public IDbContextTransaction GetCurrentTransaction => _currentTransaction;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //foreach (var entity in modelBuilder.Model.GetEntityTypes())
-            //{
-            //    if (entity.BaseType == null)
-            //    {
-            //        entity.SetTableName(entity.DisplayName());
-            //    }
-            //}
-           
-
             var typeToRegisters = typeof(Entity).GetTypeInfo().Assembly.DefinedTypes.Select(t => t.AsType());
 
             modelBuilder.RegisterEntities(typeToRegisters);

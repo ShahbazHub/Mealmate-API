@@ -4,16 +4,14 @@ using Mealmate.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Mealmate.Infrastructure.Migrations
+namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    [Migration("20200710063638_InititalDB")]
-    partial class InititalDB
+    partial class MealmateContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

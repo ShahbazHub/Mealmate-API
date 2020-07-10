@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Mealmate.Infrastructure.Migrations
+namespace Mealmate.Api.Migrations
 {
-    public partial class InititalDB : Migration
+    public partial class InitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
