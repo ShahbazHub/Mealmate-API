@@ -8,8 +8,8 @@ namespace Mealmate.Application.Interfaces
     {
         Task<IEnumerable<TableModel>> Get(int locationId);
         Task<TableModel> GetById(int id);
-        Task<int> Create(TableModel model);
-        Task<int> Update(int id, TableModel model);
-        Task<bool> Delete(int id);
+        Task<TableModel> Create(TableModel model);
+        Task Update(TableModel model);
+        Task Delete(int id);
     }
 }
