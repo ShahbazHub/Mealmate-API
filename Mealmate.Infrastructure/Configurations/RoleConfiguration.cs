@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Mealmate.DataAccess.Configurations
+namespace Mealmate.Infrastructure.Configurations
 {
     public class RoleConfiguration : IEntityTypeConfiguration<Role>
     {

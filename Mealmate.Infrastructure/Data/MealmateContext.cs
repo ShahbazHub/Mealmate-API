@@ -1,5 +1,7 @@
 ﻿using Mealmate.Core.Entities;
 using Mealmate.Core.Entities.Base;
+using Mealmate.Infrastructure.Configurations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -13,16 +15,34 @@ namespace Mealmate.Infrastructure.Data
 {
     public class MealmateContext : IdentityDbContext<User, Role, int>
     {
+        public MealmateContext()
+        {
+
+        }
         public MealmateContext(DbContextOptions<MealmateContext> options)
             : base(options)
         {
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Integrated Security=true;Initial Catalog=MealMateDB2;");
+        }
         private IDbContextTransaction _currentTransaction;
         public IDbContextTransaction GetCurrentTransaction => _currentTransaction;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            //{
+            //    if (entity.BaseType == null)
+            //    {
+            //        entity.SetTableName(entity.DisplayName());
+            //    }
+            //}
+           
+
             var typeToRegisters = typeof(Entity).GetTypeInfo().Assembly.DefinedTypes.Select(t => t.AsType());
 
             modelBuilder.RegisterEntities(typeToRegisters);
@@ -31,6 +51,27 @@ namespace Mealmate.Infrastructure.Data
 
             base.OnModelCreating(modelBuilder);
 
+            //Lookup Schema
+            modelBuilder.ApplyConfiguration(new OptionItemConfiguration());
+
+            //Mealmate Schema
+            modelBuilder.ApplyConfiguration(new BranchConfiguration());
+            modelBuilder.ApplyConfiguration(new LocationConfiguration());
+            modelBuilder.ApplyConfiguration(new MenuConfiguration());
+            modelBuilder.ApplyConfiguration(new MenuItemConfiguration());
+            modelBuilder.ApplyConfiguration(new MenuItemOptionConfiguration());
+            modelBuilder.ApplyConfiguration(new QRCodeConfiguration());
+            modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
+            modelBuilder.ApplyConfiguration(new TableConfiguration());
+
+            //Identity Schema
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
+            modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+            modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
             modelBuilder.RegisterCustomMappings(typeToRegisters);
         }
 

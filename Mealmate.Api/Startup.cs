@@ -32,7 +32,7 @@ namespace Mealmate.Api
 {
     public class Startup
     {
-
+        [Obsolete]
         public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
@@ -41,10 +41,12 @@ namespace Mealmate.Api
         }
 
         public IConfiguration Configuration { get; }
+        [Obsolete]
         public IHostingEnvironment HostingEnvironment { get; }
         public MealmateSettings MealmateSettings { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        [Obsolete]
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             return
@@ -59,6 +61,7 @@ namespace Mealmate.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        [Obsolete]
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseCors("CorsPolicy");
@@ -127,20 +130,20 @@ namespace Mealmate.Api
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, MealmateSettings MealmateSettings)
         {
             // use in-memory database
-            //services.AddDbContext<MealmateContext>(c => c.UseInMemoryDatabase("Mealmate"));
-
+            services.AddDbContext<MealmateContext>(c => c.UseInMemoryDatabase("Mealmate"));
+            
             // Add Mealmate DbContext
-            services
-                .AddEntityFrameworkSqlServer()
-                .AddDbContext<MealmateContext>(options =>
-                        options.UseSqlServer(MealmateSettings.ConnectionString,
-                        sqlOptions =>
-                        {
-                            sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
-                        }
-                    ),
-                    ServiceLifetime.Scoped
-                 );
+            //services
+            //    .AddEntityFrameworkSqlServer()
+            //    .AddDbContext<MealmateContext>(options =>
+            //            options.UseSqlServer(MealmateSettings.ConnectionString,
+            //            sqlOptions =>
+            //            {
+            //                sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+            //            }
+            //        ),
+            //        ServiceLifetime.Scoped
+            //     );
 
             return services;
         }
@@ -241,6 +244,7 @@ namespace Mealmate.Api
             return services;
         }
 
+        [Obsolete]
         public static IServiceProvider AddCustomIntegrations(this IServiceCollection services, IHostingEnvironment hostingEnvironment)
         {
             services.AddHttpContextAccessor();

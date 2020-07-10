@@ -9,18 +9,18 @@ namespace Mealmate.Core.Entities
         public string Name { get; set; }
         public DateTimeOffset Created { get; set; }
 
-        public virtual ICollection<UserRole> UserRoles { get; set; }
-        public virtual ICollection<UserLogin> UserLogins { get; set; }
-        public virtual ICollection<UserClaim> UserClaims { get; set; }
-        public virtual ICollection<UserToken> UserTokens { get; set; }
+        public virtual ICollection<IdentityUserRole<int>> UserRoles { get; set; }
+        public virtual ICollection<IdentityUserLogin<int>> UserLogins { get; set; }
+        public virtual ICollection<IdentityUserClaim<int>> UserClaims { get; set; }
+        public virtual ICollection<IdentityUserToken<int>> UserTokens { get; set; }
         public virtual ICollection<Restaurant> Restaurants { get; set; }
 
         public User()
         {
-            UserRoles = new HashSet<UserRole>();
-            UserClaims = new HashSet<UserClaim>();
-            UserLogins = new HashSet<UserLogin>();
-            UserTokens = new HashSet<UserToken>();
+            UserRoles = new HashSet<IdentityUserRole<int>>();
+            UserClaims = new HashSet<IdentityUserClaim<int>>();
+            UserLogins = new HashSet<IdentityUserLogin<int>>();
+            UserTokens = new HashSet<IdentityUserToken<int>>();
             Restaurants = new HashSet<Restaurant>();
         }
     }

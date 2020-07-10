@@ -11,12 +11,12 @@ namespace Mealmate.Core.Entities
 
         public Role()
         {
-            UserRoles = new HashSet<UserRole>();
-            RoleClaims = new HashSet<RoleClaim>();
+            UserRoles = new HashSet<IdentityUserRole<int>>();
+            RoleClaims = new HashSet<IdentityRoleClaim<int>>();
         }
 
-        public virtual ICollection<UserRole> UserRoles { get; set; }
-        public virtual ICollection<RoleClaim> RoleClaims { get; set; }
+        public virtual ICollection<IdentityUserRole<int>> UserRoles { get; set; }
+        public virtual ICollection<IdentityRoleClaim<int>> RoleClaims { get; set; }
 
     }
 }
