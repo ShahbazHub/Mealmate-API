@@ -96,14 +96,15 @@ namespace Mealmate.Api
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseOpenApi();
             app.UseSwaggerUi3();
+            app.UseMiddleware<LoggingMiddleware>();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                   name: "default",
+                   pattern: "{controller}/{action=Index}/{id?}");
 
-            //app.UseRouting();
-            //app.UseEndpoints(endpoints =>
-            //{
-            //    endpoints.MapControllerRoute(
-            //      name: "default",
-            //      pattern: "{controller=Swagger}/{action}");
-            //});
+            });
         }
     }
 
@@ -113,7 +114,9 @@ namespace Mealmate.Api
         {
             // Add framework services.
             services
-                .AddMvc()
+                .AddMvc(configure=> {
+                    configure.EnableEndpointRouting = false;
+                })
                 .AddFluentValidation(fv =>
                 {
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
