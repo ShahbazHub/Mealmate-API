@@ -90,7 +90,7 @@ namespace Mealmate.Api
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Angular");
             });
             app.UseMiddleware<LoggingMiddleware>();
             app.UseHttpsRedirection();

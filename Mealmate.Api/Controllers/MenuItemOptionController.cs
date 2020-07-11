@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/menuitemoptions")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemOptionController : ControllerBase
     {
         private readonly IMediator _mediator;

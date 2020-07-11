@@ -19,7 +19,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/qrcodes")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class QRCodeController : ControllerBase
     {
         private readonly IMediator _mediator;

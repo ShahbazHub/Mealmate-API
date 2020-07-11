@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/locations")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class LocationController : ControllerBase
     {
         private readonly IMediator _mediator;

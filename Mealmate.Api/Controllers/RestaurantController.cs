@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/restaurants")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RestaurantController : ControllerBase
     {
         private readonly IMediator _mediator;
