@@ -21,6 +21,7 @@ namespace Mealmate.Infrastructure.Repository
         public RestaurantRepository(MealmateContext context)
             : base(context)
         {
+            
         }
 
         public override async Task<Restaurant> GetByIdAsync(int id)

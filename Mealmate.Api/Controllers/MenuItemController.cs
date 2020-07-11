@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -36,9 +36,9 @@ namespace Mealmate.Api.Controllers
         [Route("[action]")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemModel>>> GetMenuItems(int ownerId)
+        public async Task<ActionResult<IEnumerable<MenuItemModel>>> GetMenuItems(int menuId)
         {
-            var MenuItems = await _menuItemService.Get(ownerId);
+            var MenuItems = await _menuItemService.Get(menuId);
 
             return Ok(MenuItems);
         }
