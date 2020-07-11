@@ -1,122 +1,76 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.IdentityModel.Tokens.Jwt;
-//using System.Security.Claims;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using Mealmate.Api.Requests;
+using Mealmate.Core.Configuration;
+using Mealmate.Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
-//using AutoMapper;
+namespace Mealmate.Api.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AuthController : ControllerBase
+    {
+        private readonly MealmateSettings _mealmateSettings;
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
-//using Mealmate.Api.Requests;
-//using Mealmate.Core.Entities;
+        public AuthController(SignInManager<User> signInManager,
+          UserManager<User> userManager,
+          IOptions<MealmateSettings> options)
+        {
+            _signInManager = signInManager;
+            _userManager = userManager;
+            _mealmateSettings = options.Value;
+        }
 
-//using Microsoft.AspNetCore.Identity;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.Extensions.Configuration;
-//using Microsoft.IdentityModel.Tokens;
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<IActionResult> CreateToken([FromBody] LoginRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
 
-//namespace Mealmate.WebApi.Controllers
-//{
-//    [Route("api/auth")]
-//    [ApiController]
-//    public class AuthController : ControllerBase
-//    {
-//        private readonly IMapper _mapper;
-//        private readonly IConfigurationRoot _config;
-//        private readonly UserManager<User> _userManager;
-//        private readonly SignInManager<User> _signInManager;
-//        public AuthController(
-//                    IConfigurationRoot config,
-//                    IMapper mapper,
-//                    UserManager<User> userManager,
-//                    SignInManager<User> signInManager)
-//        {
-//            _mapper = mapper;
-//            _config = config;
-//            _userManager = userManager;
-//            _signInManager = signInManager;
-//        }
+            if (user != null)
+            {
+                var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
-//        #region Login
-//        [HttpPost("login")]
-//        public async Task<ActionResult> SignIn([FromBody] LoginRequest model)
-//        {
-//            if (ModelState.IsValid)
-//            {
-//                var user = await _userManager.FindByNameAsync(model.Username);
-//                if (user == null)
-//                {
-//                    return NotFound($"Invalid username / Password");
-//                }
+                if (result.Succeeded)
+                {
+                    // Create the token
+                    var claims = new[]
+                    {
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
+                        };
 
-//                var result = await _signInManager
-//                    .CheckPasswordSignInAsync(user, model.Password, false);
-//                if (result.Succeeded)
-//                {
-//                    var appUser = await _userManager.Users
-//                                        .FirstOrDefaultAsync(
-//                        u => u.NormalizedUserName == model.Username.ToUpper());
+                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_mealmateSettings.Tokens.Key));
+                    var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-//                    var userToReturn = _mapper.Map<UserModel>(appUser);
-//                    return Ok(new
-//                    {
-//                        token = await GenerateJwtToken(appUser),
-//                        user = userToReturn,
-//                    });
-//                }
+                    var token = new JwtSecurityToken(
+                      _mealmateSettings.Tokens.Issuer,
+                      _mealmateSettings.Tokens.Audience,
+                      claims,
+                      expires: DateTime.Now.AddMinutes(30),
+                      signingCredentials: signingCredentials);
 
-//                return Unauthorized();
-//            }
+                    var results = new
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(token),
+                        expiration = token.ValidTo
+                    };
 
-//            return BadRequest(ModelState);
-//        }
-//        #endregion
+                    return Created("", results);
+                }
+            }
 
-//        #region Generate JWT
-//        private async Task<string> GenerateJwtToken(User user)
-//        {
-//            var claims = new List<Claim>
-//            {
-//                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-//                new Claim(ClaimTypes.Name, user.UserName)
-//            };
-
-//            var roles = await _userManager.GetRolesAsync(user);
-
-//            foreach (var role in roles)
-//            {
-//                claims.Add(new Claim(ClaimTypes.Role, role));
-//            }
-
-//            var key = new SymmetricSecurityKey(Encoding.UTF8
-//                .GetBytes(_config["AppSettings:Token"]));
-
-//            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-//            var tokenDescriptor = new SecurityTokenDescriptor
-//            {
-//                Subject = new ClaimsIdentity(claims),
-//                Expires = DateTime.Now.AddDays(1),
-//                SigningCredentials = creds,
-//                Issuer = _config["AppSettings:Issuer"],
-//                Audience = _config["AppSettings:Audience"],
-//            };
-
-//            var tokenHandler = new JwtSecurityTokenHandler();
-
-//            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-//            return tokenHandler.WriteToken(token);
-//        }
-//        #endregion
-
-//        #region Sign Up
-//        [HttpPost("signup")]
-//        public ActionResult SignUp()
-//        {
-//            return Ok();
-//        }
-//        #endregion
-//    }
-//}
+            return Unauthorized();
+        }
+    }
+}

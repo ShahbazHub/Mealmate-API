@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -30,47 +30,5 @@ namespace Mealmate.Api.Controllers
             _mealmateSettings = options.Value;
         }
 
-        [Route("[action]")]
-        [HttpPost]
-        public async Task<IActionResult> CreateToken([FromBody]LoginRequest request)
-        {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-
-            if (user != null)
-            {
-                var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-
-                if (result.Succeeded)
-                {
-                    // Create the token
-                    var claims = new[]
-                    {
-                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
-                        };
-
-                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_mealmateSettings.Tokens.Key));
-                    var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-                    var token = new JwtSecurityToken(
-                      _mealmateSettings.Tokens.Issuer,
-                      _mealmateSettings.Tokens.Audience,
-                      claims,
-                      expires: DateTime.Now.AddMinutes(30),
-                      signingCredentials: signingCredentials);
-
-                    var results = new
-                    {
-                        token = new JwtSecurityTokenHandler().WriteToken(token),
-                        expiration = token.ValidTo
-                    };
-
-                    return Created("", results);
-                }
-            }
-
-            return Unauthorized();
-        }
     }
 }
