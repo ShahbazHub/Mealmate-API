@@ -28,6 +28,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
+using Autofac.Core.Lifetime;
 
 namespace Mealmate.Api
 {
@@ -160,10 +161,11 @@ namespace Mealmate.Api
                 if (existingUserManager == null)
                 {
                     services.AddIdentity<User, Role>(
-                        cfg =>
-                        {
-                            cfg.User.RequireUniqueEmail = true;
-                        })
+                        //cfg =>
+                        //{
+                        //    User.RequireUniqueEmail = true;
+                        //}
+                        )
                         .AddEntityFrameworkStores<MealmateContext>()
                         .AddDefaultTokenProviders();
                 }
@@ -257,6 +259,7 @@ namespace Mealmate.Api
             var containerBuilder = new ContainerBuilder();
 
             //register type finder
+
             containerBuilder.RegisterInstance(fileProvider).As<IAppFileProvider>().SingleInstance();
             containerBuilder.RegisterInstance(typeFinder).As<ITypeFinder>().SingleInstance();
 
@@ -265,6 +268,7 @@ namespace Mealmate.Api
 
             //find dependency registrars provided by other assemblies
             var dependencyRegistrars = typeFinder.FindClassesOfType<IDependencyRegistrar>();
+
 
             //create and sort instances of dependency registrars
             var instances = dependencyRegistrars
@@ -275,7 +279,10 @@ namespace Mealmate.Api
             foreach (var dependencyRegistrar in instances)
                 dependencyRegistrar.Register(containerBuilder, typeFinder);
 
-            return new AutofacServiceProvider(containerBuilder.Build());
+            var lifetimeScope = containerBuilder.Build()
+                                .BeginLifetimeScope(MatchingScopeLifetimeTags.RequestLifetimeScopeTag);
+
+            return new AutofacServiceProvider(lifetimeScope);
         }
     }
 }

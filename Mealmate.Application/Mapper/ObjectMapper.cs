@@ -4,24 +4,22 @@ using AutoMapper;
 
 namespace Mealmate.Application.Mapper
 {
-    public class ObjectMapper
+    public class MealMateMapper : Profile
     {
-        public static IMapper Mapper => AutoMapper.Mapper.Instance;
-
-        private static void CreateMap()
+        public MealMateMapper()
         {
-            AutoMapper.Mapper.Initialize(cfg =>
-            {
-                cfg.CreateMap<Restaurant, RestaurantModel>().ReverseMap();
-                cfg.CreateMap<Branch, BranchModel>().ReverseMap();
-                cfg.CreateMap<Location, LocationModel>().ReverseMap();
-                cfg.CreateMap<Menu, MenuModel>().ReverseMap();
-                cfg.CreateMap<MenuItem, MenuItemModel>().ReverseMap();
-                cfg.CreateMap<MenuItemOption, MenuItemOptionModel>().ReverseMap();
-                cfg.CreateMap<QRCode, QRCodeModel>().ReverseMap();
-                cfg.CreateMap<Table, TableModel>().ReverseMap();
-                cfg.CreateMap<User, UserModel>().ReverseMap();
-            });
+
+            CreateMap<Restaurant, RestaurantModel>().ReverseMap();
+            CreateMap<Branch, BranchModel>().ReverseMap();
+            CreateMap<Location, LocationModel>().ReverseMap();
+            CreateMap<Menu, MenuModel>().ReverseMap();
+            CreateMap<MenuItem, MenuItemModel>().ReverseMap();
+            CreateMap<MenuItemOption, MenuItemOptionModel>().ReverseMap();
+            CreateMap<QRCode, QRCodeModel>().ReverseMap();
+            CreateMap<Table, TableModel>().ReverseMap();
+            CreateMap<User, UserModel>().ReverseMap();
         }
+
+
     }
 }

@@ -5,6 +5,8 @@ using Mealmate.Infrastructure.Misc;
 using Autofac;
 using Autofac.Core;
 using AutoMapper;
+using System.Collections.Generic;
+using Mealmate.Application.Mapper;
 
 namespace Mealmate.Application.IoC
 {
@@ -12,6 +14,20 @@ namespace Mealmate.Application.IoC
     {
         public void Register(ContainerBuilder builder, ITypeFinder typeFinder)
         {
+            builder.Register(context => new MapperConfiguration(configuration =>
+            {
+                foreach (var profile in context.Resolve<IEnumerable<Profile>>())
+                {
+                    configuration.AddProfile(profile);
+                }
+            }))
+              .AsSelf()
+              .SingleInstance();
+
+            builder.Register(context => context.Resolve<MapperConfiguration>()
+                .CreateMapper(context.Resolve))
+                .As<IMapper>()
+                .InstancePerLifetimeScope();
 
             // services
 
@@ -24,8 +40,10 @@ namespace Mealmate.Application.IoC
             builder.RegisterType<OptionItemService>().As<IOptionItemService>().InstancePerLifetimeScope();
             builder.RegisterType<QRCodeService>().As<IQRCodeService>().InstancePerLifetimeScope();
             builder.RegisterType<LocationService>().As<ILocationService>().InstancePerLifetimeScope();
-         
-            }
+            builder.RegisterType<MealMateMapper>().As<Profile>();
+
+        }
+
         public int Order => 2;
     }
 }
