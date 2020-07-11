@@ -36,10 +36,19 @@ namespace Mealmate.Api
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(hostingEnvironment.ContentRootPath)
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables();
+
+            _config = builder.Build();
+
             Configuration = configuration;
             HostingEnvironment = hostingEnvironment;
             MealmateSettings = configuration.Get<MealmateSettings>();
         }
+
+        private readonly IConfigurationRoot _config;
 
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment HostingEnvironment { get; }
@@ -50,6 +59,7 @@ namespace Mealmate.Api
         {
             return
             services
+                .AddSingleton(_config)
                 .AddCustomMvc()
                 .AddCustomDbContext(MealmateSettings)
                 .AddCustomIdentity()

@@ -15,6 +15,10 @@ namespace Mealmate.Infrastructure.Configurations
             builder.Property(p => p.Id)
                 .ValueGeneratedOnAdd();
 
+            builder.Property(p => p.BranchId)
+                .HasColumnType("INT")
+                .IsRequired();
+
             builder.Property(p => p.Name)
                 .HasColumnType("NVARCHAR(250)")
                 .IsRequired();
@@ -23,6 +27,13 @@ namespace Mealmate.Infrastructure.Configurations
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()
                 .HasDefaultValueSql("GETDATE()");
+
+            builder.HasOne(p => p.Branch)
+               .WithMany(p => p.OptionItems)
+               .HasForeignKey(p => p.BranchId)
+               .HasConstraintName("FK_OptionItem_Branch")
+               .IsRequired()
+               .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

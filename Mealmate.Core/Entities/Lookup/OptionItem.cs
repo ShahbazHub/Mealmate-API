@@ -11,6 +11,10 @@ namespace Mealmate.Core.Entities
         public DateTimeOffset Created { get; set; }
         public virtual ICollection<MenuItemOption> MenuItemOptions { get; set; }
 
+        public int BranchId { get; set; }
+
+        public virtual Branch Branch { get; set; }
+
         public OptionItem()
         {
             MenuItemOptions = new HashSet<MenuItemOption>();

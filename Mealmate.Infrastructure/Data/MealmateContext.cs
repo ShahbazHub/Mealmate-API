@@ -55,6 +55,13 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
+
+            // Lookups
+            modelBuilder.ApplyConfiguration(new DietaryConfiguration());
+            modelBuilder.ApplyConfiguration(new AllergenConfiguration());
+
+
+            // Custom
             modelBuilder.RegisterCustomMappings(typeToRegisters);
         }
 

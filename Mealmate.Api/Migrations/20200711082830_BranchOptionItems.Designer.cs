@@ -4,14 +4,16 @@ using Mealmate.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    partial class MealmateContextModelSnapshot : ModelSnapshot
+    [Migration("20200711082830_BranchOptionItems")]
+    partial class BranchOptionItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,50 +76,6 @@ namespace Mealmate.Api.Migrations
                     b.HasIndex("BranchId");
 
                     b.ToTable("Location","Mealmate");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.Lookup.Allergen", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTimeOffset>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(250)");
-
-                    b.HasKey("Id")
-                        .HasName("PK_Allergen");
-
-                    b.ToTable("Allergen","Lookup");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.Lookup.Dietary", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTimeOffset>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(250)");
-
-                    b.HasKey("Id")
-                        .HasName("PK_Dietary");
-
-                    b.ToTable("Dietary","Lookup");
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.Menu", b =>
