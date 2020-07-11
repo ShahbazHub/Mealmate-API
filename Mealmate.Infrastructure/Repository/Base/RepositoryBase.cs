@@ -16,6 +16,7 @@ namespace Mealmate.Infrastructure.Repository.Base
         public RepositoryBase(MealmateContext context)
         {
             _context = context;
+            _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 
         private readonly DbContext _context;

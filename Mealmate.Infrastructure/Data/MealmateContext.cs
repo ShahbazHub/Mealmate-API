@@ -18,6 +18,7 @@ namespace Mealmate.Infrastructure.Data
         public MealmateContext(DbContextOptions<MealmateContext> options)
             : base(options)
         {
+            
         }
 
         private IDbContextTransaction _currentTransaction;

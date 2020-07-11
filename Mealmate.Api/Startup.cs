@@ -145,7 +145,7 @@ namespace Mealmate.Api
                             sqlOptions.MigrationsHistoryTable("__MigrationsHistory", "Migration");
                         }
                     ),
-                    ServiceLifetime.Scoped
+                    ServiceLifetime.Transient
                  );
 
             return services;

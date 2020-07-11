@@ -72,7 +72,7 @@ namespace Mealmate.Application.Services
             return _mapper.Map<RestaurantModel>(await _restaurantRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(RestaurantModel model)
+        public async Task<RestaurantModel> Update(RestaurantModel model)
         {
             var existingRestaurant = await _restaurantRepository.GetByIdAsync(model.Id);
             if (existingRestaurant == null)
@@ -80,12 +80,12 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("Restaurant with this id is not exists");
             }
 
-            existingRestaurant.Name = model.Name;
-            existingRestaurant.Description = model.Description;
 
-            await _restaurantRepository.SaveAsync(existingRestaurant);
+            existingRestaurant = _mapper.Map<Restaurant>(model);
+           var restaurantUpdated  =  await _restaurantRepository.SaveAsync(existingRestaurant);
 
-            _logger.LogInformation("Entity successfully updated - MealmateAppService");
+            var restaurantModelUpdate = _mapper.Map<RestaurantModel>(restaurantUpdated);
+            return restaurantModelUpdate;
         }
 
         //public async Task<IEnumerable<RestaurantModel>> GetRestaurantList()

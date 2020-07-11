@@ -22,7 +22,7 @@ namespace Mealmate.Application.IoC
                 }
             }))
               .AsSelf()
-              .SingleInstance();
+              .InstancePerRequest();
 
             builder.Register(context => context.Resolve<MapperConfiguration>()
                 .CreateMapper(context.Resolve))
