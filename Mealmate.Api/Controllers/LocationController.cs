@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class LocationController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -36,9 +36,9 @@ namespace Mealmate.Api.Controllers
         [Route("[action]")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<LocationModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<LocationModel>>> GetLocations(int ownerId)
+        public async Task<ActionResult<IEnumerable<LocationModel>>> GetLocations(int branchId)
         {
-            var Locations = await _locationService.Get(ownerId);
+            var Locations = await _locationService.Get(branchId);
 
             return Ok(Locations);
         }
