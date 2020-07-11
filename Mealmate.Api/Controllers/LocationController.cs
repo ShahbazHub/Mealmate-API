@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/locations")]
     [ApiController]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class LocationController : ControllerBase
@@ -33,48 +33,56 @@ namespace Mealmate.Api.Controllers
             _locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
         }
 
+        #region Read
         [Route("[action]")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<LocationModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<LocationModel>>> GetLocations(int branchId)
+        public async Task<ActionResult<IEnumerable<LocationModel>>> Get(int branchId)
         {
             var Locations = await _locationService.Get(branchId);
 
             return Ok(Locations);
         }
+        #endregion
 
+        #region Create
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<LocationModel>> CreateLocation(CreateRequest<LocationModel> request)
+        public async Task<ActionResult<LocationModel>> Create(CreateRequest<LocationModel> request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
+        #region Update
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateLocation(UpdateRequest<LocationModel> request)
+        public async Task<ActionResult> Update(UpdateRequest<LocationModel> request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
+        #region Delete
         [Route("[action]")]
-        [HttpPost]
+        [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> DeleteLocationById(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(DeleteByIdRequest request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
         //[Route("[action]")]
         //[HttpPost]

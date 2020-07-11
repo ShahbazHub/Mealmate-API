@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/restaurants")]
     [ApiController]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RestaurantController : ControllerBase
@@ -32,48 +32,57 @@ namespace Mealmate.Api.Controllers
             _mediator = mediator;
             _restaurantService = restaurantService;
         }
+
+        #region Read
         [Route("[action]")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurants(int ownerId)
+        public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get(int ownerId)
         {
             var Restaurants = await _restaurantService.Get(ownerId);
 
             return Ok(Restaurants);
         }
+        #endregion
 
+        #region Create
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(RestaurantModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<RestaurantModel>> CreateRestaurant(CreateRequest<RestaurantModel> request)
+        public async Task<ActionResult<RestaurantModel>> Create(CreateRequest<RestaurantModel> request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
+        #region Update
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateRestaurant(UpdateRequest<RestaurantModel> request)
+        public async Task<ActionResult> Update(UpdateRequest<RestaurantModel> request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
+        #region Delete
         [Route("[action]")]
-        [HttpPost]
+        [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> DeleteRestaurantById(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(DeleteByIdRequest request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
         //[Route("[action]")]
         //[HttpPost]

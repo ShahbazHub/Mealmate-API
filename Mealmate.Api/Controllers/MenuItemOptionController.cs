@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/menuitemoptions")]
     [ApiController]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemOptionController : ControllerBase
@@ -33,48 +33,56 @@ namespace Mealmate.Api.Controllers
             _menuItemOptionService = menuItemOptionService ?? throw new ArgumentNullException(nameof(menuItemOptionService));
         }
 
+        #region Read
         [Route("[action]")]
         [HttpGet("{optionItemId}")]
         [ProducesResponseType(typeof(IEnumerable<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> GetMenuItemOptions(int menuItemId,int optionItemId)
+        public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(int menuItemId,int optionItemId)
         {
             var MenuItemOptions = await _menuItemOptionService.Get(menuItemId, optionItemId);
 
             return Ok(MenuItemOptions);
         }
+        #endregion
 
+        #region Create
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(MenuItemOptionModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuItemOptionModel>> CreateMenuItemOption(CreateRequest<MenuItemOptionModel> request)
+        public async Task<ActionResult<MenuItemOptionModel>> Create(CreateRequest<MenuItemOptionModel> request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
+        #region Update
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateMenuItemOption(UpdateRequest<MenuItemOptionModel> request)
+        public async Task<ActionResult> Update(UpdateRequest<MenuItemOptionModel> request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
+        #region Delete
         [Route("[action]")]
-        [HttpPost]
+        [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> DeleteMenuItemOptionById(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(DeleteByIdRequest request)
         {
             var commandResult = await _mediator.Send(request);
 
             return Ok(commandResult);
         }
+        #endregion
 
         //[Route("[action]")]
         //[HttpPost]

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/branches")]
     [ApiController]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BranchController : ControllerBase
@@ -30,46 +30,53 @@ namespace Mealmate.Api.Controllers
             _branchService = branchService;
         }
 
+        #region Read
         [Route("[action]")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<BranchModel>>> GetBranchs(int restaurantId)
+        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(int restaurantId)
         {
             var Branchs = await _branchService.Get(restaurantId);
 
             return Ok(Branchs);
         }
+        #endregion
 
+        #region Create
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(BranchModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<BranchModel>> CreateBranch(CreateRequest<BranchModel> request)
+        public async Task<ActionResult<BranchModel>> Create(CreateRequest<BranchModel> request)
         {
             var commandResult = await _branchService.Create(request.Model);
 
             return Ok(commandResult);
         }
+        #endregion
 
+        #region Update
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> UpdateBranch(UpdateRequest<BranchModel> request)
+        public async Task<ActionResult> Update(UpdateRequest<BranchModel> request)
         {
             await _branchService.Update(request.Model);
             return Ok();
         }
+        #endregion
 
+        #region Delete
         [Route("[action]")]
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> DeleteBranchById(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(DeleteByIdRequest request)
         {
             await _branchService.Delete(request.Id);
             return Ok();
         }
-        
+        #endregion
     }
 }

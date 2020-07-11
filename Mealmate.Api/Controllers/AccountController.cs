@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
