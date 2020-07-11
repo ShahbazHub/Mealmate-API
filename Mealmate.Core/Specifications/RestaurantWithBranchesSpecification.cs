@@ -5,14 +5,14 @@ namespace Mealmate.Core.Specifications
 {
     public class RestaurantWithBranchesSpecification : BaseSpecification<Restaurant>
     {
-        public RestaurantWithBranchesSpecification(string productName)
-            : base(p => p.Name.Contains(productName))
+        public RestaurantWithBranchesSpecification(string restaurantName)
+            : base(p => p.Name.Contains(restaurantName))
         {
             AddInclude(p => p.Branches);
         }
 
-        public RestaurantWithBranchesSpecification(int productId)
-            : base(p => p.Id == productId)
+        public RestaurantWithBranchesSpecification(int restaurantId)
+            : base(p => p.Id == restaurantId)
         {
             AddInclude(p => p.Branches);
         }

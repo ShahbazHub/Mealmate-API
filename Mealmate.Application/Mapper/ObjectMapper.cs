@@ -13,6 +13,14 @@ namespace Mealmate.Application.Mapper
             AutoMapper.Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<Restaurant, RestaurantModel>().ReverseMap();
+                cfg.CreateMap<Branch, BranchModel>().ReverseMap();
+                cfg.CreateMap<Location, LocationModel>().ReverseMap();
+                cfg.CreateMap<Menu, MenuModel>().ReverseMap();
+                cfg.CreateMap<MenuItem, MenuItemModel>().ReverseMap();
+                cfg.CreateMap<MenuItemOption, MenuItemOptionModel>().ReverseMap();
+                cfg.CreateMap<QRCode, QRCodeModel>().ReverseMap();
+                cfg.CreateMap<Table, TableModel>().ReverseMap();
+                cfg.CreateMap<User, UserModel>().ReverseMap();
             });
         }
     }
