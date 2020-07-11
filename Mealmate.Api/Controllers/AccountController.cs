@@ -17,7 +17,6 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/accounts")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
     {
         private readonly MealmateSettings _mealmateSettings;
@@ -69,7 +68,7 @@ namespace Mealmate.Api.Controllers
                         expiration = token.ValidTo
                     };
 
-                    return Created("", results);
+                    return Ok(results);
                 }
             }
 

@@ -148,8 +148,8 @@ namespace Mealmate.Api
             //services.AddDbContext<MealmateContext>(c => c.UseInMemoryDatabase("Mealmate"));
 
             // Add Mealmate DbContext
+            // .AddEntityFrameworkSqlServer()
             services
-                .AddEntityFrameworkSqlServer()
                 .AddDbContext<MealmateContext>(options =>
                         options
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
