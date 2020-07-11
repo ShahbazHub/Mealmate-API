@@ -3,6 +3,7 @@ using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Configuration;
 using Mealmate.Core.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -21,12 +22,16 @@ namespace Mealmate.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IMediator _mediator;
         private readonly MealmateSettings _mealmateSettings;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService,
-          IOptions<MealmateSettings> options)
+        public UserController(
+            IMediator mediator,
+            IUserService userService,
+            IOptions<MealmateSettings> options)
         {
+            _mediator = mediator;
             _userService = userService;
             _mealmateSettings = options.Value;
         }
@@ -48,7 +53,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult<UserModel>> GetById(int id)
         {
             var result = await _userService.GetById(id);
-            if(result == null)
+            if (result == null)
             {
                 return NotFound($"User with id {id} no more exists");
             }
@@ -57,12 +62,32 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Register
+        [HttpPost("register")]
+        public ActionResult Register(CreateRequest<RestaurantModel> request)
+        {
+            //TODO: Add you code here
+            return Ok();
+        }
         #endregion
 
         #region Update
+        [HttpPost("register")]
+        public ActionResult Update(UpdateRequest<UserModel> request)
+        {
+            //TODO: Add you code here
+            return Ok();
+        }
         #endregion
 
         #region Delete
+        [Route("[action]")]
+        [HttpDelete]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public ActionResult Delete(DeleteByIdRequest request)
+        {
+            return Ok();
+        }
         #endregion
     }
 }

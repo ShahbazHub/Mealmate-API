@@ -32,9 +32,10 @@ namespace Mealmate.Api.Controllers
             _userManager = userManager;
             _mealmateSettings = options.Value;
         }
+
+        #region Login
         [AllowAnonymous]
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> CreateToken([FromBody] LoginRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
@@ -74,8 +75,10 @@ namespace Mealmate.Api.Controllers
 
             return Unauthorized();
         }
-        [Route("[action]")]
-        [HttpPost]
+        #endregion
+
+        #region Change Password
+        [HttpPost("changepassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
@@ -89,8 +92,10 @@ namespace Mealmate.Api.Controllers
 
             return Unauthorized();
         }
-        [Route("[action]")]
-        [HttpPost]
+        #endregion
+
+        #region Sign Out
+        [HttpPost("logout")]
         public async Task<IActionResult> SignOut(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
@@ -102,5 +107,15 @@ namespace Mealmate.Api.Controllers
 
             return Unauthorized();
         }
+        #endregion
+
+        #region Register
+        [HttpPost("register")]
+        public ActionResult Register()
+        {
+            //TODO: Add you code here
+            return Ok();
+        }
+        #endregion
     }
 }
