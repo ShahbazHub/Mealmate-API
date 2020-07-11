@@ -19,10 +19,10 @@ namespace Mealmate.Infrastructure.Misc
         /// Initializes a new instance of a AppFileProvider
         /// </summary>
         /// <param name="hostingEnvironment">Hosting environment</param>
-        public AppFileProvider(IHostingEnvironment hostingEnvironment)
-            : base(File.Exists(hostingEnvironment.ContentRootPath) ? Path.GetDirectoryName(hostingEnvironment.ContentRootPath) : hostingEnvironment.ContentRootPath)
+        public AppFileProvider(string contentRootPath)
+            : base(File.Exists(contentRootPath) ? Path.GetDirectoryName(contentRootPath) : contentRootPath)
         {
-            var path = hostingEnvironment.ContentRootPath ?? string.Empty;
+            var path = contentRootPath ?? string.Empty;
             if (File.Exists(path))
                 path = Path.GetDirectoryName(path);
 

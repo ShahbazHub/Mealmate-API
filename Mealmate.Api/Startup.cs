@@ -33,8 +33,7 @@ namespace Mealmate.Api
 {
     public class Startup
     {
-        [Obsolete]
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
             HostingEnvironment = hostingEnvironment;
@@ -42,12 +41,10 @@ namespace Mealmate.Api
         }
 
         public IConfiguration Configuration { get; }
-        [Obsolete]
-        public IHostingEnvironment HostingEnvironment { get; }
+        public IWebHostEnvironment HostingEnvironment { get; }
         public MealmateSettings MealmateSettings { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        [Obsolete]
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             return
@@ -257,12 +254,11 @@ namespace Mealmate.Api
             return services;
         }
 
-        [Obsolete]
-        public static IServiceProvider AddCustomIntegrations(this IServiceCollection services, IHostingEnvironment hostingEnvironment)
+        public static IServiceProvider AddCustomIntegrations(this IServiceCollection services, IWebHostEnvironment hostingEnvironment)
         {
             services.AddHttpContextAccessor();
 
-            var fileProvider = new AppFileProvider(hostingEnvironment);
+            var fileProvider = new AppFileProvider(hostingEnvironment.ContentRootPath);
             var typeFinder = new WebAppTypeFinder(fileProvider);
 
             //configure autofac
