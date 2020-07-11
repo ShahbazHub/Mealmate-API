@@ -137,7 +137,9 @@ namespace Mealmate.Api
             services
                 .AddEntityFrameworkSqlServer()
                 .AddDbContext<MealmateContext>(options =>
-                        options.UseSqlServer(MealmateSettings.ConnectionString,
+                        options
+                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                        .UseSqlServer(MealmateSettings.ConnectionString,
                         sqlOptions =>
                         {
                             sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);

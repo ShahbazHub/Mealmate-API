@@ -49,8 +49,9 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<RestaurantModel>> CreateRestaurant(CreateRequest<RestaurantModel> request)
         {
-            var result = await _restaurantService.Create(request.Model);
-            return Ok(result);
+            var commandResult = await _mediator.Send(request);
+
+            return Ok(commandResult);
         }
 
         [Route("[action]")]
@@ -59,8 +60,9 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> UpdateRestaurant(UpdateRequest<RestaurantModel> request)
         {
-            await _restaurantService.Update(request.Model);
-            return Ok();
+            var commandResult = await _mediator.Send(request);
+
+            return Ok(commandResult);
         }
 
         [Route("[action]")]
