@@ -35,7 +35,7 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         [Route("[action]")]
-        [HttpGet("{optionItemId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(int menuItemId,int optionItemId)
         {

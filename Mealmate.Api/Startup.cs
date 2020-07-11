@@ -28,9 +28,8 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Autofac.Core.Lifetime;
-using NSwag;
-using NSwag.Generation.Processors.Security;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 namespace Mealmate.Api
 {
@@ -74,7 +73,7 @@ namespace Mealmate.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("CorsPolicy");
+
 
             if (env.IsDevelopment())
             {
@@ -86,15 +85,19 @@ namespace Mealmate.Api
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
-
-            app.UseMiddleware<LoggingMiddleware>();
-
             // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseOpenApi();
-            app.UseSwaggerUi3();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1");
+            });
             app.UseMiddleware<LoggingMiddleware>();
+            app.UseHttpsRedirection();
             app.UseRouting();
+            app.UseCors("CorsPolicy");
+
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
@@ -189,25 +192,36 @@ namespace Mealmate.Api
 
         public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
         {
-            services.AddSwaggerDocument(config =>
+            services.AddSwaggerGen(c =>
             {
-                config.DocumentProcessors.Add(new SecurityDefinitionAppender("JWT Token", new OpenApiSecurityScheme
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mealmate Service", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Type = OpenApiSecuritySchemeType.ApiKey,
                     Name = "Authorization",
-                    Description = "Copy 'Bearer ' + valid JWT token into field",
-                    In = OpenApiSecurityApiKeyLocation.Header
-                }));
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme."
+                });
 
-                config.PostProcess = document =>
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    document.Info.Version = "v1";
-                    document.Info.Title = "Mealmate HTTP API";
-                    document.Info.Description = "The Mealmate Service HTTP API";
-                    document.Info.TermsOfService = "Terms Of Service";
-                };
-            });
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
 
+                    }
+                });
+            });
             return services;
         }
 
