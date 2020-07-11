@@ -29,6 +29,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using AutoMapper;
 using Autofac.Core.Lifetime;
+using NSwag;
+using System.Collections.Generic;
+using Autofac.Core;
+using NSwag.Generation.Processors.Security;
+using Microsoft.Extensions.Hosting;
 
 namespace Mealmate.Api
 {
@@ -60,10 +65,8 @@ namespace Mealmate.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        [Obsolete]
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
             app.UseCors("CorsPolicy");
 
             if (env.IsDevelopment())
@@ -85,6 +88,7 @@ namespace Mealmate.Api
             app.UseSwaggerUi3();
             app.UseMiddleware<LoggingMiddleware>();
             app.UseRouting();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -180,23 +184,20 @@ namespace Mealmate.Api
         {
             services.AddSwaggerDocument(config =>
             {
+                config.DocumentProcessors.Add(new SecurityDefinitionAppender("JWT Token", new OpenApiSecurityScheme
+                {
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                    Description = "Copy 'Bearer ' + valid JWT token into field",
+                    In = OpenApiSecurityApiKeyLocation.Header
+                }));
+
                 config.PostProcess = document =>
                 {
                     document.Info.Version = "v1";
                     document.Info.Title = "Mealmate HTTP API";
                     document.Info.Description = "The Mealmate Service HTTP API";
                     document.Info.TermsOfService = "Terms Of Service";
-                    //document.Info.Contact = new NSwag.SwaggerContact
-                    //{
-                    //    Name = "Mealmate",
-                    //    Email = string.Empty,
-                    //    Url = string.Empty
-                    //};
-                    //document.Info.License = new NSwag.SwaggerLicense
-                    //{
-                    //    Name = "Use under LICX",
-                    //    Url = "https://example.com/license"
-                    //};
                 };
             });
 
@@ -236,8 +237,8 @@ namespace Mealmate.Api
               {
                   options.TokenValidationParameters = new TokenValidationParameters
                   {
-                      ValidateIssuer = true,
-                      ValidateAudience = true,
+                      //ValidateIssuer = true,
+                      //ValidateAudience = true,
                       ValidateLifetime = true,
                       ValidateIssuerSigningKey = true,
 

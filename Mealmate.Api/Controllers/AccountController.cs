@@ -1,6 +1,8 @@
 ﻿using Mealmate.Api.Requests;
 using Mealmate.Core.Configuration;
 using Mealmate.Core.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -15,6 +17,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
     {
         private readonly MealmateSettings _mealmateSettings;
@@ -29,13 +32,12 @@ namespace Mealmate.Api.Controllers
             _userManager = userManager;
             _mealmateSettings = options.Value;
         }
-
+        [AllowAnonymous]
         [Route("[action]")]
         [HttpPost]
-        public async Task<IActionResult> CreateToken([FromBody]LoginRequest request)
+        public async Task<IActionResult> CreateToken([FromBody] LoginRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
-
             if (user != null)
             {
                 var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
@@ -68,6 +70,34 @@ namespace Mealmate.Api.Controllers
 
                     return Created("", results);
                 }
+            }
+
+            return Unauthorized();
+        }
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        {
+            var user = await _userManager.FindByNameAsync(request.UserName);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, request.OldPassword, false);
+            if (result.Succeeded)
+            {
+                var change = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+                if (change.Succeeded)
+                    return Ok();
+            }
+
+            return Unauthorized();
+        }
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<IActionResult> SignOut(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user != null)
+            {
+                await _signInManager.SignOutAsync();
+                return Ok();
             }
 
             return Unauthorized();

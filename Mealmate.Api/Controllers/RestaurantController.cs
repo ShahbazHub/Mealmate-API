@@ -32,7 +32,6 @@ namespace Mealmate.Api.Controllers
             _mediator = mediator;
             _restaurantService = restaurantService;
         }
-
         [Route("[action]")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
