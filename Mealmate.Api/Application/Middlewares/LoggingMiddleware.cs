@@ -21,9 +21,9 @@ namespace Mealmate.Api.Application.Middlewares
 
         public async Task Invoke(HttpContext context)
         {
-            _logger.LogInformation("Before request");
+            //_logger.LogInformation("Before request");
             await _next(context);
-            _logger.LogInformation("After request");
+            //_logger.LogInformation("After request");
         }
     }
 }

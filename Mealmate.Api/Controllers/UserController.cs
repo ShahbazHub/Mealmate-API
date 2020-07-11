@@ -62,7 +62,8 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Register
-        [HttpPost("register")]
+        [Route("[action]")]
+        [HttpPost()]
         public ActionResult Register(CreateRequest<RestaurantModel> request)
         {
             //TODO: Add you code here
@@ -71,7 +72,8 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPost("register")]
+        [Route("[action]")]
+        [HttpPost()]
         public ActionResult Update(UpdateRequest<UserModel> request)
         {
             //TODO: Add you code here

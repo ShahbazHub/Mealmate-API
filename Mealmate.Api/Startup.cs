@@ -27,11 +27,8 @@ using Microsoft.IdentityModel.Tokens;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using AutoMapper;
 using Autofac.Core.Lifetime;
 using NSwag;
-using System.Collections.Generic;
-using Autofac.Core;
 using NSwag.Generation.Processors.Security;
 using Microsoft.Extensions.Hosting;
 
