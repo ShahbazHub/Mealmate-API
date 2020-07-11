@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/branches")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BranchController : ControllerBase
     {
         private readonly IBranchService _branchService;

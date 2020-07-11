@@ -4,6 +4,9 @@ using Mealmate.Application.Models;
 using Mealmate.Core.Configuration;
 using Mealmate.Core.Entities;
 using MediatR;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -20,6 +23,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/users")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -62,7 +66,8 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Register
-        [HttpPost("register")]
+        [Route("[action]")]
+        [HttpPost()]
         public ActionResult Register(CreateRequest<RestaurantModel> request)
         {
             //TODO: Add you code here
@@ -71,7 +76,8 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPost("register")]
+        [Route("[action]")]
+        [HttpPost()]
         public ActionResult Update(UpdateRequest<UserModel> request)
         {
             //TODO: Add you code here

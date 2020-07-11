@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
 {
     [Route("api/menuitemoptions")]
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemOptionController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -35,7 +35,7 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         [Route("[action]")]
-        [HttpGet("{optionItemId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(int menuItemId,int optionItemId)
         {

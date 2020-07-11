@@ -3,7 +3,6 @@ using Mealmate.Application.Services;
 using Mealmate.Infrastructure.IoC;
 using Mealmate.Infrastructure.Misc;
 using Autofac;
-using Autofac.Core;
 using AutoMapper;
 using System.Collections.Generic;
 using Mealmate.Application.Mapper;
@@ -40,6 +39,7 @@ namespace Mealmate.Application.IoC
             builder.RegisterType<OptionItemService>().As<IOptionItemService>().InstancePerLifetimeScope();
             builder.RegisterType<QRCodeService>().As<IQRCodeService>().InstancePerLifetimeScope();
             builder.RegisterType<LocationService>().As<ILocationService>().InstancePerLifetimeScope();
+            builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterType<MealMateMapper>().As<Profile>();
 
         }
