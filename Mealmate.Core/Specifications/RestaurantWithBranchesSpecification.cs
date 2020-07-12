@@ -1,6 +1,9 @@
 ﻿using Mealmate.Core.Entities;
 using Mealmate.Core.Specifications.Base;
 
+using System;
+using System.Linq.Expressions;
+
 namespace Mealmate.Core.Specifications
 {
     public class RestaurantWithBranchesSpecification : BaseSpecification<Restaurant>
@@ -17,8 +20,13 @@ namespace Mealmate.Core.Specifications
             AddInclude(p => p.Branches);
         }
 
+        public RestaurantWithBranchesSpecification(Expression<Func<Restaurant, bool>> predicate)
+            : base(predicate)
+        {
+            AddInclude(p => p.Branches);
+        }
         public RestaurantWithBranchesSpecification()
-            : base(null)
+           : base(null)
         {
             AddInclude(p => p.Branches);
         }

@@ -12,6 +12,6 @@ namespace Mealmate.Application.Models
         public int LocationId { get; set; }
         //public LocationModel Location { get; set; }
 
-        //public QRCodeModel QRCode { get; set; }
+        public QRCodeModel QRCode { get; set; }
     }
 }

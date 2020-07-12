@@ -122,12 +122,10 @@ namespace Mealmate.Infrastructure.Repository
             var spec = new RestaurantWithBranchesSpecification(RestaurantId);
             return (await GetAsync(spec)).FirstOrDefault();
         }
-
-        //public async Task<IEnumerable<Restaurant>> GetRestaurantByCategoryAsync(int branchId)
-        //{
-        //    return await Table
-        //        .Where(x => x.Branches == branchId)
-        //        .ToListAsync();
-        //}
+        public async Task<IEnumerable<Restaurant>> GetRestaurantWithBranchesByOwnerIdAsync(int OwnerId)
+        {
+            var spec = new RestaurantWithBranchesSpecification(p=> p.OwnerId == OwnerId);
+            return await GetAsync(spec);
+        }
     }
 }

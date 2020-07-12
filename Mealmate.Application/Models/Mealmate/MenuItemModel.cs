@@ -1,6 +1,7 @@
 ﻿using Mealmate.Application.Models.Base;
 
 using System;
+using System.Collections.Generic;
 
 namespace Mealmate.Application.Models
 {
@@ -15,6 +16,6 @@ namespace Mealmate.Application.Models
         public int MenuId { get; set; }
         //public MenuModel Menu { get; set; }
 
-        public MenuItemOptionModel MenuItemOption { get; set; }
+        public ICollection<MenuItemOptionModel> MenuItemOptions { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Mealmate.Application.Models.Base;
 using System;
+using System.Collections.Generic;
 
 namespace Mealmate.Application.Models
 {
@@ -10,6 +11,6 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
 
         public int OwnerId { get; set; }
-        public BranchModel Branch { get; set; }
+        public ICollection<BranchModel> Branches { get; set; }
     }
 }

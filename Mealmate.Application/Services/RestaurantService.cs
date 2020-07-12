@@ -63,7 +63,8 @@ namespace Mealmate.Application.Services
 
         public async Task<IEnumerable<RestaurantModel>> Get(int ownerId)
         {
-            var result = await _restaurantRepository.GetAsync(x => x.OwnerId == ownerId);
+
+            var result = await _restaurantRepository.GetRestaurantWithBranchesByOwnerIdAsync(ownerId);
             return _mapper.Map<IEnumerable<RestaurantModel>>(result);
         }
 

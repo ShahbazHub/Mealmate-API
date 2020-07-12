@@ -1,6 +1,7 @@
 ﻿using Mealmate.Application.Models.Base;
 
 using System;
+using System.Collections.Generic;
 
 namespace Mealmate.Application.Models
 {
@@ -11,7 +12,7 @@ namespace Mealmate.Application.Models
         public int BranchId { get; set; }
         //public BranchModel Branch { get; set; }
 
-        public TableModel Table { get; set; }
+        public ICollection<TableModel> Tables { get; set; }
 
     }
 }
