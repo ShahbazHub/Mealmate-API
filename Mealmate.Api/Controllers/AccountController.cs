@@ -70,9 +70,14 @@ namespace Mealmate.Api.Controllers
 
                     return Ok(results);
                 }
-            }
+                else
+                {
+                    return Unauthorized("UserName of Password is incorrect");
+                }
 
-            return Unauthorized();
+            }
+                return Unauthorized("UserName of Password is incorrect");
+           
         }
         #endregion
 

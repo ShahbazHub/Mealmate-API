@@ -34,7 +34,7 @@ namespace Mealmate.Infrastructure.Data
         public async Task SeedAsync()
         {
             //// TODO: Only run this if using a real database
-            //await _mealmateContext.Database.MigrateAsync();
+            await _mealmateContext.Database.MigrateAsync();
             //await _mealmateContext.Database.EnsureCreatedAsync();
 
             //// users

@@ -35,46 +35,40 @@ namespace Mealmate.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
+        public Startup(IWebHostEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(hostingEnvironment.ContentRootPath)
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
+            _config = new ConfigurationBuilder()
+                       .SetBasePath(env.ContentRootPath)
+                       .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                       .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                       .AddEnvironmentVariables()
+                       .Build();
 
-            _config = builder.Build();
-
-            Configuration = configuration;
-            HostingEnvironment = hostingEnvironment;
-            MealmateSettings = configuration.Get<MealmateSettings>();
+            _env = env;
+            _mealMateSettings = _config.Get<MealmateSettings>();
         }
 
-        private readonly IConfigurationRoot _config;
-
-        public IConfiguration Configuration { get; }
-        public IWebHostEnvironment HostingEnvironment { get; }
-        public MealmateSettings MealmateSettings { get; }
+        public IConfigurationRoot _config { get; }
+        public IWebHostEnvironment _env { get; }
+        public MealmateSettings _mealMateSettings { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             return
             services
-                .AddSingleton(_config)
                 .AddCustomMvc()
-                .AddCustomDbContext(MealmateSettings)
+                .AddCustomDbContext(_mealMateSettings)
                 .AddCustomIdentity()
                 .AddCustomSwagger()
-                .AddCustomConfiguration(Configuration)
-                .AddCustomAuthentication(MealmateSettings)
-                .AddCustomIntegrations(HostingEnvironment);
+                .AddCustomConfiguration(_config)
+                .AddCustomAuthentication(_mealMateSettings)
+                .AddCustomIntegrations(_env);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -93,7 +87,7 @@ namespace Mealmate.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Angular");
             });
             app.UseMiddleware<LoggingMiddleware>();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("CorsPolicy");
 
@@ -101,10 +95,7 @@ namespace Mealmate.Api
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                   name: "default",
-                   pattern: "{controller}/{action=Index}/{id?}");
-
+                endpoints.MapControllers();
             });
         }
     }
@@ -161,7 +152,7 @@ namespace Mealmate.Api
                             sqlOptions.MigrationsHistoryTable("__MigrationsHistory", "Migration");
                         }
                     ),
-                    ServiceLifetime.Transient
+                    ServiceLifetime.Singleton
                  );
 
             return services;
@@ -177,11 +168,10 @@ namespace Mealmate.Api
                 if (existingUserManager == null)
                 {
                     services.AddIdentity<User, Role>(
-                        //cfg =>
-                        //{
-                        //    User.RequireUniqueEmail = true;
-                        //}
-                        )
+                        options =>
+                        {
+                            options.User.RequireUniqueEmail = true;
+                        })
                         .AddEntityFrameworkStores<MealmateContext>()
                         .AddDefaultTokenProviders();
                 }
@@ -272,11 +262,11 @@ namespace Mealmate.Api
             return services;
         }
 
-        public static IServiceProvider AddCustomIntegrations(this IServiceCollection services, IWebHostEnvironment hostingEnvironment)
+        public static IServiceProvider AddCustomIntegrations(this IServiceCollection services, IWebHostEnvironment env)
         {
             services.AddHttpContextAccessor();
 
-            var fileProvider = new AppFileProvider(hostingEnvironment.ContentRootPath);
+            var fileProvider = new AppFileProvider(env.ContentRootPath);
             var typeFinder = new WebAppTypeFinder(fileProvider);
 
             //configure autofac
