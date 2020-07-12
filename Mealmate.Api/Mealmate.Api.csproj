@@ -11,8 +11,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Application\Commands\**" />
+    <Compile Remove="Application\Validations\**" />
+    <Compile Remove="Requests\**" />
+    <Content Remove="Application\Commands\**" />
+    <Content Remove="Application\Validations\**" />
+    <Content Remove="Requests\**" />
+    <EmbeddedResource Remove="Application\Commands\**" />
+    <EmbeddedResource Remove="Application\Validations\**" />
+    <EmbeddedResource Remove="Requests\**" />
+    <None Remove="Application\Commands\**" />
+    <None Remove="Application\Validations\**" />
+    <None Remove="Requests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="IoC\DependencyRegistrar.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Requests\ChangePasswordRequest.cs" />
+    <Compile Include="Requests\LoginRequest.cs" />
+    <Compile Include="Requests\RegisterRequest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="MediatR" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5">
@@ -30,6 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="IoC\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

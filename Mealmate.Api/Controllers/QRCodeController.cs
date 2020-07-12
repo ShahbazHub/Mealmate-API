@@ -4,7 +4,6 @@ using Mealmate.Application.Models;
 using Mealmate.Core.Entities;
 using Mealmate.Core.Paging;
 
-using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -22,15 +21,12 @@ namespace Mealmate.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class QRCodeController : ControllerBase
     {
-        private readonly IMediator _mediator;
         private readonly IQRCodeService _qRCodeService;
 
         public QRCodeController(
-            IMediator mediator,
             IQRCodeService qRCodeService
             )
         {
-            _mediator = mediator;
             _qRCodeService = qRCodeService;
         }
 
@@ -51,10 +47,9 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(QRCodeModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<QRCodeModel>> Create(CreateRequest<QRCodeModel> request)
+        public async Task<ActionResult<QRCodeModel>> Create(QRCodeModel request)
         {
-            var commandResult = await _mediator.Send(request);
-
+            var commandResult = await _qRCodeService.Create(request);
             return Ok(commandResult);
         }
         #endregion
@@ -64,11 +59,10 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(UpdateRequest<QRCodeModel> request)
+        public async Task<ActionResult> Update(QRCodeModel request)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            await _qRCodeService.Update(request);
+            return Ok();
         }
         #endregion
 
@@ -77,11 +71,10 @@ namespace Mealmate.Api.Controllers
         [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Delete(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(int QRCodeId)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            await _qRCodeService.Delete(QRCodeId);
+            return Ok();
         }
         #endregion
 

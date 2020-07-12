@@ -3,8 +3,6 @@ using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
 
-using MediatR;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +21,7 @@ namespace Mealmate.Api.Controllers
     {
         private readonly IBranchService _branchService;
 
-        public BranchController(
-            IBranchService branchService
-            )
+        public BranchController(IBranchService branchService)
         {
             _branchService = branchService;
         }
@@ -37,7 +33,6 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult<IEnumerable<BranchModel>>> Get(int restaurantId)
         {
             var Branchs = await _branchService.Get(restaurantId);
-
             return Ok(Branchs);
         }
         #endregion
@@ -47,9 +42,9 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(BranchModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<BranchModel>> Create(CreateRequest<BranchModel> request)
+        public async Task<ActionResult<BranchModel>> Create(BranchModel request)
         {
-            var commandResult = await _branchService.Create(request.Model);
+            var commandResult = await _branchService.Create(request);
 
             return Ok(commandResult);
         }
@@ -60,9 +55,9 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(UpdateRequest<BranchModel> request)
+        public async Task<ActionResult> Update(BranchModel request)
         {
-            await _branchService.Update(request.Model);
+            await _branchService.Update(request);
             return Ok();
         }
         #endregion
@@ -71,17 +66,17 @@ namespace Mealmate.Api.Controllers
         /// <summary>
         /// Delete branch by id
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="branchId"></param>
         /// <returns></returns>
         [Route("[action]")]
         [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Delete(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(int branchId)
         {
             try
             {
-                await _branchService.Delete(request.Id);
+                await _branchService.Delete(branchId);
                 return Ok();
             }
             catch (Exception ex)

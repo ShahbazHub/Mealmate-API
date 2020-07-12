@@ -3,7 +3,6 @@ using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
 
-using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,15 +20,12 @@ namespace Mealmate.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class RestaurantController : ControllerBase
     {
-        private readonly IMediator _mediator;
         private readonly IRestaurantService _restaurantService;
 
         public RestaurantController(
-            IMediator mediator,
             IRestaurantService restaurantService
             )
         {
-            _mediator = mediator;
             _restaurantService = restaurantService;
         }
 
@@ -50,9 +46,9 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(RestaurantModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<RestaurantModel>> Create(CreateRequest<RestaurantModel> request)
+        public async Task<ActionResult<RestaurantModel>> Create(RestaurantModel request)
         {
-            var commandResult = await _mediator.Send(request);
+            var commandResult = await _restaurantService.Create(request);
 
             return Ok(commandResult);
         }
@@ -63,11 +59,10 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(UpdateRequest<RestaurantModel> request)
+        public async Task<ActionResult> Update(RestaurantModel request)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            var result  = await _restaurantService.Update(request);
+            return Ok(result);
         }
         #endregion
 
@@ -76,11 +71,10 @@ namespace Mealmate.Api.Controllers
         [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Delete(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(int restaurandId)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            await _restaurantService.Delete(restaurandId);
+            return Ok();
         }
         #endregion
 

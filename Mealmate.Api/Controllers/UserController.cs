@@ -2,7 +2,6 @@
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Configuration;
-using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,16 +18,13 @@ namespace Mealmate.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
-        private readonly IMediator _mediator;
         private readonly MealmateSettings _mealmateSettings;
         private readonly IUserService _userService;
 
         public UserController(
-            IMediator mediator,
             IUserService userService,
             IOptions<MealmateSettings> options)
         {
-            _mediator = mediator;
             _userService = userService;
             _mealmateSettings = options.Value;
         }
@@ -58,23 +54,23 @@ namespace Mealmate.Api.Controllers
 
         #region Register
         [HttpPost()]
-        public ActionResult Register(CreateRequest<UserModel> request)
+        public async Task<ActionResult> Register(UserModel request)
         {
             //TODO: Add you code here
-
+            await _userService.Create(request);
             return Ok();
         }
         #endregion
 
         #region Update
         [HttpPost("{id}")]
-        public async Task<ActionResult> Update(int id, UpdateRequest<UserModel> request)
+        public async Task<ActionResult> Update(UserModel request)
         {
             //TODO: Add you code here
-            var result = await _userService.GetById(id);
+            var result = await _userService.GetById(request.Id);
             if (result == null)
             {
-                return NotFound($"User with id {id} no more exists");
+                return NotFound($"User with id {request.Id} no more exists");
             }
 
             return Ok();
@@ -86,12 +82,12 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult> Delete(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(int userId)
         {
-            var result = await _userService.GetById(request.Id);
+            var result = await _userService.GetById(userId);
             if (result == null)
             {
-                return NotFound($"User with id {request.Id} no more exists");
+                return NotFound($"User with id {userId} no more exists");
             }
 
             return Ok();

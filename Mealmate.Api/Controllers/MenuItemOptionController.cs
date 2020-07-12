@@ -3,7 +3,6 @@ using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
 
-using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,15 +20,12 @@ namespace Mealmate.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemOptionController : ControllerBase
     {
-        private readonly IMediator _mediator;
         private readonly IMenuItemOptionService _menuItemOptionService;
 
         public MenuItemOptionController(
-            IMediator mediator,
             IMenuItemOptionService menuItemOptionService
             )
         {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _menuItemOptionService = menuItemOptionService ?? throw new ArgumentNullException(nameof(menuItemOptionService));
         }
 
@@ -50,9 +46,10 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(MenuItemOptionModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuItemOptionModel>> Create(CreateRequest<MenuItemOptionModel> request)
+        public async Task<ActionResult<MenuItemOptionModel>> Create(MenuItemOptionModel request)
         {
-            var commandResult = await _mediator.Send(request);
+
+            var commandResult = await _menuItemOptionService.Create(request);
 
             return Ok(commandResult);
         }
@@ -63,11 +60,10 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(UpdateRequest<MenuItemOptionModel> request)
+        public async Task<ActionResult> Update(MenuItemOptionModel request)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            await _menuItemOptionService.Update(request);
+            return Ok();
         }
         #endregion
 
@@ -76,11 +72,10 @@ namespace Mealmate.Api.Controllers
         [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Delete(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(int meneItemOptionId)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            await _menuItemOptionService.Delete(meneItemOptionId);
+            return Ok();
         }
         #endregion
 

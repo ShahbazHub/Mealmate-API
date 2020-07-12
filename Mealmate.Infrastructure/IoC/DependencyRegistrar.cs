@@ -1,14 +1,14 @@
 ﻿using Mealmate.Core.Interfaces;
 using Mealmate.Core.Repositories;
 using Mealmate.Core.Repositories.Base;
-using Mealmate.Infrastructure.Behaviors;
+//using Mealmate.Infrastructure.Behaviors;
 using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Logging;
 using Mealmate.Infrastructure.Misc;
 using Mealmate.Infrastructure.Repository;
 using Mealmate.Infrastructure.Repository.Base;
 using Autofac;
-using MediatR;
+//using MediatR;
 using System.Reflection;
 
 namespace Mealmate.Infrastructure.IoC
@@ -37,8 +37,8 @@ namespace Mealmate.Infrastructure.IoC
 
             builder.RegisterType<MealmateContextSeed>();
 
-            builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
-                .AsImplementedInterfaces();
+            //builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
+            //    .AsImplementedInterfaces();
 
             // Register all the Command classes (they implement IRequestHandler) in assembly holding the Commands
             //var handlerAssemblies = typeFinder.FindClassesOfType(typeof(IRequestHandler<,>))
@@ -46,14 +46,13 @@ namespace Mealmate.Infrastructure.IoC
             //builder.RegisterAssemblyTypes(handlerAssemblies)
             //    .AsClosedTypesOf(typeof(IRequestHandler<,>));
 
-            builder.Register<ServiceFactory>(context =>
-            {
-                var componentContext = context.Resolve<IComponentContext>();
-                return t => { object o; return componentContext.TryResolve(t, out o) ? o : null; };
-            });
+            //builder.Register<ServiceFactory>(context =>
+            //{
+            //    var componentContext = context.Resolve<IComponentContext>();
+            //    return t => { object o; return componentContext.TryResolve(t, out o) ? o : null; };
+            //});
 
-            builder.RegisterGeneric(typeof(TransactionBehaviour<,>)).As(typeof(IPipelineBehavior<,>));
-
+            //builder.RegisterGeneric(typeof(TransactionBehaviour<,>)).As(typeof(IPipelineBehavior<,>));
             //// Register the Command's Validators (Validators based on FluentValidation library)
             //var validatorAssemblies = typeFinder.FindClassesOfType(typeof(IValidator<,>))
             //    .Select(t => t.Assembly).Distinct().ToArray();

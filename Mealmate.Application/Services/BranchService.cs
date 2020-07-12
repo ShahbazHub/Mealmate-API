@@ -61,9 +61,9 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully deleted - MealmateAppService");
         }
 
-        public async Task<IEnumerable<BranchModel>> Get(int branchId)
+        public async Task<IEnumerable<BranchModel>> Get(int restaurantId)
         {
-            var result = await _branchRepository.GetAsync(x => x.RestaurantId== branchId);
+            var result = await _branchRepository.GetAsync(x => x.RestaurantId== restaurantId);
             return _mapper.Map<IEnumerable<BranchModel>>(result);
         }
 
