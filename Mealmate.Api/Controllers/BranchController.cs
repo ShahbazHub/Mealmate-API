@@ -68,14 +68,26 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Delete
+        /// <summary>
+        /// Delete branch by id
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Route("[action]")]
-        [HttpPost]
+        [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(DeleteByIdRequest request)
         {
-            await _branchService.Delete(request.Id);
-            return Ok();
+            try
+            {
+                await _branchService.Delete(request.Id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
         #endregion
     }

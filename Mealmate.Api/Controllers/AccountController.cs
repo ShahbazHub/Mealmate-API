@@ -1,4 +1,6 @@
-﻿using Mealmate.Api.Requests;
+﻿using AutoMapper;
+using Mealmate.Api.Requests;
+using Mealmate.Application.Models;
 using Mealmate.Core.Configuration;
 using Mealmate.Core.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,11 +27,14 @@ namespace Mealmate.Api.Controllers
         private readonly MealmateSettings _mealmateSettings;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly IMapper _mapper;
 
         public AccountController(SignInManager<User> signInManager,
           UserManager<User> userManager,
-          IOptions<MealmateSettings> options)
+          IOptions<MealmateSettings> options,
+          IMapper mapper)
         {
+            _mapper = mapper;
             _signInManager = signInManager;
             _userManager = userManager;
             _mealmateSettings = options.Value;
@@ -123,10 +128,31 @@ namespace Mealmate.Api.Controllers
 
         #region Register
         [HttpPost("register")]
-        public ActionResult Register()
+        public async Task<ActionResult> Register([FromBody] RegisterRequest model)
         {
             //TODO: Add you code here
-            return Ok();
+
+            if (ModelState.IsValid)
+            {
+                var user = new User
+                {
+                    UserName = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    return Created($"/api/users/{user.Id}", _mapper.Map<UserModel>(user));
+                }
+                else
+                {
+                    return BadRequest($"Error registering new user");
+                }
+            }
+            return BadRequest(ModelState);
         }
         #endregion
     }

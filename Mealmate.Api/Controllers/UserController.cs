@@ -35,8 +35,7 @@ namespace Mealmate.Api.Controllers
 
 
         #region Read
-        [Route("[action]")]
-        [HttpGet]
+        [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<UserModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<UserModel>>> Get()
         {
@@ -44,8 +43,7 @@ namespace Mealmate.Api.Controllers
             return Ok(result);
         }
 
-        [Route("[action]")]
-        [HttpGet]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<UserModel>> GetById(int id)
         {
@@ -59,32 +57,43 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Register
-        [Route("[action]")]
         [HttpPost()]
-        public ActionResult Register(CreateRequest<RestaurantModel> request)
+        public ActionResult Register(CreateRequest<UserModel> request)
         {
             //TODO: Add you code here
+
             return Ok();
         }
         #endregion
 
         #region Update
-        [Route("[action]")]
-        [HttpPost()]
-        public ActionResult Update(UpdateRequest<UserModel> request)
+        [HttpPost("{id}")]
+        public async Task<ActionResult> Update(int id, UpdateRequest<UserModel> request)
         {
             //TODO: Add you code here
+            var result = await _userService.GetById(id);
+            if (result == null)
+            {
+                return NotFound($"User with id {id} no more exists");
+            }
+
             return Ok();
         }
         #endregion
 
         #region Delete
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete()]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public ActionResult Delete(DeleteByIdRequest request)
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult> Delete(DeleteByIdRequest request)
         {
+            var result = await _userService.GetById(request.Id);
+            if (result == null)
+            {
+                return NotFound($"User with id {request.Id} no more exists");
+            }
+
             return Ok();
         }
         #endregion
