@@ -3,7 +3,6 @@ using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
 
-using MediatR;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,15 +20,12 @@ namespace Mealmate.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class LocationController : ControllerBase
     {
-        private readonly IMediator _mediator;
         private readonly ILocationService _locationService;
 
         public LocationController(
-            IMediator mediator,
             ILocationService locationService
             )
         {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
         }
 
@@ -50,11 +46,10 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<LocationModel>> Create(CreateRequest<LocationModel> request)
+        public async Task<ActionResult<LocationModel>> Create(LocationModel request)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            var result = await _locationService.Create(request);
+            return Ok(result);
         }
         #endregion
 
@@ -63,11 +58,10 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(UpdateRequest<LocationModel> request)
+        public async Task<ActionResult> Update(LocationModel request)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            await _locationService.Update(request);
+            return Ok();
         }
         #endregion
 
@@ -76,11 +70,10 @@ namespace Mealmate.Api.Controllers
         [HttpDelete]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Delete(DeleteByIdRequest request)
+        public async Task<ActionResult> Delete(int locationId)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            await _locationService.Delete(locationId);
+            return Ok();
         }
         #endregion
 

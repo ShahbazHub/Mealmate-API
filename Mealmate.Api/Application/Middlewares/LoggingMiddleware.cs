@@ -8,15 +8,12 @@ namespace Mealmate.Api.Application.Middlewares
     public class LoggingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<LoggingMiddleware> _logger;
 
         public LoggingMiddleware(
-            RequestDelegate next,
-            ILogger<LoggingMiddleware> logger
+            RequestDelegate next
             )
         {
             _next = next;
-            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
