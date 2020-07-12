@@ -49,7 +49,8 @@ namespace Mealmate.Infrastructure.Data
             {
                 user = new User
                 {
-                    Name = "Administrator",
+                    FirstName = "System",
+                    LastName = "Administrator",
                     Email = "admin@gmail.com",
                     UserName = "admin"
                 };

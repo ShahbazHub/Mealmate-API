@@ -11,7 +11,7 @@ namespace Mealmate.Infrastructure.Configurations
             builder.ToTable("User", "Identity");
 
             builder.Property(p => p.UserName)
-                .HasColumnType("VARCHAR(25)")
+                .HasColumnType("NVARCHAR(25)")
                 .IsRequired();
 
             builder.Property(p => p.Email)
@@ -21,9 +21,12 @@ namespace Mealmate.Infrastructure.Configurations
             builder.Property(p => p.PhoneNumber)
                 .HasColumnType("VARCHAR(25)");
 
-            builder.Property(p => p.Name)
-                .HasColumnType("VARCHAR(250)")
+            builder.Property(p => p.FirstName)
+                .HasColumnType("NVARCHAR(250)")
                 .IsRequired();
+
+            builder.Property(p => p.LastName)
+                .HasColumnType("NVARCHAR(250)");
 
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")

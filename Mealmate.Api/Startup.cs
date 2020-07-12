@@ -177,11 +177,17 @@ namespace Mealmate.Api
                 if (existingUserManager == null)
                 {
                     services.AddIdentity<User, Role>(
-                        //cfg =>
-                        //{
-                        //    User.RequireUniqueEmail = true;
-                        //}
-                        )
+                        cfg =>
+                        {
+                            cfg.Password.RequireDigit = false;
+                            cfg.Password.RequiredLength = 4;
+                            cfg.Password.RequiredUniqueChars = 0;
+                            cfg.Password.RequireLowercase = false;
+                            cfg.Password.RequireNonAlphanumeric = false;
+                            cfg.Password.RequireUppercase = false;
+
+                            cfg.User.RequireUniqueEmail = true;
+                        })
                         .AddEntityFrameworkStores<MealmateContext>()
                         .AddDefaultTokenProviders();
                 }
