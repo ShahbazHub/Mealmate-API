@@ -101,6 +101,13 @@ namespace Mealmate.Api
                     services.AddIdentity<User, Role>(
                         options =>
                         {
+                            options.Password.RequireDigit = false;
+                            options.Password.RequiredLength = 4;
+                            options.Password.RequiredUniqueChars = 0;
+                            options.Password.RequireLowercase = false;
+                            options.Password.RequireNonAlphanumeric = false;
+                            options.Password.RequireUppercase = false;
+
                             options.User.RequireUniqueEmail = true;
                         })
                         .AddEntityFrameworkStores<MealmateContext>()
