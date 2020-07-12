@@ -40,7 +40,12 @@ namespace Mealmate.Application.IoC
             builder.RegisterType<QRCodeService>().As<IQRCodeService>().InstancePerLifetimeScope();
             builder.RegisterType<LocationService>().As<ILocationService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
+<<<<<<< HEAD
+            builder.RegisterType<AllergenService>().As<IAllergenService>().InstancePerLifetimeScope();
+            builder.RegisterType<DietaryService>().As<IDietaryService>().InstancePerLifetimeScope();
+=======
             builder.RegisterType<TableService>().As<ITableService>().InstancePerLifetimeScope();
+>>>>>>> 64a8d141d9a048cca4f53d192e61b3e1b0c85f39
             builder.RegisterType<MealMateMapper>().As<Profile>();
 
         }

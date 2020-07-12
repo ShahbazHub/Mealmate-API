@@ -1,6 +1,7 @@
 ﻿using Mealmate.Application.Models;
 using Mealmate.Core.Entities;
 using AutoMapper;
+using Mealmate.Core.Entities.Lookup;
 
 namespace Mealmate.Application.Mapper
 {
@@ -18,6 +19,8 @@ namespace Mealmate.Application.Mapper
             CreateMap<QRCode, QRCodeModel>().ReverseMap();
             CreateMap<Table, TableModel>().ReverseMap();
             CreateMap<User, UserModel>().ReverseMap();
+            CreateMap<Allergen, AllergenModel>().ReverseMap();
+            CreateMap<Dietary, DietaryModel>().ReverseMap();
         }
 
 

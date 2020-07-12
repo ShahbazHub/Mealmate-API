@@ -9,6 +9,6 @@ namespace Mealmate.Core.Repositories
 {
     public interface IAllergenRepository : IRepository<Allergen>
     {
-     
+        Task<IPagedList<Allergen>> SearchAsync(PageSearchArgs args);
     }
 }

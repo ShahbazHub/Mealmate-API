@@ -75,6 +75,7 @@ namespace Mealmate.Api
                 .AddDbContext<MealmateContext>(options =>
                         options
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                        .EnableSensitiveDataLogging(sensitiveDataLoggingEnabled: true)
                         .UseSqlServer(MealmateSettings.ConnectionString,
                         sqlOptions =>
                         {
@@ -83,7 +84,7 @@ namespace Mealmate.Api
                             sqlOptions.MigrationsHistoryTable("__MigrationsHistory", "Migration");
                         }
                     ),
-                    ServiceLifetime.Singleton
+                    ServiceLifetime.Transient
                  );
 
             return services;

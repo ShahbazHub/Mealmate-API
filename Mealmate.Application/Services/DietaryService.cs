@@ -23,8 +23,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public DietaryService(
-            IDietaryRepository dietaryRepository, 
-            IAppLogger<DietaryService> logger, 
+            IDietaryRepository dietaryRepository,
+            IAppLogger<DietaryService> logger,
             IMapper mapper)
         {
             _dietaryRepository = dietaryRepository ?? throw new ArgumentNullException(nameof(_dietaryRepository));
@@ -88,6 +88,23 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
+
+        public async Task<IPagedList<DietaryModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _dietaryRepository.SearchAsync(args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var tempModels = _mapper.Map<List<DietaryModel>>(TablePagedList.Items);
+
+            var tempModelPagedList = new PagedList<DietaryModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                tempModels);
+
+            return tempModelPagedList;
+        }
         //public async Task<IEnumerable<DietaryModel>> GetTableList()
         //{
         //    var TableList = await _dietaryRepository.ListAllAsync();
