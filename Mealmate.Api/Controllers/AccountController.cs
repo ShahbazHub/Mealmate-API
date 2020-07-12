@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Mealmate.Api.Requests;
+using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Configuration;
 using Mealmate.Core.Entities;
@@ -25,6 +26,7 @@ namespace Mealmate.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly MealmateSettings _mealmateSettings;
+        private readonly IRestaurantService _restaurantService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
@@ -32,12 +34,14 @@ namespace Mealmate.Api.Controllers
         public AccountController(SignInManager<User> signInManager,
           UserManager<User> userManager,
           IOptions<MealmateSettings> options,
-          IMapper mapper)
+          IMapper mapper,
+          IRestaurantService restaurantService)
         {
             _mapper = mapper;
             _signInManager = signInManager;
             _userManager = userManager;
             _mealmateSettings = options.Value;
+            _restaurantService = restaurantService;
         }
 
         #region Login
@@ -145,6 +149,16 @@ namespace Mealmate.Api.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    //Todo:Temp fix.. Flag is required where request is from frontend or mobile app...
+                    if (!string.IsNullOrEmpty(model.RestaurantName))
+                    {
+                        await _restaurantService.Create(new RestaurantModel
+                        {
+                            Name = model.RestaurantName,
+                            Description = model.RestaurantDescription
+                        });
+                    }
+
                     return Created($"/api/users/{user.Id}", _mapper.Map<UserModel>(user));
                 }
                 else

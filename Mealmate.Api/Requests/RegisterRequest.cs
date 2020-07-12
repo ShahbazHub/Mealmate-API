@@ -14,5 +14,8 @@ namespace Mealmate.Api.Requests
 
         [Required]
         public string Password { get; set; }
+        public string RestaurantName { get; set; }        
+
+        public string RestaurantDescription { get; set; }
     }
 }
