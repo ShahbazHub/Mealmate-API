@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -13,6 +15,8 @@ using Mealmate.Core.Repositories;
 using Mealmate.Core.Specifications;
 using Mealmate.Infrastructure.Paging;
 
+using QRCoder;
+
 namespace Mealmate.Application.Services
 {
     public class QRCodeService : IQRCodeService
@@ -22,8 +26,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public QRCodeService(
-            IQRCodeRepository qrCodeRepository, 
-            IAppLogger<QRCodeService> logger, 
+            IQRCodeRepository qrCodeRepository,
+            IAppLogger<QRCodeService> logger,
             IMapper mapper)
         {
             _qrCodeRepository = qrCodeRepository ?? throw new ArgumentNullException(nameof(qrCodeRepository));
@@ -39,7 +43,8 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("qrCode with this id already exists");
             }
 
-            var newqrCode = _mapper.Map<QRCode>(model);
+            var newqrCode = _mapper.Map<Core.Entities.QRCode>(model);
+            newqrCode.Code = GenerateQRCode(newqrCode.TableId.ToString());
             newqrCode = await _qrCodeRepository.SaveAsync(newqrCode);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -63,7 +68,7 @@ namespace Mealmate.Application.Services
 
         public async Task<IEnumerable<QRCodeModel>> Get(int tableId)
         {
-            var result = await _qrCodeRepository.GetAsync(x => x.TableId== tableId);
+            var result = await _qrCodeRepository.GetAsync(x => x.TableId == tableId);
             return _mapper.Map<IEnumerable<QRCodeModel>>(result);
         }
 
@@ -80,11 +85,27 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("QRCode with this id is not exists");
             }
 
-            existingQRCode = _mapper.Map<QRCode>(model);
+            existingQRCode = _mapper.Map<Core.Entities.QRCode>(model);
 
             await _qrCodeRepository.SaveAsync(existingQRCode);
 
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
+        }
+
+        private byte[] GenerateQRCode(string textToEncode)
+        {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(textToEncode, QRCodeGenerator.ECCLevel.Q);
+            QRCoder.QRCode qrCode = new QRCoder.QRCode(qrCodeData);
+            Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+            return BitmapToBytes(qrCodeImage);
+        }
+        private static byte[] BitmapToBytes(Bitmap img)
+        {
+            using MemoryStream stream = new MemoryStream();
+            img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            return stream.ToArray();
         }
 
         //public async Task<IEnumerable<QRCodeModel>> GetQRCodeList()

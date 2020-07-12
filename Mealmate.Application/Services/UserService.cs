@@ -16,15 +16,12 @@ namespace Mealmate.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
 
         public UserService(UserManager<User> userManager,
-            SignInManager<User> signInManager,
             IMapper mapper)
         {
             _mapper = mapper;
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         public Task<UserModel> Create(UserModel model)

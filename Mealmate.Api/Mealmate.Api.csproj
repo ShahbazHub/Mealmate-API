@@ -13,20 +13,20 @@
   <ItemGroup>
     <Compile Remove="Application\Commands\**" />
     <Compile Remove="Application\Validations\**" />
+    <Compile Remove="IoC\**" />
     <Compile Remove="Requests\**" />
     <Content Remove="Application\Commands\**" />
     <Content Remove="Application\Validations\**" />
+    <Content Remove="IoC\**" />
     <Content Remove="Requests\**" />
     <EmbeddedResource Remove="Application\Commands\**" />
     <EmbeddedResource Remove="Application\Validations\**" />
+    <EmbeddedResource Remove="IoC\**" />
     <EmbeddedResource Remove="Requests\**" />
     <None Remove="Application\Commands\**" />
     <None Remove="Application\Validations\**" />
+    <None Remove="IoC\**" />
     <None Remove="Requests\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="IoC\DependencyRegistrar.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,7 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="IoC\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

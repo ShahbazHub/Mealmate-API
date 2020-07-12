@@ -1,12 +1,9 @@
-﻿using Mealmate.Api.Requests;
-using Mealmate.Application.Interfaces;
+﻿using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
-using Mealmate.Core.Configuration;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,15 +15,13 @@ namespace Mealmate.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
-        private readonly MealmateSettings _mealmateSettings;
         private readonly IUserService _userService;
 
         public UserController(
-            IUserService userService,
-            IOptions<MealmateSettings> options)
+            IUserService userService
+            )
         {
             _userService = userService;
-            _mealmateSettings = options.Value;
         }
 
 
