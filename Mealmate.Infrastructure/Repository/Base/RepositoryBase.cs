@@ -2,7 +2,9 @@
 using Mealmate.Core.Repositories.Base;
 using Mealmate.Core.Specifications.Base;
 using Mealmate.Infrastructure.Data;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +37,9 @@ namespace Mealmate.Infrastructure.Repository.Base
 
         public async virtual Task<T> GetByIdAsync(TId id)
         {
-            return await Entities.FindAsync(id);
+            var entity = await Entities.FindAsync(id);
+            _context.Entry(entity).State = EntityState.Detached;
+            return entity;
         }
 
         public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
@@ -51,12 +55,14 @@ namespace Mealmate.Infrastructure.Repository.Base
             if (entity.Id == null || entity.Id.Equals(default(TId)))
             {
                 Entities.Add(entity);
+                await _context.SaveChangesAsync();
             }
             else
             {
                 _context.Entry(entity).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
             }
-
+            _context.Entry(entity).State = EntityState.Detached;
             await _context.SaveChangesAsync();
 
             return entity;
