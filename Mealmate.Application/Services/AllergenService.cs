@@ -23,8 +23,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public AllergenService(
-            IAllergenRepository allergenRepository, 
-            IAppLogger<AllergenService> logger, 
+            IAllergenRepository allergenRepository,
+            IAppLogger<AllergenService> logger,
             IMapper mapper)
         {
             _allergenRepository = allergenRepository ?? throw new ArgumentNullException(nameof(_allergenRepository));
@@ -97,22 +97,22 @@ namespace Mealmate.Application.Services
         //    return AllergenModels;
         //}
 
-        //public async Task<IPagedList<AllergenModel>> SearchTables(PageSearchArgs args)
-        //{
-        //    var TablePagedList = await _allergenRepository.SearchTablesAsync(args);
+        public async Task<IPagedList<AllergenModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _allergenRepository.SearchAsync(args);
 
-        //    //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-        //    var AllergenModels = ObjectMapper.Mapper.Map<List<AllergenModel>>(TablePagedList.Items);
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<AllergenModel>>(TablePagedList.Items);
 
-        //    var AllergenModelPagedList = new PagedList<AllergenModel>(
-        //        TablePagedList.PageIndex,
-        //        TablePagedList.PageSize,
-        //        TablePagedList.TotalCount,
-        //        TablePagedList.TotalPages,
-        //        AllergenModels);
+            var AllergenModelPagedList = new PagedList<AllergenModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
 
-        //    return AllergenModelPagedList;
-        //}
+            return AllergenModelPagedList;
+        }
 
         //public async Task<AllergenModel> GetTableById(int TableId)
         //{
