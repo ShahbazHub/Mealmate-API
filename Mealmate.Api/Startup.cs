@@ -82,9 +82,10 @@ namespace Mealmate.Api
             // Enable middleware to serve generated Swagger as a JSON endpoint.
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            app.UseSwaggerUI(options =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Angular");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Angular");
+                options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
             });
             app.UseMiddleware<LoggingMiddleware>();
             //app.UseHttpsRedirection();
@@ -184,7 +185,18 @@ namespace Mealmate.Api
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mealmate Service", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Mealmate Service",
+                    Version = "v1",
+                    Description = "Mealmate Service to share the api structure with frontend developers",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Salman Taj",
+                        Email = "salman1277@gmail.com"
+                    },
+                    TermsOfService = new Uri("https://dev.azure.com/mealmate/MealMate/_git/Mealmate-DotNet")
+                });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
