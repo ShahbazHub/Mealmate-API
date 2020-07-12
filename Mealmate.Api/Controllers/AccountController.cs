@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
+    /// <summary>
+    /// Account Controller
+    /// </summary>
     [Route("api/accounts")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -33,6 +36,11 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Login
+        /// <summary>
+        /// Login
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> CreateToken([FromBody] LoginRequest request)
