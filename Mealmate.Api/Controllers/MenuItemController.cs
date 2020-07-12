@@ -40,7 +40,6 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(int menuId)
         {
             var MenuItems = await _menuItemService.Get(menuId);
-
             return Ok(MenuItems);
         }
         #endregion
@@ -52,9 +51,8 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<MenuItemModel>> Create(CreateRequest<MenuItemModel> request)
         {
-            var commandResult = await _mediator.Send(request);
-
-            return Ok(commandResult);
+            var result = await _menuItemService.Create(request.Model);
+            return Created($"api/menuitem/{result.Id}", result);
         }
         #endregion
 
