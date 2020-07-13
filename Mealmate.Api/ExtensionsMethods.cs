@@ -75,7 +75,6 @@ namespace Mealmate.Api
                 .AddDbContext<MealmateContext>(options =>
                         options
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                        .EnableSensitiveDataLogging(sensitiveDataLoggingEnabled: true)
                         .UseSqlServer(MealmateSettings.ConnectionString,
                         sqlOptions =>
                         {
