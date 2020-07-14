@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Mealmate.Core.Entities.Lookup;
 using Microsoft.AspNetCore.Identity;
 
 namespace Mealmate.Core.Entities
@@ -15,6 +16,8 @@ namespace Mealmate.Core.Entities
         public virtual ICollection<IdentityUserClaim<int>> UserClaims { get; set; }
         public virtual ICollection<IdentityUserToken<int>> UserTokens { get; set; }
         public virtual ICollection<Restaurant> Restaurants { get; set; }
+        public virtual ICollection<UserAllergen> UserAllergens { get; set; }
+        public virtual ICollection<UserDietary> UserDietaries { get; set; }
 
         public User()
         {
@@ -23,6 +26,8 @@ namespace Mealmate.Core.Entities
             UserLogins = new HashSet<IdentityUserLogin<int>>();
             UserTokens = new HashSet<IdentityUserToken<int>>();
             Restaurants = new HashSet<Restaurant>();
+            UserAllergens = new HashSet<UserAllergen>();
+            UserDietaries = new HashSet<UserDietary>();
         }
     }
 }
