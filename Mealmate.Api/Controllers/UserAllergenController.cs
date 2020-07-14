@@ -47,8 +47,10 @@ namespace Mealmate.Api.Controllers
             }
         }
 
-        [HttpGet("{userAllergenId}")]
+        [Route("single/{userAllergenId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(UserAllergenModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<UserAllergenModel>> Get(int userAllergenId)
         {
             try

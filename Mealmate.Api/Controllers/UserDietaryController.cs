@@ -47,7 +47,8 @@ namespace Mealmate.Api.Controllers
             }
         }
 
-        [HttpGet("{userDietaryId}")]
+        [Route("single/{userDietaryId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(UserDietaryModel), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<UserDietaryModel>> Get(int userDietaryId)
         {

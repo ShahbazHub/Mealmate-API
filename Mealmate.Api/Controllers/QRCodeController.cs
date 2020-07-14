@@ -48,8 +48,10 @@ namespace Mealmate.Api.Controllers
             }
         }
 
-        [HttpGet("{qrCodeId}")]
+        [Route("single/{qrCodeId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(QRCodeModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<QRCodeModel>> Get(int qrCodeId)
         {
             try
@@ -57,9 +59,9 @@ namespace Mealmate.Api.Controllers
                 var temp = await _qRCodeService.GetById(qrCodeId);
                 return Ok(temp);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
         #endregion
