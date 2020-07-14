@@ -5,6 +5,7 @@
         public string ConnectionString { get; set; }
 
         public Tokens Tokens { get; set; }
+
     }
 
     public class Tokens
