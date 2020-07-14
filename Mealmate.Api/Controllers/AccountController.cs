@@ -149,11 +149,13 @@ namespace Mealmate.Api.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    var newUser = await _userManager.FindByEmailAsync(model.Email);
                     //Todo:Temp fix.. Flag is required where request is from frontend or mobile app...
                     if (!string.IsNullOrEmpty(model.RestaurantName))
                     {
                         await _restaurantService.Create(new RestaurantModel
                         {
+                            OwnerId = newUser.Id,
                             Name = model.RestaurantName,
                             Description = model.RestaurantDescription
                         });

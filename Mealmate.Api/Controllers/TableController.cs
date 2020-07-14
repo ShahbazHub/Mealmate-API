@@ -1,4 +1,5 @@
-﻿using Mealmate.Api.Requests;
+﻿using Mealmate.Api.Helpers;
+using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
@@ -7,7 +8,7 @@ using Mealmate.Core.Paging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -30,14 +31,22 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("[action]")]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<TableModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<TableModel>>> Get(int branchId)
-        {
-            var Tables = await _tableService.Get(branchId);
 
-            return Ok(Tables);
+        [HttpGet]
+        [Route("{branchId}")]
+        [ProducesResponseType(typeof(IEnumerable<TableModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<TableModel>>> Get(int branchId, string props)
+        {
+            try
+            {
+                var Tables = await _tableService.Get(branchId);
+                JToken _jtoken = TokenService.CreateJToken(Tables, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
@@ -77,44 +86,6 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IPagedList<TableModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IPagedList<TableModel>>> SearchTables(SearchPageRequest request)
-        //{
-        //    var TablePagedList = await _tableService.SearchTables(request.Args);
 
-        //    return Ok(TablePagedList);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(TableModel), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<TableModel>> GetTableById(GetTableByIdRequest request)
-        //{
-        //    var Table = await _tableService.GetTableById(request.Id);
-
-        //    return Ok(Table);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<TableModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<TableModel>>> GetTablesByName(GetResturantsByNameRequest request)
-        //{
-        //    var Tables = await _tableService.GetTablesByName(request.Name);
-
-        //    return Ok(Tables);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<TableModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<TableModel>>> GetTablesByCategoryId(GetTablesByCategoryIdRequest request)
-        //{
-        //    var Tables = await _tableService.GetTablesByCategoryId(request.CategoryId);
-
-        //    return Ok(Tables);
-        //}
     }
 }

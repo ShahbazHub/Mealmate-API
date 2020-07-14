@@ -1,4 +1,5 @@
-﻿using Mealmate.Api.Requests;
+﻿using Mealmate.Api.Helpers;
+using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
@@ -7,7 +8,7 @@ using Mealmate.Core.Paging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -30,13 +31,21 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("[action]")]
         [HttpGet]
+        [Route("{menuId}")]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(int menuId)
+        public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(int menuId, string props)
         {
-            var MenuItems = await _menuItemService.Get(menuId);
-            return Ok(MenuItems);
+            try
+            {
+                var MenuItems = await _menuItemService.Get(menuId);
+                JToken _jtoken = TokenService.CreateJToken(MenuItems, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
@@ -76,44 +85,5 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IPagedList<MenuItemModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IPagedList<MenuItemModel>>> SearchMenuItems(SearchPageRequest request)
-        //{
-        //    var MenuItemPagedList = await _menuItemService.SearchMenuItems(request.Args);
-
-        //    return Ok(MenuItemPagedList);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(MenuItemModel), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<MenuItemModel>> GetMenuItemById(GetMenuItemByIdRequest request)
-        //{
-        //    var MenuItem = await _menuItemService.GetMenuItemById(request.Id);
-
-        //    return Ok(MenuItem);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<MenuItemModel>>> GetMenuItemsByName(GetResturantsByNameRequest request)
-        //{
-        //    var MenuItems = await _menuItemService.GetMenuItemsByName(request.Name);
-
-        //    return Ok(MenuItems);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<MenuItemModel>>> GetMenuItemsByCategoryId(GetMenuItemsByCategoryIdRequest request)
-        //{
-        //    var MenuItems = await _menuItemService.GetMenuItemsByCategoryId(request.CategoryId);
-
-        //    return Ok(MenuItems);
-        //}
     }
 }

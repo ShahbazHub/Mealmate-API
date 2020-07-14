@@ -1,4 +1,5 @@
-﻿using Mealmate.Api.Requests;
+﻿using Mealmate.Api.Helpers;
+using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
@@ -7,7 +8,7 @@ using Mealmate.Core.Paging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -30,14 +31,21 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("[action]")]
         [HttpGet]
+        [Route("{branchId}")]
         [ProducesResponseType(typeof(IEnumerable<LocationModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<LocationModel>>> Get(int branchId)
+        public async Task<ActionResult<IEnumerable<LocationModel>>> Get(int branchId, string props)
         {
-            var Locations = await _locationService.Get(branchId);
-
-            return Ok(Locations);
+            try
+            {
+                var Locations = await _locationService.Get(branchId);
+                JToken _jtoken = TokenService.CreateJToken(Locations, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
@@ -77,44 +85,5 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IPagedList<LocationModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IPagedList<LocationModel>>> SearchLocations(SearchPageRequest request)
-        //{
-        //    var LocationPagedList = await _locationService.SearchLocations(request.Args);
-
-        //    return Ok(LocationPagedList);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<LocationModel>> GetLocationById(GetLocationByIdRequest request)
-        //{
-        //    var Location = await _locationService.GetLocationById(request.Id);
-
-        //    return Ok(Location);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<LocationModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<LocationModel>>> GetLocationsByName(GetResturantsByNameRequest request)
-        //{
-        //    var Locations = await _locationService.GetLocationsByName(request.Name);
-
-        //    return Ok(Locations);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<LocationModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<LocationModel>>> GetLocationsByCategoryId(GetLocationsByCategoryIdRequest request)
-        //{
-        //    var Locations = await _locationService.GetLocationsByCategoryId(request.CategoryId);
-
-        //    return Ok(Locations);
-        //}
     }
 }

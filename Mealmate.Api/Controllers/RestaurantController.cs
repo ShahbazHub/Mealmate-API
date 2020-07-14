@@ -42,7 +42,7 @@ namespace Mealmate.Api.Controllers
         [Route("{ownerId}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get(int ownerId,string props)
+        public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get(int ownerId, string props)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Mealmate.Api.Controllers
             {
                 return BadRequest();
             }
-            
+
         }
         #endregion
 
@@ -78,7 +78,7 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(RestaurantModel request)
         {
-            var result  = await _restaurantService.Update(request);
+            var result = await _restaurantService.Update(request);
             return Ok(result);
         }
         #endregion

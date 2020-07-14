@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace Mealmate.Api.Controllers
 {
@@ -26,11 +28,18 @@ namespace Mealmate.Api.Controllers
         #region Read
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<DietaryModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<DietaryModel>>> Get([FromBody] SearchPageRequest request)
+        public async Task<ActionResult<IEnumerable<DietaryModel>>> Get([FromBody] SearchPageRequest request, string props)
         {
-            var temp = await _dietaryService.Search(request.Args);
-
-            return Ok(temp);
+            try
+            {
+                var result = await _dietaryService.Search(request.Args);
+                JToken _jtoken = TokenService.CreateJToken(result, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("{id}")]

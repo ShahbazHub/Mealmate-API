@@ -1,4 +1,5 @@
-﻿using Mealmate.Api.Requests;
+﻿using Mealmate.Api.Helpers;
+using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
@@ -6,7 +7,7 @@ using Mealmate.Core.Paging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -27,13 +28,21 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("[action]")]
         [HttpGet]
+        [Route("{restaurantId}")]
         [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(int restaurantId)
+        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(int restaurantId, string props)
         {
-            var Branchs = await _branchService.Get(restaurantId);
-            return Ok(Branchs);
+            try
+            {
+                var Branches = await _branchService.Get(restaurantId);
+                JToken _jtoken = TokenService.CreateJToken(Branches, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 

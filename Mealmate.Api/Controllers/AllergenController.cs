@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
@@ -9,6 +10,7 @@ using Mealmate.Core.Entities.Lookup;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace Mealmate.Api.Controllers
 {
@@ -27,11 +29,18 @@ namespace Mealmate.Api.Controllers
         #region Read
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<AllergenModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<AllergenModel>>> Get([FromBody] SearchPageRequest request)
+        public async Task<ActionResult<IEnumerable<AllergenModel>>> Get([FromBody] SearchPageRequest request, string props)
         {
-            var temp = await _allergenService.Search(request.Args);
-
-            return Ok(temp);
+            try
+            {
+                var result = await _allergenService.Search(request.Args);
+                JToken _jtoken = TokenService.CreateJToken(result, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("{id}")]

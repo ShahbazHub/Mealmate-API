@@ -1,4 +1,5 @@
-﻿using Mealmate.Api.Requests;
+﻿using Mealmate.Api.Helpers;
+using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
@@ -7,7 +8,7 @@ using Mealmate.Core.Paging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -30,14 +31,21 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("[action]")]
+        [Route("{menuItemId}/{optionItemId}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(int menuItemId,int optionItemId)
+        public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(int menuItemId,int optionItemId,string props)
         {
-            var MenuItemOptions = await _menuItemOptionService.Get(menuItemId, optionItemId);
-
-            return Ok(MenuItemOptions);
+            try
+            {
+                var MenuItemOptions = await _menuItemOptionService.Get(menuItemId, optionItemId);
+                JToken _jtoken = TokenService.CreateJToken(MenuItemOptions, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
