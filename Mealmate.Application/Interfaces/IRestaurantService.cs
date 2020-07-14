@@ -8,6 +8,7 @@ namespace Mealmate.Application.Interfaces
     public interface IRestaurantService
     {
         Task<IEnumerable<RestaurantModel>> Get(int ownerId);
+        Task<IEnumerable<RestaurantModel>> GetByCuisineType(List<int> cusineTypeIds);
         Task<RestaurantModel> GetById(int id);
         Task<RestaurantModel> Create(RestaurantModel model);
         Task<RestaurantModel> Update(RestaurantModel model);

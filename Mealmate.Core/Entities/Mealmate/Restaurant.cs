@@ -14,6 +14,9 @@ namespace Mealmate.Core.Entities
         public int OwnerId { get; set; }
         public virtual User Owner { get; set; }
 
+        public int CuisineTypeId { get; set; }
+        public CuisineType CuisineType { get; set; }
+
         public virtual ICollection<Branch> Branches { get; set; }
 
         public Restaurant()

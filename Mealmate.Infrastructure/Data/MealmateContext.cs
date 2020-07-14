@@ -18,7 +18,7 @@ namespace Mealmate.Infrastructure.Data
         public MealmateContext(DbContextOptions<MealmateContext> options)
             : base(options)
         {
-            
+
         }
 
         private IDbContextTransaction _currentTransaction;
@@ -60,6 +60,7 @@ namespace Mealmate.Infrastructure.Data
             // Lookups
             modelBuilder.ApplyConfiguration(new DietaryConfiguration());
             modelBuilder.ApplyConfiguration(new AllergenConfiguration());
+            modelBuilder.ApplyConfiguration(new CuisineTypeConfiguration());
 
 
             // Custom

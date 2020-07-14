@@ -93,8 +93,8 @@ namespace Mealmate.Api.Controllers
                 }
 
             }
-                return Unauthorized("UserName of Password is incorrect");
-           
+            return Unauthorized("UserName of Password is incorrect");
+
         }
         #endregion
 
@@ -151,13 +151,14 @@ namespace Mealmate.Api.Controllers
                 {
                     var newUser = await _userManager.FindByEmailAsync(model.Email);
                     //Todo:Temp fix.. Flag is required where request is from frontend or mobile app...
-                    if (!string.IsNullOrEmpty(model.RestaurantName))
+                    if (model.IsRestaurantAdmin)
                     {
                         await _restaurantService.Create(new RestaurantModel
                         {
                             OwnerId = newUser.Id,
                             Name = model.RestaurantName,
-                            Description = model.RestaurantDescription
+                            Description = model.RestaurantDescription,
+                            CuisineTypeId = model.CuisineTypeId
                         });
                     }
 

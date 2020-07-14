@@ -22,8 +22,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public RestaurantService(
-            IRestaurantRepository restaurantRepository, 
-            IAppLogger<RestaurantService> logger, 
+            IRestaurantRepository restaurantRepository,
+            IAppLogger<RestaurantService> logger,
             IMapper mapper)
         {
             _restaurantRepository = restaurantRepository ?? throw new ArgumentNullException(nameof(restaurantRepository));
@@ -68,6 +68,13 @@ namespace Mealmate.Application.Services
             return _mapper.Map<IEnumerable<RestaurantModel>>(result);
         }
 
+        public async Task<IEnumerable<RestaurantModel>> GetByCuisineType(List<int> cusineTypeIds)
+        {
+
+            //TODO: add logic for Ids
+            var result = await _restaurantRepository.GetRestaurantListAsync();
+            return _mapper.Map<IEnumerable<RestaurantModel>>(result);
+        }
         public async Task<RestaurantModel> GetById(int id)
         {
             return _mapper.Map<RestaurantModel>(await _restaurantRepository.GetByIdAsync(id));
@@ -83,7 +90,7 @@ namespace Mealmate.Application.Services
 
 
             existingRestaurant = _mapper.Map<Restaurant>(model);
-           var restaurantUpdated  =  await _restaurantRepository.SaveAsync(existingRestaurant);
+            var restaurantUpdated = await _restaurantRepository.SaveAsync(existingRestaurant);
 
             var restaurantModelUpdate = _mapper.Map<RestaurantModel>(restaurantUpdated);
             return restaurantModelUpdate;

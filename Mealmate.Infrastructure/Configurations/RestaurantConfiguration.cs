@@ -34,6 +34,12 @@ namespace Mealmate.Infrastructure.Configurations
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.HasOne(p => p.CuisineType)
+                .WithMany(p => p.Restaurants)
+                .HasForeignKey(p => p.CuisineTypeId)
+                .HasConstraintName("FK_Restaurant_CuisineType")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
 
         }
     }

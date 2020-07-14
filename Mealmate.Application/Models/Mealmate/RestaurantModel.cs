@@ -12,6 +12,8 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
 
         public int OwnerId { get; set; }
+        public int CuisineTypeId { get; set; }
+
         [JsonIgnore]
         public ICollection<BranchModel> Branches { get; set; }
     }
