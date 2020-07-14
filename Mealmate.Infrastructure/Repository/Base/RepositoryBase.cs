@@ -38,7 +38,7 @@ namespace Mealmate.Infrastructure.Repository.Base
         public async virtual Task<T> GetByIdAsync(TId id)
         {
             var entity = await Entities.FindAsync(id);
-            _context.Entry(entity).State = EntityState.Detached;
+            //_context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
 
