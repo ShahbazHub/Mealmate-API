@@ -47,16 +47,6 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        #region Register
-        [HttpPost()]
-        public async Task<ActionResult> Register(UserModel request)
-        {
-            //TODO: Add you code here
-            await _userService.Create(request);
-            return Ok();
-        }
-        #endregion
-
         #region Update
         [HttpPost("{id}")]
         public async Task<ActionResult> Update(UserModel request)
