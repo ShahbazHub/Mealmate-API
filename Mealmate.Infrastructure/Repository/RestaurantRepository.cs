@@ -21,7 +21,7 @@ namespace Mealmate.Infrastructure.Repository
         public RestaurantRepository(MealmateContext context)
             : base(context)
         {
-            
+
         }
 
         public override async Task<Restaurant> GetByIdAsync(int id)
@@ -124,7 +124,7 @@ namespace Mealmate.Infrastructure.Repository
         }
         public async Task<IEnumerable<Restaurant>> GetRestaurantWithBranchesByOwnerIdAsync(int OwnerId)
         {
-            var spec = new RestaurantWithBranchesSpecification(p=> p.OwnerId == OwnerId);
+            var spec = new RestaurantWithBranchesSpecification(p => p.OwnerId == OwnerId);
             return await GetAsync(spec);
         }
     }

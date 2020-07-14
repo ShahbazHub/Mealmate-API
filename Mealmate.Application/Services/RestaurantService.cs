@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -68,13 +69,17 @@ namespace Mealmate.Application.Services
             return _mapper.Map<IEnumerable<RestaurantModel>>(result);
         }
 
-        public async Task<IEnumerable<RestaurantModel>> GetByCuisineType(List<int> cusineTypeIds)
+        public async Task<IEnumerable<RestaurantModel>> GetByCuisineTypes(List<int> cusineTypeIds)
         {
-
-            //TODO: add logic for Ids
             var result = await _restaurantRepository.GetRestaurantListAsync();
-            return _mapper.Map<IEnumerable<RestaurantModel>>(result);
+
+            var data = from item in result.ToList()
+                       join id in cusineTypeIds on item.CuisineTypeId equals id
+                       select item;
+
+            return _mapper.Map<IEnumerable<RestaurantModel>>(data);
         }
+
         public async Task<RestaurantModel> GetById(int id)
         {
             return _mapper.Map<RestaurantModel>(await _restaurantRepository.GetByIdAsync(id));

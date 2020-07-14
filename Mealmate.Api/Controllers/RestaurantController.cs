@@ -56,6 +56,24 @@ namespace Mealmate.Api.Controllers
             }
 
         }
+
+        [Route("{cuisineTypeIds}")]
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get(List<int> cuisineTypeIds, string props)
+        {
+            try
+            {
+                var Restaurants = await _restaurantService.GetByCuisineTypes(cuisineTypeIds);
+                JToken _jtoken = TokenService.CreateJToken(Restaurants, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
+        }
         #endregion
 
         #region Create
