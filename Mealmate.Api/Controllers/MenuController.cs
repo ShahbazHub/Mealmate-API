@@ -1,8 +1,7 @@
-﻿using Mealmate.Api.Helpers;
+using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
-using Mealmate.Core.Entities;
 using Mealmate.Core.Paging;
 
 
@@ -17,29 +16,28 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
-    [Route("api/qrcodes")]
+    [Route("api/menus")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class QRCodeController : ControllerBase
+    public class MenuController : ControllerBase
     {
-        private readonly IQRCodeService _qRCodeService;
+        private readonly IMenuService _menuService;
 
-        public QRCodeController(
-            IQRCodeService qRCodeService
-            )
+        public MenuController(IMenuService menuService)
         {
-            _qRCodeService = qRCodeService;
+            _menuService = menuService ?? throw new ArgumentNullException(nameof(menuService)); ;
         }
 
+
         #region Read
-        [HttpGet("{tableId}")]
-        [ProducesResponseType(typeof(IEnumerable<QRCodeModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<QRCodeModel>>> Get(int tableId, string props)
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<MenuModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<MenuModel>>> Get(string props)
         {
             try
             {
-                var result = await _qRCodeService.Get(tableId);
-                JToken _jtoken = TokenService.CreateJToken(result, props);
+                var Menus = await _menuService.Get();
+                JToken _jtoken = TokenService.CreateJToken(Menus, props);
                 return Ok(_jtoken);
             }
             catch (Exception)
@@ -48,14 +46,14 @@ namespace Mealmate.Api.Controllers
             }
         }
 
-        [HttpGet("{qrCodeId}")]
-        [ProducesResponseType(typeof(QRCodeModel), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<QRCodeModel>> Get(int qrCodeId)
+        [HttpGet("{menuId}")]
+        [ProducesResponseType(typeof(MenuModel), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<MenuModel>> Get(int menuId)
         {
             try
             {
-                var temp = await _qRCodeService.GetById(qrCodeId);
-                return Ok(temp);
+                var Menu = await _menuService.GetById(menuId);
+                return Ok(Menu);
             }
             catch (Exception)
             {
@@ -66,12 +64,12 @@ namespace Mealmate.Api.Controllers
 
         #region Create
         [HttpPost]
-        [ProducesResponseType(typeof(QRCodeModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MenuModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<QRCodeModel>> Create(QRCodeModel request)
+        public async Task<ActionResult<MenuModel>> Create(MenuModel request)
         {
-            var commandResult = await _qRCodeService.Create(request);
-            return Ok(commandResult);
+            var result = await _menuService.Create(request);
+            return Ok(result);
         }
         #endregion
 
@@ -79,24 +77,22 @@ namespace Mealmate.Api.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(QRCodeModel request)
+        public async Task<ActionResult> Update(MenuModel request)
         {
-            await _qRCodeService.Update(request);
+            await _menuService.Update(request);
             return Ok();
         }
         #endregion
 
         #region Delete
-        [HttpDelete("{qrCodeId}")]
+        [HttpDelete("{menuId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Delete(int qrCodeId)
+        public async Task<ActionResult> Delete(int menuId)
         {
-            await _qRCodeService.Delete(qrCodeId);
+            await _menuService.Delete(menuId);
             return Ok();
         }
         #endregion
-
-
     }
 }

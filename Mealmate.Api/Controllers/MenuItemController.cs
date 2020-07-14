@@ -31,8 +31,7 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet]
-        [Route("{menuId}")]
+        [HttpGet("{menuId}")]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(int menuId, string props)
         {
@@ -47,10 +46,24 @@ namespace Mealmate.Api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("{menuItemId}")]
+        [ProducesResponseType(typeof(MenuItemModel), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<MenuItemModel>> Get(int menuItemId)
+        {
+            try
+            {
+                var MenuItem = await _menuItemService.GetById(menuItemId);
+                return Ok(MenuItem);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
         #endregion
 
         #region Create
-        [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(MenuItemModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -62,8 +75,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(MenuItemModel request)
@@ -74,8 +86,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Delete
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("{menuItemId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(int menuItemId)

@@ -31,10 +31,9 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("{menuItemId}/{optionItemId}")]
-        [HttpGet()]
+        [HttpGet("{menuItemId}/{optionItemId}")]
         [ProducesResponseType(typeof(IEnumerable<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(int menuItemId,int optionItemId,string props)
+        public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(int menuItemId, int optionItemId, string props)
         {
             try
             {
@@ -47,10 +46,24 @@ namespace Mealmate.Api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("{menuItemOptionId}")]
+        [ProducesResponseType(typeof(MenuItemOptionModel), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<MenuItemOptionModel>> Get(int menuItemOptionId)
+        {
+            try
+            {
+                var temp = await _menuItemOptionService.GetById(menuItemOptionId);
+                return Ok(temp);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
         #endregion
 
         #region Create
-        [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(MenuItemOptionModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -64,8 +77,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(MenuItemOptionModel request)
@@ -76,55 +88,15 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Delete
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("{menuItemOptionId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Delete(int meneItemOptionId)
+        public async Task<ActionResult> Delete(int menuItemOptionId)
         {
-            await _menuItemOptionService.Delete(meneItemOptionId);
+            await _menuItemOptionService.Delete(menuItemOptionId);
             return Ok();
         }
         #endregion
 
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IPagedList<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IPagedList<MenuItemOptionModel>>> SearchMenuItemOptions(SearchPageRequest request)
-        //{
-        //    var MenuItemOptionPagedList = await _menuItemOptionService.SearchMenuItemOptions(request.Args);
-
-        //    return Ok(MenuItemOptionPagedList);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(MenuItemOptionModel), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<MenuItemOptionModel>> GetMenuItemOptionById(GetMenuItemOptionByIdRequest request)
-        //{
-        //    var MenuItemOption = await _menuItemOptionService.GetMenuItemOptionById(request.Id);
-
-        //    return Ok(MenuItemOption);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> GetMenuItemOptionsByName(GetResturantsByNameRequest request)
-        //{
-        //    var MenuItemOptions = await _menuItemOptionService.GetMenuItemOptionsByName(request.Name);
-
-        //    return Ok(MenuItemOptions);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> GetMenuItemOptionsByCategoryId(GetMenuItemOptionsByCategoryIdRequest request)
-        //{
-        //    var MenuItemOptions = await _menuItemOptionService.GetMenuItemOptionsByCategoryId(request.CategoryId);
-
-        //    return Ok(MenuItemOptions);
-        //}
     }
 }

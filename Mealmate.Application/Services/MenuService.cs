@@ -22,8 +22,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public MenuService(
-            IMenuRepository menuRepository, 
-            IAppLogger<MenuService> logger, 
+            IMenuRepository menuRepository,
+            IAppLogger<MenuService> logger,
             IMapper mapper)
         {
             _menuRepository = menuRepository ?? throw new ArgumentNullException(nameof(menuRepository));
@@ -61,9 +61,9 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully deleted - MealmateAppService");
         }
 
-        public async Task<IEnumerable<MenuModel>> Get(int branchId)
+        public async Task<IEnumerable<MenuModel>> Get()
         {
-            var result = await _menuRepository.GetAsync(x => x.BranchId== branchId);
+            var result = await _menuRepository.ListAllAsync();
             return _mapper.Map<IEnumerable<MenuModel>>(result);
         }
 

@@ -46,6 +46,21 @@ namespace Mealmate.Api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet("{menuItemAllergenId}")]
+        [ProducesResponseType(typeof(MenuItemAllergenModel), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<MenuItemAllergenModel>> Get(int menuItemAllergenId)
+        {
+            try
+            {
+                var temp = await _menuItemAllergenService.Get(menuItemAllergenId);
+                return Ok(temp);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
         #endregion
 
         #region Create
@@ -71,8 +86,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Delete
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("{menuItemAllergenId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(int menuItemAllergenId)
