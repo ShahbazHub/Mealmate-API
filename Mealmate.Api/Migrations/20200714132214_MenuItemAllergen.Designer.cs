@@ -4,14 +4,16 @@ using Mealmate.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    partial class MealmateContextModelSnapshot : ModelSnapshot
+    [Migration("20200714132214_MenuItemAllergen")]
+    partial class MenuItemAllergen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,34 +244,6 @@ namespace Mealmate.Api.Migrations
                     b.HasIndex("MenuItemId");
 
                     b.ToTable("MenuItemAllergen","Mealmate");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.MenuItemDietary", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTimeOffset>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("DietaryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MenuItemId")
-                        .HasColumnType("INT");
-
-                    b.HasKey("Id")
-                        .HasName("PK_MenuItemDietary");
-
-                    b.HasIndex("DietaryId");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.ToTable("MenuItemDietary","Mealmate");
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.MenuItemOption", b =>
@@ -725,22 +699,6 @@ namespace Mealmate.Api.Migrations
                         .WithMany("MenuItemAllergens")
                         .HasForeignKey("MenuItemId")
                         .HasConstraintName("FK_MenuItemAllergen_MenuItem")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.MenuItemDietary", b =>
-                {
-                    b.HasOne("Mealmate.Core.Entities.Lookup.Dietary", "Dietary")
-                        .WithMany()
-                        .HasForeignKey("DietaryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Mealmate.Core.Entities.MenuItem", "MenuItem")
-                        .WithMany("MenuItemDietaries")
-                        .HasForeignKey("MenuItemId")
-                        .HasConstraintName("FK_MenuItemDietary_MenuItem")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

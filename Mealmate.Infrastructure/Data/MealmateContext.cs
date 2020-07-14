@@ -62,6 +62,9 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new AllergenConfiguration());
             modelBuilder.ApplyConfiguration(new CuisineTypeConfiguration());
 
+            modelBuilder.ApplyConfiguration(new MenuItemAllergenConfiguration());
+            modelBuilder.ApplyConfiguration(new MenuItemDietaryConfiguration());
+
 
             // Custom
             modelBuilder.RegisterCustomMappings(typeToRegisters);

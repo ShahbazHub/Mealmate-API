@@ -17,10 +17,14 @@ namespace Mealmate.Core.Entities
         public virtual Menu Menu { get; set; }
 
         public virtual ICollection<MenuItemOption> MenuItemOptions { get; set; }
+        public virtual ICollection<MenuItemAllergen> MenuItemAllergens { get; set; }
+        public virtual ICollection<MenuItemDietary> MenuItemDietaries { get; set; }
 
         public MenuItem()
         {
             MenuItemOptions = new HashSet<MenuItemOption>();
+            MenuItemAllergens = new HashSet<MenuItemAllergen>();
+            MenuItemDietaries = new HashSet<MenuItemDietary>();
         }
     }
 }
