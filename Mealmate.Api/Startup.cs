@@ -31,15 +31,14 @@ namespace Mealmate.Api
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            return
-            services
-                .AddCustomMvc()
+            return services.AddCustomMvc()
                 .AddCustomDbContext(_mealMateSettings)
                 .AddCustomIdentity()
                 .AddCustomSwagger()
                 .AddCustomConfiguration(_config)
                 .AddCustomAuthentication(_mealMateSettings)
                 .AddCustomIntegrations(_env);
+            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

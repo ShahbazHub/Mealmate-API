@@ -28,6 +28,7 @@ using Autofac.Core.Lifetime;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
+using Mealmate.Api.Helpers;
 
 namespace Mealmate.Api
 {
@@ -40,6 +41,7 @@ namespace Mealmate.Api
                 .AddMvc(configure =>
                 {
                     configure.EnableEndpointRouting = false;
+                    configure.SuppressAsyncSuffixInActionNames = false;
                 })
                 .AddFluentValidation(fv =>
                 {
@@ -86,6 +88,7 @@ namespace Mealmate.Api
                     ServiceLifetime.Transient
                  );
 
+            services.AddTransient<IEmailService, EmailService>();
             return services;
         }
 
@@ -109,12 +112,15 @@ namespace Mealmate.Api
                             options.Password.RequireUppercase = false;
 
                             options.User.RequireUniqueEmail = true;
+                            //options.Tokens.ProviderMap.Add("CustomEmailConfirmation",
+                            //    new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<IdentityUser>)));
+                            //options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
                         })
                         .AddEntityFrameworkStores<MealmateContext>()
                         .AddDefaultTokenProviders();
                 }
             }
-
+            services.AddTransient<CustomEmailConfirmationTokenProvider<IdentityUser>>();
             return services;
         }
 
@@ -189,7 +195,7 @@ namespace Mealmate.Api
                     };
                 };
             });
-
+            services.Configure<AuthMessageSenderOptions>(configuration);
             return services;
         }
 

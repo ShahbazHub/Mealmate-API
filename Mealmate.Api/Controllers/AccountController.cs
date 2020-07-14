@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
@@ -27,6 +28,7 @@ namespace Mealmate.Api.Controllers
     {
         private readonly MealmateSettings _mealmateSettings;
         private readonly IRestaurantService _restaurantService;
+        private readonly IEmailService _emailService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
@@ -35,13 +37,15 @@ namespace Mealmate.Api.Controllers
           UserManager<User> userManager,
           IOptions<MealmateSettings> options,
           IMapper mapper,
-          IRestaurantService restaurantService)
+          IRestaurantService restaurantService,
+          IEmailService emailService)
         {
             _mapper = mapper;
             _signInManager = signInManager;
             _userManager = userManager;
             _mealmateSettings = options.Value;
             _restaurantService = restaurantService;
+            _emailService = emailService;
         }
 
         #region Login
@@ -93,8 +97,8 @@ namespace Mealmate.Api.Controllers
                 }
 
             }
-                return Unauthorized("UserName of Password is incorrect");
-           
+            return Unauthorized("UserName of Password is incorrect");
+
         }
         #endregion
 
@@ -159,6 +163,11 @@ namespace Mealmate.Api.Controllers
                             Name = model.RestaurantName,
                             Description = model.RestaurantDescription
                         });
+
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                        await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
                     }
 
                     return Created($"/api/users/{user.Id}", _mapper.Map<UserModel>(user));
@@ -170,6 +179,41 @@ namespace Mealmate.Api.Controllers
             }
             return BadRequest(ModelState);
         }
+        #endregion
+
+        #region ResetPassword
+        [AllowAnonymous]
+        [HttpGet("resetpassword")]
+        public async Task<ActionResult> ResetPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, protocol: HttpContext.Request.Scheme);
+                var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                await _emailService.SendEmailAsync(email, "Reset Password", message);
+                return Ok("Check Your email...");
+            }
+            return BadRequest();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("resetpassword")]
+        public async Task<ActionResult> ChangePassword([FromBody] ResetPasswordRequest request)
+        {
+            var user = await _userManager.FindByNameAsync(request.UserName);
+            if (user != null)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+                if (result.Succeeded)
+                {
+                    return Ok("User Password Changed Successfully!");
+                }
+            }
+            return BadRequest();
+        }
+
         #endregion
     }
 }
