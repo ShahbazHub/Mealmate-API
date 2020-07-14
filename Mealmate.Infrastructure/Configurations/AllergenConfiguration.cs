@@ -20,6 +20,10 @@ namespace Mealmate.Infrastructure.Configurations
                 .HasColumnType("NVARCHAR(250)")
                 .IsRequired();
 
+            builder.Property(p => p.Photo)
+                .HasColumnType("VARBINARY(MAX)")
+                .IsRequired();
+
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()

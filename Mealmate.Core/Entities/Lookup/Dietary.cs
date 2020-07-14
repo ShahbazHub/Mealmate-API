@@ -8,6 +8,8 @@ namespace Mealmate.Core.Entities.Lookup
     public class Dietary : Entity
     {
         public string Name { get; set; }
+        public byte[] Photo { get; set; }
+
         public DateTimeOffset Created { get; set; }
 
     }

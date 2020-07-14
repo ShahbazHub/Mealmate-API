@@ -8,6 +8,7 @@ namespace Mealmate.Core.Entities.Lookup
     public class Allergen : Entity
     {
         public string Name { get; set; }
+        public byte[] Photo { get; set; }
         public DateTimeOffset Created { get; set; }
 
     }

@@ -9,6 +9,8 @@ namespace Mealmate.Application.Models
     {
         [Required]
         public string Name { get; set; }
+        [Required]
+        public byte[] Photo { get; set; }
         public DateTimeOffset Created { get; set; }
     }
 }

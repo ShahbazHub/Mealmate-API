@@ -27,6 +27,9 @@ namespace Mealmate.Infrastructure.Configurations
                 .IsRequired()
                 .HasDefaultValueSql("GETDATE()");
 
+            builder.Property(p => p.Photo)
+                .HasColumnType("VARBINARY(MAX)");
+
             builder.HasOne(p => p.Owner)
                 .WithMany(p => p.Restaurants)
                 .HasForeignKey(p => p.OwnerId)
