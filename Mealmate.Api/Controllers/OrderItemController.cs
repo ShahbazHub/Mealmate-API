@@ -14,26 +14,26 @@ using Newtonsoft.Json.Linq;
 
 namespace Mealmate.Api.Controllers
 {
-    [Route("api/orders")]
+    [Route("api/orderitems")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class OrderController : ControllerBase
+    public class OrderItemController : ControllerBase
     {
-        private readonly IOrderService _orderService;
+        private readonly IOrderItemService _orderitemService;
 
-        public OrderController(IOrderService orderService)
+        public OrderItemController(IOrderItemService orderitemService)
         {
-            _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
+            _orderitemService = orderitemService ?? throw new ArgumentNullException(nameof(orderitemService));
         }
 
         #region Read
-        [HttpGet("{customerId}")]
-        [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OrderModel>>> Get(int customerId, string props)
+        [HttpGet("{orderId}")]
+        [ProducesResponseType(typeof(IEnumerable<OrderItemModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<OrderItemModel>>> Get(int orderId, string props)
         {
             try
             {
-                var result = await _orderService.Get(customerId);
+                var result = await _orderitemService.Get(orderId);
                 JToken _jtoken = TokenService.CreateJToken(result, props);
                 return Ok(_jtoken);
             }
@@ -44,10 +44,10 @@ namespace Mealmate.Api.Controllers
         }
 
         [Route("single/{id}")]
-        [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OrderModel>>> Get(int id)
+        [ProducesResponseType(typeof(IEnumerable<OrderItemModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<OrderItemModel>>> Get(int id)
         {
-            var temp = await _orderService.GetById(id);
+            var temp = await _orderitemService.GetById(id);
 
             return Ok(temp);
         }
@@ -55,14 +55,14 @@ namespace Mealmate.Api.Controllers
 
         #region Create
         [HttpPost()]
-        public async Task<ActionResult> Create([FromBody] OrderModel model)
+        public async Task<ActionResult> Create([FromBody] OrderItemModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _orderService.Create(model);
+                var result = await _orderitemService.Create(model);
                 if (result != null)
                 {
-                    return Created($"api/orders/{result.Id}", result);
+                    return Created($"api/orderitems/{result.Id}", result);
                 }
             }
 
@@ -74,14 +74,14 @@ namespace Mealmate.Api.Controllers
         [HttpPut()]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(OrderModel model)
+        public async Task<ActionResult> Update(OrderItemModel model)
         {
             //TODO: Add you code here
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _orderService.Update(model);
+                    await _orderitemService.Update(model);
                 }
             }
             catch (Exception ex)
@@ -101,7 +101,7 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
-                await _orderService.Delete(id);
+                await _orderitemService.Delete(id);
             }
             catch (Exception ex)
             {
