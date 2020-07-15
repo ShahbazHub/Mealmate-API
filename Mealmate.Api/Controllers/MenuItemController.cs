@@ -1,10 +1,6 @@
 ﻿using Mealmate.Api.Helpers;
-using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
-using Mealmate.Core.Paging;
-
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Mealmate.Api.Requests;
 
 namespace Mealmate.Api.Controllers
 {
@@ -54,6 +51,23 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var MenuItem = await _menuItemService.GetById(menuItemId);
+                return Ok(MenuItem);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [Route("filter")]
+        [HttpGet()]
+        [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(
+            [FromBody] MenuFilterRequest filterRequest)
+        {
+            try
+            {
+                var MenuItem = await _menuItemService.GetById(1);
                 return Ok(MenuItem);
             }
             catch (Exception)

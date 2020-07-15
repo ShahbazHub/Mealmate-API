@@ -27,6 +27,7 @@ namespace Mealmate.Application.Mapper
             CreateMap<User, UserModel>().ReverseMap();
             CreateMap<Allergen, AllergenModel>().ReverseMap();
             CreateMap<Dietary, DietaryModel>().ReverseMap();
+            CreateMap<CuisineType, CuisineTypeModel>().ReverseMap();
         }
 
 
