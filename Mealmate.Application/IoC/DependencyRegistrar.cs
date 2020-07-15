@@ -49,6 +49,11 @@ namespace Mealmate.Application.IoC
 
             builder.RegisterType<TableService>().As<ITableService>().InstancePerLifetimeScope();
 
+
+            builder.RegisterType<OrderService>().As<IOrderService>().InstancePerLifetimeScope();
+            builder.RegisterType<OrderItemService>().As<IOrderItemService>().InstancePerLifetimeScope();
+            builder.RegisterType<OrderItemDetailService>().As<IOrderItemDetailService>().InstancePerLifetimeScope();
+
             builder.RegisterType<MealMateMapper>().As<Profile>();
 
         }

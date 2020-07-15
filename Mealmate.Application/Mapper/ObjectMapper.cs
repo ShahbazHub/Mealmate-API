@@ -10,9 +10,12 @@ namespace Mealmate.Application.Mapper
         public MealMateMapper()
         {
 
+            // Identity
+            CreateMap<User, UserModel>().ReverseMap();
             CreateMap<UserAllergen, UserAllergenModel>().ReverseMap();
             CreateMap<UserDietary, UserDietaryModel>().ReverseMap();
 
+            // Mealmate
             CreateMap<Restaurant, RestaurantModel>().ReverseMap();
             CreateMap<Branch, BranchModel>().ReverseMap();
             CreateMap<Location, LocationModel>().ReverseMap();
@@ -20,14 +23,20 @@ namespace Mealmate.Application.Mapper
             CreateMap<MenuItem, MenuItemModel>().ReverseMap();
             CreateMap<MenuItemAllergen, MenuItemAllergenModel>().ReverseMap();
             CreateMap<MenuItemDietary, MenuItemDietaryModel>().ReverseMap();
-
             CreateMap<MenuItemOption, MenuItemOptionModel>().ReverseMap();
             CreateMap<QRCode, QRCodeModel>().ReverseMap();
             CreateMap<Table, TableModel>().ReverseMap();
-            CreateMap<User, UserModel>().ReverseMap();
+
+            // Lookup
             CreateMap<Allergen, AllergenModel>().ReverseMap();
             CreateMap<Dietary, DietaryModel>().ReverseMap();
             CreateMap<CuisineType, CuisineTypeModel>().ReverseMap();
+
+            // Sale
+            CreateMap<Order, OrderModel>().ReverseMap();
+            CreateMap<OrderItem, OrderItemModel>().ReverseMap();
+            CreateMap<OrderItemDetail, OrderItemDetailModel>().ReverseMap();
+
         }
 
 
