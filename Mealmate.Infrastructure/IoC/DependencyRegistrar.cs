@@ -38,6 +38,11 @@ namespace Mealmate.Infrastructure.IoC
             builder.RegisterType<UserAllergenRepository>().As<IUserAllergenRepository>().InstancePerRequest();
             builder.RegisterType<UserDietaryRepository>().As<IUserDietaryRepository>().InstancePerRequest();
 
+            // Sale
+            builder.RegisterType<OrderRepository>().As<IOrderRepository>().InstancePerRequest();
+            builder.RegisterType<OrderItemRepository>().As<IOrderItemRepository>().InstancePerRequest();
+            builder.RegisterType<OrderItemDetailRepository>().As<IOrderItemDetailRepository>().InstancePerRequest();
+
 
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerRequest();
             builder.RegisterGeneric(typeof(EnumRepository<>)).As(typeof(IEnumRepository<>)).InstancePerRequest();
