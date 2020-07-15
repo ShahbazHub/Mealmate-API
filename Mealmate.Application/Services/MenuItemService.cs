@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -18,15 +19,18 @@ namespace Mealmate.Application.Services
     public class MenuItemService : IMenuItemService
     {
         private readonly IMenuItemRepository _menuItemRepository;
+        private readonly IMenuItemAllergenRepository _menuItemAllergenRepository;
         private readonly IAppLogger<MenuItemService> _logger;
         private readonly IMapper _mapper;
 
         public MenuItemService(
-            IMenuItemRepository menuItemRepository, 
-            IAppLogger<MenuItemService> logger, 
+            IMenuItemRepository menuItemRepository,
+            IMenuItemAllergenRepository menuItemAllergenRepository,
+            IAppLogger<MenuItemService> logger,
             IMapper mapper)
         {
             _menuItemRepository = menuItemRepository ?? throw new ArgumentNullException(nameof(menuItemRepository));
+            _menuItemAllergenRepository = menuItemAllergenRepository ?? throw new ArgumentNullException(nameof(menuItemAllergenRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
         }
@@ -63,13 +67,25 @@ namespace Mealmate.Application.Services
 
         public async Task<IEnumerable<MenuItemModel>> Get(int menuId)
         {
-            var result = await _menuItemRepository.GetAsync(x => x.MenuId== menuId);
+            var result = await _menuItemRepository.GetAsync(x => x.MenuId == menuId);
             return _mapper.Map<IEnumerable<MenuItemModel>>(result);
         }
 
         public async Task<MenuItemModel> GetById(int id)
         {
             return _mapper.Map<MenuItemModel>(await _menuItemRepository.GetByIdAsync(id));
+        }
+
+        public async Task<IEnumerable<MenuItemModel>> Get(List<int> allergenIds, List<int> dietaryIds)
+        {
+            var result = await _menuItemRepository.GetWithDetailsAsync();
+
+            //TODO: filtering the menu items having allergens / dietaries
+
+            var groupAllergens = result.GroupBy(p => p.MenuItemAllergens.Select(x => x.AllergenId));
+            var groupDietaries = result.GroupBy(p => p.MenuItemDietaries.Select(x => x.DietaryId));
+
+            return _mapper.Map<IEnumerable<MenuItemModel>>(result);
         }
 
         public async Task Update(MenuItemModel model)

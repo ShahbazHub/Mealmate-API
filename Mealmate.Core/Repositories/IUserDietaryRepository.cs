@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Core.Repositories
 {
-    public interface IMenuItemRepository : IRepository<MenuItem>
+    public interface IUserDietaryRepository : IRepository<UserDietary>
     {
-        Task<IEnumerable<MenuItem>> GetWithDetailsAsync();
     }
 }

@@ -17,5 +17,7 @@ namespace Mealmate.Application.Models
         //public MenuModel Menu { get; set; }
 
         public ICollection<MenuItemOptionModel> MenuItemOptions { get; set; }
+        public ICollection<MenuItemAllergenModel> MenuItemAllergens { get; set; }
+        public ICollection<MenuItemDietaryModel> MenuItemDietaries { get; set; }
     }
 }

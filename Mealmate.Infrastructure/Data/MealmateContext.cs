@@ -48,6 +48,9 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new TableConfiguration());
 
             //Identity Schema
+            modelBuilder.ApplyConfiguration(new UserAllergenConfiguration());
+            modelBuilder.ApplyConfiguration(new UserDietaryConfiguration());
+
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new RoleClaimConfiguration());
@@ -65,6 +68,10 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new MenuItemAllergenConfiguration());
             modelBuilder.ApplyConfiguration(new MenuItemDietaryConfiguration());
 
+
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemDetailConfiguration());
 
             // Custom
             modelBuilder.RegisterCustomMappings(typeToRegisters);

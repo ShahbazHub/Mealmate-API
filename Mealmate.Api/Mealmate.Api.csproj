@@ -35,6 +35,7 @@
     <Compile Include="Requests\LoginRequest.cs" />
     <Compile Include="Requests\RegisterRequest.cs" />
     <Compile Include="Requests\SearchPageRequest.cs" />
+    <Compile Include="Requests\MenuFilterRequest.cs" />
   </ItemGroup>
 
   <ItemGroup>

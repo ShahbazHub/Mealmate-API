@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Mealmate.Core.Entities.Base;
 
 namespace Mealmate.Core.Entities
@@ -16,5 +17,11 @@ namespace Mealmate.Core.Entities
 
         public int OptionItemId { get; set; }
         public virtual OptionItem OptionItem { get; set; }
+
+        public virtual ICollection<OrderItemDetail> OrderItemDetails { get; set; }
+        public MenuItemOption()
+        {
+            OrderItemDetails = new HashSet<OrderItemDetail>();
+        }
     }
 }

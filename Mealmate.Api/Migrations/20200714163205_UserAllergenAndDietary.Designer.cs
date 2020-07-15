@@ -4,14 +4,16 @@ using Mealmate.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    partial class MealmateContextModelSnapshot : ModelSnapshot
+    [Migration("20200714163205_UserAllergenAndDietary")]
+    partial class UserAllergenAndDietary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -331,106 +333,6 @@ namespace Mealmate.Api.Migrations
                     b.HasIndex("BranchId");
 
                     b.ToTable("OptionItem","Lookup");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("INT");
-
-                    b.Property<DateTimeOffset>("OrderDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("OrderNumber")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(150)");
-
-                    b.Property<int>("TableId")
-                        .HasColumnType("INT");
-
-                    b.HasKey("Id")
-                        .HasName("PK_Order");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("TableId");
-
-                    b.ToTable("Order","Sale");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.OrderItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTimeOffset>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("MenuItemId")
-                        .HasColumnType("INT");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("INT");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INT");
-
-                    b.HasKey("Id")
-                        .HasName("PK_OrderItem");
-
-                    b.HasIndex("MenuItemId");
-
-                    b.HasIndex("OrderId");
-
-                    b.ToTable("OrderItem","Sale");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.OrderItemDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTimeOffset>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("MenuItemOptionId")
-                        .HasColumnType("INT");
-
-                    b.Property<int>("OrderItemId")
-                        .HasColumnType("INT");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INT");
-
-                    b.HasKey("Id")
-                        .HasName("PK_OrderItemDetail");
-
-                    b.HasIndex("MenuItemOptionId");
-
-                    b.HasIndex("OrderItemId");
-
-                    b.ToTable("OrderItemDetail","Sale");
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.QRCode", b =>
@@ -924,57 +826,6 @@ namespace Mealmate.Api.Migrations
                         .WithMany("OptionItems")
                         .HasForeignKey("BranchId")
                         .HasConstraintName("FK_OptionItem_Branch")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.Order", b =>
-                {
-                    b.HasOne("Mealmate.Core.Entities.User", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerId")
-                        .HasConstraintName("FK_Order_Customer")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Mealmate.Core.Entities.Table", "Table")
-                        .WithMany("Orders")
-                        .HasForeignKey("TableId")
-                        .HasConstraintName("FK_Order_Table")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.OrderItem", b =>
-                {
-                    b.HasOne("Mealmate.Core.Entities.MenuItem", "MenuItem")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("MenuItemId")
-                        .HasConstraintName("FK_OrderItem_MenuItem")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Mealmate.Core.Entities.Order", "Order")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("OrderId")
-                        .HasConstraintName("FK_OrderItem_Order")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.OrderItemDetail", b =>
-                {
-                    b.HasOne("Mealmate.Core.Entities.MenuItemOption", "MenuItemOption")
-                        .WithMany("OrderItemDetails")
-                        .HasForeignKey("MenuItemOptionId")
-                        .HasConstraintName("FK_OrderItemDetail_MenuItemOption")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Mealmate.Core.Entities.OrderItem", "OrderItem")
-                        .WithMany("OrderItemDetails")
-                        .HasForeignKey("OrderItemId")
-                        .HasConstraintName("FK_OrderItemDetail_OrderItem")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

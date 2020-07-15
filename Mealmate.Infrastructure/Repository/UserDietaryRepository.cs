@@ -16,17 +16,11 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Infrastructure.Repository
 {
-    public class MenuItemRepository : Repository<MenuItem>, IMenuItemRepository
+    public class UserDietaryRepository : Repository<UserDietary>, IUserDietaryRepository
     {
-        public MenuItemRepository(MealmateContext context)
+        public UserDietaryRepository(MealmateContext context)
             : base(context)
         {
-        }
-
-        public async Task<IEnumerable<MenuItem>> GetWithDetailsAsync()
-        {
-            var spec = new MenuItemSpecification();
-            return await GetAsync(spec);
         }
 
     }
