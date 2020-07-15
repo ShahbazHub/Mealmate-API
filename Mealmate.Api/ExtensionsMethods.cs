@@ -135,8 +135,8 @@ namespace Mealmate.Api
                     Description = "Mealmate Service to share the api structure with frontend developers",
                     Contact = new OpenApiContact
                     {
-                        Name = "Salman Taj",
-                        Email = "salman1277@gmail.com"
+                        Name = "Salman Malik",
+                        Email = "salman@askhorizons.com"
                     },
                     TermsOfService = new Uri("https://dev.azure.com/mealmate/MealMate/_git/Mealmate-DotNet")
                 });
