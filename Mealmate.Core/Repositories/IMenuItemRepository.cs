@@ -8,5 +8,6 @@ namespace Mealmate.Core.Repositories
 {
     public interface IMenuItemRepository : IRepository<MenuItem>
     {
+        Task<IEnumerable<MenuItem>> GetWithDetailsAsync();
     }
 }

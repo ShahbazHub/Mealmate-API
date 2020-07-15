@@ -60,15 +60,15 @@ namespace Mealmate.Api.Controllers
         }
 
         [Route("filter")]
-        [HttpGet()]
+        [HttpPost()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(
             [FromBody] MenuFilterRequest filterRequest)
         {
             try
             {
-                var MenuItem = await _menuItemService.GetById(1);
-                return Ok(MenuItem);
+                var MenuItems = await _menuItemService.Get(filterRequest.allergenIds, filterRequest.dietaryIds);
+                return Ok(MenuItems);
             }
             catch (Exception)
             {

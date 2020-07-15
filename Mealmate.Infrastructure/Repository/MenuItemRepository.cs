@@ -23,5 +23,11 @@ namespace Mealmate.Infrastructure.Repository
         {
         }
 
+        public async Task<IEnumerable<MenuItem>> GetWithDetailsAsync()
+        {
+            var spec = new MenuItemSpecification();
+            return await GetAsync(spec);
+        }
+
     }
 }
