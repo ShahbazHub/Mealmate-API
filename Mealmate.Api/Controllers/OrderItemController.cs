@@ -44,6 +44,7 @@ namespace Mealmate.Api.Controllers
         }
 
         [Route("single/{id}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<OrderItemModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<OrderItemModel>>> Get(int id)
         {
