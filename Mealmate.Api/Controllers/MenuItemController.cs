@@ -67,6 +67,7 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
+                //TODO: filtering the menu items having allergens / dietaries
                 var MenuItems = await _menuItemService.Get(filterRequest.allergenIds, filterRequest.dietaryIds);
                 return Ok(MenuItems);
             }

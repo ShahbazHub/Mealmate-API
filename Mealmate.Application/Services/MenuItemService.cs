@@ -80,6 +80,8 @@ namespace Mealmate.Application.Services
         {
             var result = await _menuItemRepository.GetWithDetailsAsync();
 
+            //TODO: filtering the menu items having allergens / dietaries
+
             var groupAllergens = result.GroupBy(p => p.MenuItemAllergens.Select(x => x.AllergenId));
             var groupDietaries = result.GroupBy(p => p.MenuItemDietaries.Select(x => x.DietaryId));
 

@@ -69,6 +69,10 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new MenuItemDietaryConfiguration());
 
 
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemDetailConfiguration());
+
             // Custom
             modelBuilder.RegisterCustomMappings(typeToRegisters);
         }
