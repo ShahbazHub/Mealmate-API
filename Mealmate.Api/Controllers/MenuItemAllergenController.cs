@@ -46,10 +46,10 @@ namespace Mealmate.Api.Controllers
                 return BadRequest();
             }
         }
-
-        [HttpGet("{menuItemAllergenId}")]
+        [Route("GetByAllergenId")]
+        [HttpGet]
         [ProducesResponseType(typeof(MenuItemAllergenModel), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<MenuItemAllergenModel>> Get(int menuItemAllergenId)
+        public async Task<ActionResult<MenuItemAllergenModel>> GetByAllergenId(int menuItemAllergenId)
         {
             try
             {

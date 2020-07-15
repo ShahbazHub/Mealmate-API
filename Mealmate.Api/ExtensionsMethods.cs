@@ -29,6 +29,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.IO;
 using Mealmate.Api.Helpers;
+using Autofac.Core;
 
 namespace Mealmate.Api
 {
@@ -201,8 +202,9 @@ namespace Mealmate.Api
 
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, MealmateSettings MealmateSettings)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-              .AddJwtBearer(options =>
+            services
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
               {
                   options.TokenValidationParameters = new TokenValidationParameters
                   {
@@ -215,7 +217,13 @@ namespace Mealmate.Api
                       ValidAudience = MealmateSettings.Tokens.Audience,
                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(MealmateSettings.Tokens.Key))
                   };
-              });
+              })
+                .AddGoogle(googleConfig =>
+                {
+                    googleConfig.ClientId = MealmateSettings.ClientId;
+                    googleConfig.ClientSecret = MealmateSettings.ClientSecret;
+                })
+                .AddFacebook();
 
             return services;
         }
