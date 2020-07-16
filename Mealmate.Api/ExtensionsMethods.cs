@@ -222,8 +222,7 @@ namespace Mealmate.Api
                 {
                     googleConfig.ClientId = MealmateSettings.ClientId;
                     googleConfig.ClientSecret = MealmateSettings.ClientSecret;
-                })
-                .AddFacebook();
+                });
 
             return services;
         }

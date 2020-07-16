@@ -6,8 +6,13 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Mealmate.Api.xml</DocumentationFile>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin</OutputPath>
     <NoWarn>1701;1702,1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Mealmate.Api.xml</DocumentationFile>
+    <OutputPath>bin</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
