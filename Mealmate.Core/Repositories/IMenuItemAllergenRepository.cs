@@ -8,5 +8,7 @@ namespace Mealmate.Core.Repositories
 {
     public interface IMenuItemAllergenRepository : IRepository<MenuItemAllergen>
     {
+        Task<IPagedList<MenuItemAllergen>> SearchAsync(PageSearchArgs args);
+        Task<IPagedList<MenuItemAllergen>> SearchAsync(int menuItemId, PageSearchArgs args);
     }
 }

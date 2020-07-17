@@ -1,4 +1,5 @@
 ﻿using Mealmate.Application.Models;
+using Mealmate.Core.Paging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,5 +12,8 @@ namespace Mealmate.Application.Interfaces
         Task<MenuModel> Create(MenuModel model);
         Task Update(MenuModel model);
         Task Delete(int id);
+
+        Task<IPagedList<MenuModel>> Search(PageSearchArgs args);
+        Task<IPagedList<MenuModel>> Search(int branchId, PageSearchArgs args);
     }
 }

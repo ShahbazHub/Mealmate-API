@@ -1,4 +1,5 @@
 ﻿using Mealmate.Application.Models;
+using Mealmate.Core.Paging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,5 +12,6 @@ namespace Mealmate.Application.Interfaces
         Task<LocationModel> Create(LocationModel model);
         Task Update(LocationModel model);
         Task Delete(int id);
+        Task<IPagedList<LocationModel>> Search(int branchId, PageSearchArgs args);
     }
 }

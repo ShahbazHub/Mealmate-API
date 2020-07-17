@@ -8,5 +8,7 @@ namespace Mealmate.Core.Repositories
 {
     public interface IMenuRepository : IRepository<Menu>
     {
+        Task<IPagedList<Menu>> SearchAsync(PageSearchArgs args);
+        Task<IPagedList<Menu>> SearchAsync(int branchId, PageSearchArgs args);
     }
 }

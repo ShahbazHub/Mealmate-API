@@ -103,6 +103,40 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
+
+        public async Task<IPagedList<MenuItemModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _menuItemRepository.SearchAsync(args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<MenuItemModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<MenuItemModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
+        }
+
+        public async Task<IPagedList<MenuItemModel>> Search(int branchId, PageSearchArgs args)
+        {
+            var TablePagedList = await _menuItemRepository.SearchAsync(branchId, args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<MenuItemModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<MenuItemModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
+        }
         //public async Task<IEnumerable<MenuItemModel>> GetMenuItemList()
         //{
         //    var MenuItemList = await _menuItemRepository.ListAllAsync();

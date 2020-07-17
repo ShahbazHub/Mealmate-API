@@ -9,5 +9,7 @@ namespace Mealmate.Core.Repositories
     public interface IMenuItemRepository : IRepository<MenuItem>
     {
         Task<IEnumerable<MenuItem>> GetWithDetailsAsync();
+        Task<IPagedList<MenuItem>> SearchAsync(PageSearchArgs args);
+        Task<IPagedList<MenuItem>> SearchAsync(int menuId, PageSearchArgs args);
     }
 }

@@ -33,12 +33,6 @@ namespace Mealmate.Application.Services
 
         public async Task<MenuModel> Create(MenuModel model)
         {
-            var existingMenu = await _menuRepository.GetByIdAsync(model.Id);
-            if (existingMenu != null)
-            {
-                throw new ApplicationException("menu with this id already exists");
-            }
-
             var newmenu = _mapper.Map<Menu>(model);
             newmenu = await _menuRepository.SaveAsync(newmenu);
 
@@ -85,6 +79,40 @@ namespace Mealmate.Application.Services
             await _menuRepository.SaveAsync(existingMenu);
 
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
+        }
+
+        public async Task<IPagedList<MenuModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _menuRepository.SearchAsync(args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<MenuModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<MenuModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
+        }
+
+        public async Task<IPagedList<MenuModel>> Search(int branchId, PageSearchArgs args)
+        {
+            var TablePagedList = await _menuRepository.SearchAsync(branchId, args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<MenuModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<MenuModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
         }
 
         //public async Task<IEnumerable<MenuModel>> GetMenuList()

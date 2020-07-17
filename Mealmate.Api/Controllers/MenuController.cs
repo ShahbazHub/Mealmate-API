@@ -3,8 +3,6 @@ using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Paging;
-
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +28,16 @@ namespace Mealmate.Api.Controllers
 
 
         #region Read
-        [HttpGet]
+        [HttpGet()]
+        [Route("{branchId}")]
         [ProducesResponseType(typeof(IEnumerable<MenuModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuModel>>> Get(string props)
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<IEnumerable<MenuModel>>> Get(
+            int branchId, [FromBody] SearchPageRequest request, string props)
         {
             try
             {
-                var Menus = await _menuService.Get();
+                var Menus = await _menuService.Search(branchId, request.Args);
                 JToken _jtoken = TokenService.CreateJToken(Menus, props);
                 return Ok(_jtoken);
             }
@@ -46,8 +47,10 @@ namespace Mealmate.Api.Controllers
             }
         }
 
-        [HttpGet("{menuId}")]
+        [Route("single/{menuId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(MenuModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<MenuModel>> Get(int menuId)
         {
             try
@@ -66,7 +69,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(MenuModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuModel>> Create(MenuModel request)
+        public async Task<ActionResult<MenuModel>> Create([FromBody]MenuModel request)
         {
             var result = await _menuService.Create(request);
             return Ok(result);
@@ -77,7 +80,7 @@ namespace Mealmate.Api.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(MenuModel request)
+        public async Task<ActionResult> Update([FromBody]MenuModel request)
         {
             await _menuService.Update(request);
             return Ok();

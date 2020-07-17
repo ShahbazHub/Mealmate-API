@@ -31,13 +31,15 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet("{menuItemId}")]
+        [HttpGet()]
+        [Route("{menuItemId}")]
         [ProducesResponseType(typeof(IEnumerable<MenuItemAllergenModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemAllergenModel>>> Get(int menuItemId, string props)
+        public async Task<ActionResult<IEnumerable<MenuItemAllergenModel>>> Get(
+            int menuItemId, [FromBody] SearchPageRequest request, string props)
         {
             try
             {
-                var MenuItemAllergens = await _menuItemAllergenService.Get(menuItemId);
+                var MenuItemAllergens = await _menuItemAllergenService.Search(menuItemId, request.Args);
                 JToken _jtoken = TokenService.CreateJToken(MenuItemAllergens, props);
                 return Ok(_jtoken);
             }
@@ -46,10 +48,11 @@ namespace Mealmate.Api.Controllers
                 return BadRequest();
             }
         }
-        [Route("GetByAllergenId")]
-        [HttpGet]
+
+        [Route("single/{menuItemAllergenId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(MenuItemAllergenModel), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<MenuItemAllergenModel>> GetByAllergenId(int menuItemAllergenId)
+        public async Task<ActionResult<MenuItemAllergenModel>> Get(int menuItemAllergenId)
         {
             try
             {
@@ -64,10 +67,10 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Create
-        [HttpPost]
+        [HttpPost()]
         [ProducesResponseType(typeof(MenuItemAllergenModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuItemModel>> Create(MenuItemAllergenModel request)
+        public async Task<ActionResult<MenuItemModel>> Create([FromBody] MenuItemAllergenModel request)
         {
             var result = await _menuItemAllergenService.Create(request);
             return Created($"api/menuitemallergens/{result.Id}", result);
@@ -75,10 +78,10 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut]
+        [HttpPut()]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(MenuItemAllergenModel request)
+        public async Task<ActionResult> Update([FromBody] MenuItemAllergenModel request)
         {
             await _menuItemAllergenService.Update(request);
             return Ok();

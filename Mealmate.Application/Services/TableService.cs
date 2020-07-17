@@ -22,8 +22,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public TableService(
-            ITableRepository tableRepository, 
-            IAppLogger<TableService> logger, 
+            ITableRepository tableRepository,
+            IAppLogger<TableService> logger,
             IMapper mapper)
         {
             _tableRepository = tableRepository ?? throw new ArgumentNullException(nameof(tableRepository));
@@ -33,12 +33,6 @@ namespace Mealmate.Application.Services
 
         public async Task<TableModel> Create(TableModel model)
         {
-            var existingTable = await _tableRepository.GetByIdAsync(model.Id);
-            if (existingTable != null)
-            {
-                throw new ApplicationException("table with this id already exists");
-            }
-
             var newtable = _mapper.Map<Table>(model);
             newtable = await _tableRepository.SaveAsync(newtable);
 
@@ -63,7 +57,7 @@ namespace Mealmate.Application.Services
 
         public async Task<IEnumerable<TableModel>> Get(int locationId)
         {
-            var result = await _tableRepository.GetAsync(x => x.LocationId== locationId);
+            var result = await _tableRepository.GetAsync(x => x.LocationId == locationId);
             return _mapper.Map<IEnumerable<TableModel>>(result);
         }
 
@@ -85,6 +79,40 @@ namespace Mealmate.Application.Services
             await _tableRepository.SaveAsync(existingTable);
 
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
+        }
+
+        public async Task<IPagedList<TableModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _tableRepository.SearchAsync(args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<TableModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<TableModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
+        }
+
+        public async Task<IPagedList<TableModel>> Search(int branchId, PageSearchArgs args)
+        {
+            var TablePagedList = await _tableRepository.SearchAsync(branchId, args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<TableModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<TableModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
         }
 
         //public async Task<IEnumerable<TableModel>> GetTableList()

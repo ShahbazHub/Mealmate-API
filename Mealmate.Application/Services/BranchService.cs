@@ -22,8 +22,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public BranchService(
-            IBranchRepository branchRepository, 
-            IAppLogger<BranchService> logger, 
+            IBranchRepository branchRepository,
+            IAppLogger<BranchService> logger,
             IMapper mapper)
         {
             _branchRepository = branchRepository ?? throw new ArgumentNullException(nameof(branchRepository));
@@ -33,12 +33,6 @@ namespace Mealmate.Application.Services
 
         public async Task<BranchModel> Create(BranchModel model)
         {
-            var existingBranch = await _branchRepository.GetByIdAsync(model.Id);
-            if (existingBranch != null)
-            {
-                throw new ApplicationException("branch with this id already exists");
-            }
-
             var newbranch = _mapper.Map<Branch>(model);
             newbranch = await _branchRepository.SaveAsync(newbranch);
 
@@ -63,7 +57,7 @@ namespace Mealmate.Application.Services
 
         public async Task<IEnumerable<BranchModel>> Get(int restaurantId)
         {
-            var result = await _branchRepository.GetAsync(x => x.RestaurantId== restaurantId);
+            var result = await _branchRepository.GetAsync(x => x.RestaurantId == restaurantId);
             return _mapper.Map<IEnumerable<BranchModel>>(result);
         }
 
@@ -85,6 +79,40 @@ namespace Mealmate.Application.Services
             await _branchRepository.SaveAsync(existingBranch);
 
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
+        }
+
+        public async Task<IPagedList<BranchModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _branchRepository.SearchAsync(args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<BranchModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<BranchModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
+        }
+
+        public async Task<IPagedList<BranchModel>> Search(int restaurantId, PageSearchArgs args)
+        {
+            var TablePagedList = await _branchRepository.SearchAsync(restaurantId, args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<BranchModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<BranchModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
         }
 
         //public async Task<IEnumerable<BranchModel>> GetBranchList()

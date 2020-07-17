@@ -14,8 +14,8 @@ namespace Mealmate.Core.Entities
         public int OwnerId { get; set; }
         public virtual User Owner { get; set; }
 
-        public int CuisineTypeId { get; set; }
-        public CuisineType CuisineType { get; set; }
+        // public int CuisineTypeId { get; set; }
+        // public CuisineType CuisineType { get; set; }
 
         public byte[] Photo { get; set; }
 

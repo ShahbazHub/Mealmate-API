@@ -34,12 +34,6 @@ namespace Mealmate.Application.Services
 
         public async Task<RestaurantModel> Create(RestaurantModel model)
         {
-            var existingRestaurant = await _restaurantRepository.GetByIdAsync(model.Id);
-            if (existingRestaurant != null)
-            {
-                throw new ApplicationException("restaurant with this id already exists");
-            }
-
             var newrestaurant = _mapper.Map<Restaurant>(model);
             newrestaurant = await _restaurantRepository.SaveAsync(newrestaurant);
 
@@ -69,17 +63,6 @@ namespace Mealmate.Application.Services
             return _mapper.Map<IEnumerable<RestaurantModel>>(result);
         }
 
-        public async Task<IEnumerable<RestaurantModel>> GetByCuisineTypes(List<int> cusineTypeIds)
-        {
-            var result = await _restaurantRepository.GetRestaurantListAsync();
-
-            var data = from item in result.ToList()
-                       join id in cusineTypeIds on item.CuisineTypeId equals id
-                       select item;
-
-            return _mapper.Map<IEnumerable<RestaurantModel>>(data);
-        }
-
         public async Task<RestaurantModel> GetById(int id)
         {
             return _mapper.Map<RestaurantModel>(await _restaurantRepository.GetByIdAsync(id));
@@ -101,6 +84,22 @@ namespace Mealmate.Application.Services
             return restaurantModelUpdate;
         }
 
+        public async Task<IPagedList<RestaurantModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _restaurantRepository.SearchAsync(args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<RestaurantModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<RestaurantModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
+        }
         //public async Task<IEnumerable<RestaurantModel>> GetRestaurantList()
         //{
         //    var RestaurantList = await _restaurantRepository.ListAllAsync();

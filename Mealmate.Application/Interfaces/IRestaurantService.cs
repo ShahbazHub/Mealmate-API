@@ -8,11 +8,11 @@ namespace Mealmate.Application.Interfaces
     public interface IRestaurantService
     {
         Task<IEnumerable<RestaurantModel>> Get(int ownerId);
-        Task<IEnumerable<RestaurantModel>> GetByCuisineTypes(List<int> cusineTypeIds);
         Task<RestaurantModel> GetById(int id);
         Task<RestaurantModel> Create(RestaurantModel model);
         Task<RestaurantModel> Update(RestaurantModel model);
         Task Delete(int id);
+        Task<IPagedList<RestaurantModel>> Search(PageSearchArgs args);
         //Task<IEnumerable<RestaurantModel>> GetRestaurantList();
         //Task<IPagedList<RestaurantModel>> SearchRestaurants(PageSearchArgs args);
         //Task<RestaurantModel> GetRestaurantById(int RestaurantId);

@@ -33,15 +33,32 @@ namespace Mealmate.Api.Controllers
         #region Read
 
         [HttpGet]
-        [Route("{branchId}")]
+        [Route("{locationId}")]
         [ProducesResponseType(typeof(IEnumerable<TableModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<TableModel>>> Get(int branchId, string props)
+        public async Task<ActionResult<IEnumerable<TableModel>>> Get(
+            int locationId, [FromBody] SearchPageRequest request, string props)
         {
             try
             {
-                var Tables = await _tableService.Get(branchId);
+                var Tables = await _tableService.Search(locationId, request.Args);
                 JToken _jtoken = TokenService.CreateJToken(Tables, props);
                 return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("single/{tableId}")]
+        [ProducesResponseType(typeof(IEnumerable<TableModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<TableModel>>> Get(int tableId)
+        {
+            try
+            {
+                var Tables = await _tableService.GetById(tableId);
+                return Ok(Tables);
             }
             catch (Exception)
             {
@@ -51,7 +68,6 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Create
-        [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(TableModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -63,8 +79,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(TableModel request)
@@ -75,8 +90,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Delete
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("{tableId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(int tableId)
