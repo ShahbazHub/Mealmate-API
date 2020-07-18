@@ -15,6 +15,6 @@ namespace Mealmate.Application.Models
         public MenuItemModel MenuItem { get; set; }
 
         public int OptionItemId { get; set; }
-        public ICollection<OptionItemModel> OptionItems { get; set; }
+        public OptionItemModel OptionItem { get; set; }
     }
 }

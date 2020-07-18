@@ -22,8 +22,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public OptionItemService(
-            IOptionItemRepository optionItemRepository, 
-            IAppLogger<OptionItemService> logger, 
+            IOptionItemRepository optionItemRepository,
+            IAppLogger<OptionItemService> logger,
             IMapper mapper)
         {
             _optionItemRepository = optionItemRepository ?? throw new ArgumentNullException(nameof(optionItemRepository));
@@ -33,12 +33,6 @@ namespace Mealmate.Application.Services
 
         public async Task<OptionItemModel> Create(OptionItemModel model)
         {
-            var existingOptionItem = await _optionItemRepository.GetByIdAsync(model.Id);
-            if (existingOptionItem != null)
-            {
-                throw new ApplicationException("optionItem with this id already exists");
-            }
-
             var newoptionItem = _mapper.Map<OptionItem>(model);
             newoptionItem = await _optionItemRepository.SaveAsync(newoptionItem);
 
@@ -87,105 +81,38 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
-        //public async Task<IEnumerable<OptionItemModel>> GetOptionItemList()
-        //{
-        //    var OptionItemList = await _optionItemRepository.ListAllAsync();
+        public async Task<IPagedList<OptionItemModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _optionItemRepository.SearchAsync(args);
 
-        //    var OptionItemModels = ObjectMapper.Mapper.Map<IEnumerable<OptionItemModel>>(OptionItemList);
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<OptionItemModel>>(TablePagedList.Items);
 
-        //    return OptionItemModels;
-        //}
+            var AllergenModelPagedList = new PagedList<OptionItemModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
 
-        //public async Task<IPagedList<OptionItemModel>> SearchOptionItems(PageSearchArgs args)
-        //{
-        //    var OptionItemPagedList = await _optionItemRepository.SearchOptionItemsAsync(args);
+            return AllergenModelPagedList;
+        }
 
-        //    //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-        //    var OptionItemModels = ObjectMapper.Mapper.Map<List<OptionItemModel>>(OptionItemPagedList.Items);
+        public async Task<IPagedList<OptionItemModel>> Search(int branchId, PageSearchArgs args)
+        {
+            var TablePagedList = await _optionItemRepository.SearchAsync(branchId, args);
 
-        //    var OptionItemModelPagedList = new PagedList<OptionItemModel>(
-        //        OptionItemPagedList.PageIndex,
-        //        OptionItemPagedList.PageSize,
-        //        OptionItemPagedList.TotalCount,
-        //        OptionItemPagedList.TotalPages,
-        //        OptionItemModels);
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<OptionItemModel>>(TablePagedList.Items);
 
-        //    return OptionItemModelPagedList;
-        //}
+            var AllergenModelPagedList = new PagedList<OptionItemModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
 
-        //public async Task<OptionItemModel> GetOptionItemById(int OptionItemId)
-        //{
-        //    var OptionItem = await _optionItemRepository.GetByIdAsync(OptionItemId);
-
-        //    var OptionItemModel = ObjectMapper.Mapper.Map<OptionItemModel>(OptionItem);
-
-        //    return OptionItemModel;
-        //}
-
-        //public async Task<IEnumerable<OptionItemModel>> GetOptionItemsByName(string name)
-        //{
-        //    var spec = new OptionItemWithOptionItemesSpecification(name);
-        //    var OptionItemList = await _optionItemRepository.GetAsync(spec);
-
-        //    var OptionItemModels = ObjectMapper.Mapper.Map<IEnumerable<OptionItemModel>>(OptionItemList);
-
-        //    return OptionItemModels;
-        //}
-
-        //public async Task<IEnumerable<OptionItemModel>> GetOptionItemsByCategoryId(int categoryId)
-        //{
-        //    var spec = new OptionItemWithOptionItemesSpecification(categoryId);
-        //    var OptionItemList = await _optionItemRepository.GetAsync(spec);
-
-        //    var OptionItemModels = ObjectMapper.Mapper.Map<IEnumerable<OptionItemModel>>(OptionItemList);
-
-        //    return OptionItemModels;
-        //}
-
-        //public async Task<OptionItemModel> CreateOptionItem(OptionItemModel OptionItem)
-        //{
-        //    var existingOptionItem = await _optionItemRepository.GetByIdAsync(OptionItem.Id);
-        //    if (existingOptionItem != null)
-        //    {
-        //        throw new ApplicationException("OptionItem with this id already exists");
-        //    }
-
-        //    var newOptionItem = ObjectMapper.Mapper.Map<OptionItem>(OptionItem);
-        //    newOptionItem = await _optionItemRepository.SaveAsync(newOptionItem);
-
-        //    _logger.LogInformation("Entity successfully added - MealmateAppService");
-
-        //    var newOptionItemModel = ObjectMapper.Mapper.Map<OptionItemModel>(newOptionItem);
-        //    return newOptionItemModel;
-        //}
-
-        //public async Task UpdateOptionItem(OptionItemModel OptionItem)
-        //{
-        //    var existingOptionItem = await _optionItemRepository.GetByIdAsync(OptionItem.Id);
-        //    if (existingOptionItem == null)
-        //    {
-        //        throw new ApplicationException("OptionItem with this id is not exists");
-        //    }
-
-        //    existingOptionItem.Name = OptionItem.Name;
-        //    existingOptionItem.Description = OptionItem.Description;
-
-        //    await _optionItemRepository.SaveAsync(existingOptionItem);
-
-        //    _logger.LogInformation("Entity successfully updated - MealmateAppService");
-        //}
-
-        //public async Task DeleteOptionItemById(int OptionItemId)
-        //{
-        //    var existingOptionItem = await _optionItemRepository.GetByIdAsync(OptionItemId);
-        //    if (existingOptionItem == null)
-        //    {
-        //        throw new ApplicationException("OptionItem with this id is not exists");
-        //    }
-
-        //    await _optionItemRepository.DeleteAsync(existingOptionItem);
-
-        //    _logger.LogInformation("Entity successfully deleted - MealmateAppService");
-        //}
+            return AllergenModelPagedList;
+        }
     }
 }

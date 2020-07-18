@@ -8,5 +8,7 @@ namespace Mealmate.Core.Repositories
 {
     public interface IOptionItemRepository : IRepository<OptionItem>
     {
+        Task<IPagedList<OptionItem>> SearchAsync(PageSearchArgs args);
+        Task<IPagedList<OptionItem>> SearchAsync(int branchId, PageSearchArgs args);
     }
 }

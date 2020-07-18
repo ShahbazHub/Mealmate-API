@@ -49,7 +49,8 @@ namespace Mealmate.Api.Controllers
             }
         }
 
-        [HttpGet("{menuItemOptionId}")]
+        [Route("single/{menuItemOptionId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(MenuItemOptionModel), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<MenuItemOptionModel>> Get(int menuItemOptionId)
         {
