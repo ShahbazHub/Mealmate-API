@@ -195,7 +195,12 @@ namespace Mealmate.Api.Controllers
                         await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
                     }
 
-                    return Created($"/api/users/{user.Id}", _mapper.Map<UserModel>(user));
+                    var restaurants = await _restaurantService.Get(user.Id);
+
+                    var owner = _mapper.Map<UserModel>(user);
+                    owner.Restaurants = restaurants;
+
+                    return Created($"/api/users/{user.Id}", owner);
                 }
                 else
                 {

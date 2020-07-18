@@ -16,12 +16,15 @@ namespace Mealmate.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly IRestaurantService _restaurantService;
 
         public UserService(UserManager<User> userManager,
-            IMapper mapper)
+            IMapper mapper,
+            IRestaurantService restaurantService)
         {
             _mapper = mapper;
             _userManager = userManager;
+            _restaurantService = restaurantService;
         }
 
         public Task<UserModel> Create(UserModel model)
@@ -34,11 +37,18 @@ namespace Mealmate.Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<UserModel>> Get()
+        public async Task<IEnumerable<UserModel>> Get()
         {
             var result = _userManager.Users;
+            var owners = _mapper.Map<IEnumerable<UserModel>>(result);
 
-            return Task.FromResult(_mapper.Map<IEnumerable<UserModel>>(result));
+            foreach (var owner in owners)
+            {
+                var restaurants = await _restaurantService.Get(owner.Id);
+                owner.Restaurants = restaurants;
+            }
+
+            return owners;
         }
 
         public async Task<UserModel> GetById(int id)

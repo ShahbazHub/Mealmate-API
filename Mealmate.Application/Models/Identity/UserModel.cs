@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Mealmate.Application.Models.Base;
 
@@ -13,6 +14,10 @@ namespace Mealmate.Application.Models
         public string Mobile { get; set; }
         public DateTimeOffset Created { get; set; }
 
-        public RestaurantModel Restaurant { get; set; }
+        public IEnumerable<RestaurantModel> Restaurants { get; set; }
+
+        public UserModel()
+        {
+        }
     }
 }
