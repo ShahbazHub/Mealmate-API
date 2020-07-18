@@ -33,12 +33,6 @@ namespace Mealmate.Application.Services
 
         public async Task<MenuItemOptionModel> Create(MenuItemOptionModel model)
         {
-            var existingMenuItemOption = await _menuItemOptionRepository.GetByIdAsync(model.Id);
-            if (existingMenuItemOption != null)
-            {
-                throw new ApplicationException("menuItemOption with this id already exists");
-            }
-
             var newmenuItemOption = _mapper.Map<MenuItemOption>(model);
             newmenuItemOption = await _menuItemOptionRepository.SaveAsync(newmenuItemOption);
 

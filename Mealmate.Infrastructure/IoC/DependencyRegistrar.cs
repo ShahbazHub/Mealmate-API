@@ -22,10 +22,11 @@ namespace Mealmate.Infrastructure.IoC
             builder.RegisterType<RestaurantRepository>().As<IRestaurantRepository>().InstancePerRequest();
             builder.RegisterType<BranchRepository>().As<IBranchRepository>().InstancePerRequest();
             builder.RegisterType<LocationRepository>().As<ILocationRepository>().InstancePerRequest();
-            builder.RegisterType<MenuItemOptionRepository>().As<IMenuItemOptionRepository>().InstancePerRequest();
-            builder.RegisterType<MenuItemRepository>().As<IMenuItemRepository>().InstancePerRequest();
+
             builder.RegisterType<MenuRepository>().As<IMenuRepository>().InstancePerRequest();
-            builder.RegisterType<OptionItemRepository>().As<IOptionItemRepository>().InstancePerRequest();
+            builder.RegisterType<MenuItemRepository>().As<IMenuItemRepository>().InstancePerRequest();
+            builder.RegisterType<MenuItemOptionRepository>().As<IMenuItemOptionRepository>().InstancePerRequest();
+
             builder.RegisterType<QRCodeRepository>().As<IQRCodeRepository>().InstancePerRequest();
             builder.RegisterType<TableRepository>().As<ITableRepository>().InstancePerRequest();
 
