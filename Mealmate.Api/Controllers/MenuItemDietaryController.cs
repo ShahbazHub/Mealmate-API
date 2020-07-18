@@ -70,10 +70,10 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(MenuItemDietaryModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuItemModel>> Create([FromBody] MenuItemDietaryModel request)
+        public async Task<ActionResult<MenuItemDietaryModel>> Create([FromBody] MenuItemDietaryModel request)
         {
             var result = await _menuItemDietaryService.Create(request);
-            return Created($"api/menuitemdietarys/{result.Id}", result);
+            return Created($"api/menuitemdietaries/{result.Id}", result);
         }
         #endregion
 

@@ -10,6 +10,7 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
 
         public int DietaryId { get; set; }
+        public DietaryModel Dietary { get; set; }
         public int MenuItemId { get; set; }
     }
 }
