@@ -14,7 +14,7 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
 
         public int MenuId { get; set; }
-        //public MenuModel Menu { get; set; }
+        public MenuModel Menu { get; set; }
 
         public ICollection<MenuItemOptionModel> MenuItemOptions { get; set; }
         public ICollection<MenuItemAllergenModel> MenuItemAllergens { get; set; }

@@ -31,7 +31,8 @@ namespace Mealmate.Infrastructure.Repository
 
         public Task<IPagedList<MenuItem>> SearchAsync(PageSearchArgs args)
         {
-            var query = Table.Include(p => p.MenuItemAllergens)
+            var query = Table.Include(p => p.Menu)
+                             .Include(p => p.MenuItemAllergens)
                              .Include(p => p.MenuItemDietaries)
                              .Include(p => p.MenuItemOptions);
 
@@ -87,6 +88,7 @@ namespace Mealmate.Infrastructure.Repository
             var query = Table.Include(p => p.MenuItemAllergens)
                              .Include(p => p.MenuItemDietaries)
                              .Include(p => p.MenuItemOptions)
+                             .Include(p => p.Menu)
                              .Where(p => p.MenuId == menuId);
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<MenuItem, object>>>>();

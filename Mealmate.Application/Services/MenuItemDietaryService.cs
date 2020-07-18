@@ -87,14 +87,14 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
-        public async Task<IPagedList<MenuItemDietary>> Search(PageSearchArgs args)
+        public async Task<IPagedList<MenuItemDietaryModel>> Search(PageSearchArgs args)
         {
             var TablePagedList = await _menuItemDietaryRepository.SearchAsync(args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-            var AllergenModels = _mapper.Map<List<MenuItemDietary>>(TablePagedList.Items);
+            var AllergenModels = _mapper.Map<List<MenuItemDietaryModel>>(TablePagedList.Items);
 
-            var AllergenModelPagedList = new PagedList<MenuItemDietary>(
+            var AllergenModelPagedList = new PagedList<MenuItemDietaryModel>(
                 TablePagedList.PageIndex,
                 TablePagedList.PageSize,
                 TablePagedList.TotalCount,
@@ -104,14 +104,14 @@ namespace Mealmate.Application.Services
             return AllergenModelPagedList;
         }
 
-        public async Task<IPagedList<MenuItemDietary>> Search(int branchId, PageSearchArgs args)
+        public async Task<IPagedList<MenuItemDietaryModel>> Search(int branchId, PageSearchArgs args)
         {
             var TablePagedList = await _menuItemDietaryRepository.SearchAsync(branchId, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-            var AllergenModels = _mapper.Map<List<MenuItemDietary>>(TablePagedList.Items);
+            var AllergenModels = _mapper.Map<List<MenuItemDietaryModel>>(TablePagedList.Items);
 
-            var AllergenModelPagedList = new PagedList<MenuItemDietary>(
+            var AllergenModelPagedList = new PagedList<MenuItemDietaryModel>(
                 TablePagedList.PageIndex,
                 TablePagedList.PageSize,
                 TablePagedList.TotalCount,
