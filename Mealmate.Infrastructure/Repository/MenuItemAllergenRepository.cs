@@ -76,7 +76,8 @@ namespace Mealmate.Infrastructure.Repository
 
         public Task<IPagedList<MenuItemAllergen>> SearchAsync(int menuItemId, PageSearchArgs args)
         {
-            var query = Table.Include(p => p.Allergen).Where(p => p.MenuItemId == menuItemId);
+            var query = Table.Include(p => p.Allergen)
+                             .Where(p => p.MenuItemId == menuItemId);
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<MenuItemAllergen, object>>>>();
 

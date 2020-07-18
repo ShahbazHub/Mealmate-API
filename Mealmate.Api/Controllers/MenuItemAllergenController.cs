@@ -31,8 +31,8 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet()]
         [Route("{menuItemId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemAllergenModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<MenuItemAllergenModel>>> Get(
             int menuItemId, [FromBody] SearchPageRequest request, string props)
@@ -70,7 +70,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost()]
         [ProducesResponseType(typeof(MenuItemAllergenModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuItemModel>> Create([FromBody] MenuItemAllergenModel request)
+        public async Task<ActionResult<MenuItemAllergenModel>> Create([FromBody] MenuItemAllergenModel request)
         {
             var result = await _menuItemAllergenService.Create(request);
             return Created($"api/menuitemallergens/{result.Id}", result);

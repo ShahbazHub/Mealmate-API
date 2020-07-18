@@ -120,15 +120,5 @@ namespace Mealmate.Application.Services
 
             return AllergenModelPagedList;
         }
-
-        Task<IPagedList<MenuItemAllergenModel>> IMenuItemAllergenService.Search(PageSearchArgs args)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<IPagedList<MenuItemAllergenModel>> IMenuItemAllergenService.Search(int menuItemId, PageSearchArgs args)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

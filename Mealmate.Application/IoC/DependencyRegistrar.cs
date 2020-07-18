@@ -36,8 +36,12 @@ namespace Mealmate.Application.IoC
             builder.RegisterType<RestaurantService>().As<IRestaurantService>().InstancePerLifetimeScope();
             builder.RegisterType<BranchService>().As<IBranchService>().InstancePerLifetimeScope();
             builder.RegisterType<LocationService>().As<ILocationService>().InstancePerLifetimeScope();
+
             builder.RegisterType<MenuItemOptionService>().As<IMenuItemOptionService>().InstancePerLifetimeScope();
             builder.RegisterType<MenuItemService>().As<IMenuItemService>().InstancePerLifetimeScope();
+            builder.RegisterType<MenuItemAllergenService>().As<IMenuItemAllergenService>().InstancePerLifetimeScope();
+            builder.RegisterType<MenuItemDietaryService>().As<IMenuItemDietaryService>().InstancePerLifetimeScope();
+
             builder.RegisterType<MenuService>().As<IMenuService>().InstancePerLifetimeScope();
             builder.RegisterType<OptionItemService>().As<IOptionItemService>().InstancePerLifetimeScope();
             builder.RegisterType<QRCodeService>().As<IQRCodeService>().InstancePerLifetimeScope();
