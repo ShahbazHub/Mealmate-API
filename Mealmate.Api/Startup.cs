@@ -1,4 +1,9 @@
 using System;
+using System.IO;
+
+using FirebaseAdmin;
+
+using Google.Apis.Auth.OAuth2;
 
 using Mealmate.Api.Application.Middlewares;
 using Mealmate.Core.Configuration;
@@ -16,6 +21,7 @@ namespace Mealmate.Api
         public IConfigurationRoot _config { get; }
         public IWebHostEnvironment _env { get; }
         public MealmateSettings _mealMateSettings { get; }
+
         public Startup(IWebHostEnvironment env)
         {
             _config = new ConfigurationBuilder()
@@ -27,17 +33,25 @@ namespace Mealmate.Api
 
             _env = env;
             _mealMateSettings = _config.Get<MealmateSettings>();
+
+            var pathToKey = Path.Combine(Directory.GetCurrentDirectory(), "pushnotificationsvc.json");
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = GoogleCredential.FromFile(pathToKey)
+            });
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            return services.AddCustomMvc()
+            return services
+                .AddCustomMvc()
                 .AddCustomDbContext(_mealMateSettings)
                 .AddCustomIdentity()
                 .AddCustomSwagger()
                 .AddCustomConfiguration(_config)
                 .AddCustomAuthentication(_mealMateSettings)
                 .AddCustomIntegrations(_env);
+
             
         }
 
