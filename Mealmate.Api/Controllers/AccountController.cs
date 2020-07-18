@@ -75,7 +75,9 @@ namespace Mealmate.Api.Controllers
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(1),
-                SigningCredentials = creds
+                SigningCredentials = creds,
+                Issuer = _mealmateSettings.Tokens.Issuer,
+                Audience = _mealmateSettings.Tokens.Audience
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
