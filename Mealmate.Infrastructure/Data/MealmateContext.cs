@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Infrastructure.Data
 {
-    public class MealmateContext : IdentityDbContext<User, Role, int>
+    public class MealmateContext : IdentityDbContext<User, Role, int,
+        UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
         public MealmateContext(DbContextOptions<MealmateContext> options)
             : base(options)

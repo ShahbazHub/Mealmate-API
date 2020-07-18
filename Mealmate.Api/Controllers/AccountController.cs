@@ -9,9 +9,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -48,6 +50,42 @@ namespace Mealmate.Api.Controllers
             _emailService = emailService;
         }
 
+        #region Create JWT
+        private async Task<string> GenerateJwtToken(User user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.UserName)
+            };
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8
+                .GetBytes(_mealmateSettings.Tokens.Key));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = creds
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
+        #endregion
+
         #region Login
         /// <summary>
         /// Login
@@ -56,7 +94,7 @@ namespace Mealmate.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> CreateToken([FromBody] LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user != null)
@@ -65,31 +103,16 @@ namespace Mealmate.Api.Controllers
 
                 if (result.Succeeded)
                 {
-                    // Create the token
-                    var claims = new[]
+                    var appUser = await _userManager.Users
+                                                    .FirstOrDefaultAsync(
+                                           u => u.Email.ToUpper() == request.Email.ToUpper());
+
+                    var userToReturn = _mapper.Map<UserModel>(appUser);
+                    return Ok(new
                     {
-                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
-                        };
-
-                    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_mealmateSettings.Tokens.Key));
-                    var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-                    var token = new JwtSecurityToken(
-                      _mealmateSettings.Tokens.Issuer,
-                      _mealmateSettings.Tokens.Audience,
-                      claims,
-                      expires: DateTime.Now.AddMinutes(30),
-                      signingCredentials: signingCredentials);
-
-                    var results = new
-                    {
-                        token = new JwtSecurityTokenHandler().WriteToken(token),
-                        expiration = token.ValidTo
-                    };
-
-                    return Ok(results);
+                        token = GenerateJwtToken(appUser).Result,
+                        user = userToReturn,
+                    });
                 }
                 else
                 {

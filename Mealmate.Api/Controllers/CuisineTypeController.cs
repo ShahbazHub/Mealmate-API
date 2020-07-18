@@ -28,7 +28,8 @@ namespace Mealmate.Api.Controllers
         #region Read
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CuisineTypeModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<CuisineTypeModel>>> Get([FromBody] SearchPageRequest request, string props)
+        public async Task<ActionResult<IEnumerable<CuisineTypeModel>>> Get(
+            [FromBody] SearchPageRequest request, string props)
         {
             try
             {
