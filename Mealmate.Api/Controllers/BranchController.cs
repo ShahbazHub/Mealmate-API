@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -31,13 +32,30 @@ namespace Mealmate.Api.Controllers
         [HttpGet]
         [Route("{restaurantId}")]
         [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(int restaurantId, string props)
+        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(
+            int restaurantId, [FromBody] SearchPageRequest request, string props)
         {
             try
             {
-                var Branches = await _branchService.Get(restaurantId);
+                var Branches = await _branchService.Search(restaurantId, request.Args);
                 JToken _jtoken = TokenService.CreateJToken(Branches, props);
                 return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet]
+        [Route("single/{branchId}")]
+        [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(int branchId)
+        {
+            try
+            {
+                var Branch = await _branchService.Get(branchId);
+                return Ok(Branch);
             }
             catch (Exception)
             {
@@ -47,7 +65,6 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Create
-        [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(BranchModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -60,8 +77,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(BranchModel request)
@@ -77,8 +93,7 @@ namespace Mealmate.Api.Controllers
         /// </summary>
         /// <param name="branchId"></param>
         /// <returns></returns>
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("{branchId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(int branchId)

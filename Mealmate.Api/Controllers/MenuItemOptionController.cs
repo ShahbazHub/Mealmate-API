@@ -31,13 +31,15 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet("{menuItemId}/{optionItemId}")]
+        [Route("{menuItemId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemOptionModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(int menuItemId, int optionItemId, string props)
+        public async Task<ActionResult<IEnumerable<MenuItemOptionModel>>> Get(
+            int menuItemId, [FromBody] SearchPageRequest request, string props)
         {
             try
             {
-                var MenuItemOptions = await _menuItemOptionService.Get(menuItemId, optionItemId);
+                var MenuItemOptions = await _menuItemOptionService.Search(menuItemId, request.Args);
                 JToken _jtoken = TokenService.CreateJToken(MenuItemOptions, props);
                 return Ok(_jtoken);
             }

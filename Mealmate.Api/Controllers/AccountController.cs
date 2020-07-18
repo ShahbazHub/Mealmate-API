@@ -161,8 +161,7 @@ namespace Mealmate.Api.Controllers
                         {
                             OwnerId = newUser.Id,
                             Name = model.RestaurantName,
-                            Description = model.RestaurantDescription,
-                            CuisineTypeId = model.CuisineTypeId
+                            Description = model.RestaurantDescription
                         });
 
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

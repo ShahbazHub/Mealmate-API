@@ -62,6 +62,7 @@ namespace Mealmate.Infrastructure.Repository.Base
                 _context.Entry(entity).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
+
             _context.Entry(entity).State = EntityState.Detached;
             await _context.SaveChangesAsync();
 

@@ -9,7 +9,7 @@ namespace Mealmate.Core.Repositories
     public interface IRestaurantRepository : IRepository<Restaurant>
     {
         Task<IEnumerable<Restaurant>> GetRestaurantListAsync();
-        Task<IPagedList<Restaurant>> SearchRestaurantsAsync(PageSearchArgs args);
+        Task<IPagedList<Restaurant>> SearchAsync(PageSearchArgs args);
         Task<IEnumerable<Restaurant>> GetRestaurantByNameAsync(string RestaurantName);
         Task<Restaurant> GetRestaurantByIdWithBranchesAsync(int RestaurantId);
         Task<IEnumerable<Restaurant>> GetRestaurantWithBranchesByOwnerIdAsync(int OwnerId);

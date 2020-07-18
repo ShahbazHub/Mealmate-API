@@ -22,8 +22,8 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
 
         public LocationService(
-            ILocationRepository locationRepository, 
-            IAppLogger<LocationService> logger, 
+            ILocationRepository locationRepository,
+            IAppLogger<LocationService> logger,
             IMapper mapper)
         {
             _locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
@@ -33,12 +33,6 @@ namespace Mealmate.Application.Services
 
         public async Task<LocationModel> Create(LocationModel model)
         {
-            var existingLocation = await _locationRepository.GetByIdAsync(model.Id);
-            if (existingLocation != null)
-            {
-                throw new ApplicationException("location with this id already exists");
-            }
-
             var newlocation = _mapper.Map<Location>(model);
             newlocation = await _locationRepository.SaveAsync(newlocation);
 
@@ -63,7 +57,7 @@ namespace Mealmate.Application.Services
 
         public async Task<IEnumerable<LocationModel>> Get(int branchId)
         {
-            var result = await _locationRepository.GetAsync(x => x.BranchId== branchId);
+            var result = await _locationRepository.GetAsync(x => x.BranchId == branchId);
             return _mapper.Map<IEnumerable<LocationModel>>(result);
         }
 
@@ -77,7 +71,7 @@ namespace Mealmate.Application.Services
             var existingLocation = await _locationRepository.GetByIdAsync(model.Id);
             if (existingLocation == null)
             {
-                throw new ApplicationException("Location with this id is not exists");
+                throw new ApplicationException($"Location with this id {model.Id} does not exists");
             }
 
             existingLocation = _mapper.Map<Location>(model);
@@ -85,6 +79,40 @@ namespace Mealmate.Application.Services
             await _locationRepository.SaveAsync(existingLocation);
 
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
+        }
+
+        public async Task<IPagedList<LocationModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _locationRepository.SearchAsync(args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<LocationModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<LocationModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
+        }
+
+        public async Task<IPagedList<LocationModel>> Search(int branchId, PageSearchArgs args)
+        {
+            var TablePagedList = await _locationRepository.SearchAsync(branchId, args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<LocationModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<LocationModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
         }
 
         //public async Task<IEnumerable<LocationModel>> GetLocationList()

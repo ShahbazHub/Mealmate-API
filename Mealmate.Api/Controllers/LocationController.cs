@@ -34,13 +34,29 @@ namespace Mealmate.Api.Controllers
         [HttpGet]
         [Route("{branchId}")]
         [ProducesResponseType(typeof(IEnumerable<LocationModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<LocationModel>>> Get(int branchId, string props)
+        public async Task<ActionResult<IEnumerable<LocationModel>>> Get(
+            int branchId, [FromBody] SearchPageRequest request, string props)
         {
             try
             {
-                var Locations = await _locationService.Get(branchId);
+                var Locations = await _locationService.Search(branchId, request.Args);
                 JToken _jtoken = TokenService.CreateJToken(Locations, props);
                 return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+        [HttpGet]
+        [Route("single/{locationId}")]
+        [ProducesResponseType(typeof(IEnumerable<LocationModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<LocationModel>>> Get(int locationId)
+        {
+            try
+            {
+                var Location = await _locationService.GetById(locationId);
+                return Ok(Location);
             }
             catch (Exception)
             {
@@ -50,7 +66,6 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Create
-        [Route("[action]")]
         [HttpPost]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -62,8 +77,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [Route("[action]")]
-        [HttpPost]
+        [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(LocationModel request)
@@ -74,8 +88,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Delete
-        [Route("[action]")]
-        [HttpDelete]
+        [HttpDelete("{locationId}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(int locationId)

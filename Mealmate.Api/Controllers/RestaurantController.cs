@@ -33,13 +33,28 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get([FromBody] SearchPageRequest request, string props)
+        {
+            try
+            {
+                var Restaurants = await _restaurantService.Search(request.Args);
+                JToken _jtoken = TokenService.CreateJToken(Restaurants, props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
         /// <summary>
         /// Get Restaurant By OwnerId
         /// </summary>
         /// <param name="ownerId">Owner ID</param>
         /// <param name="props">Includes i.e Name, Branches(Name) </param>
         /// <returns></returns>
-        [Route("{ownerId}")]
+        [Route("list/{ownerId}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get(int ownerId, string props)
@@ -54,7 +69,6 @@ namespace Mealmate.Api.Controllers
             {
                 return BadRequest();
             }
-
         }
 
         [Route("{restaurantId}")]
@@ -66,25 +80,6 @@ namespace Mealmate.Api.Controllers
             {
                 var temp = await _restaurantService.Get(restaurantId);
                 return Ok(temp);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-
-        }
-
-
-        [Route("{cuisineTypeIds}")]
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get(List<int> cuisineTypeIds, string props)
-        {
-            try
-            {
-                var Restaurants = await _restaurantService.GetByCuisineTypes(cuisineTypeIds);
-                JToken _jtoken = TokenService.CreateJToken(Restaurants, props);
-                return Ok(_jtoken);
             }
             catch (Exception)
             {
@@ -127,45 +122,5 @@ namespace Mealmate.Api.Controllers
             return Ok();
         }
         #endregion
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IPagedList<RestaurantModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IPagedList<RestaurantModel>>> SearchRestaurants(SearchPageRequest request)
-        //{
-        //    var RestaurantPagedList = await _restaurantService.SearchRestaurants(request.Args);
-
-        //    return Ok(RestaurantPagedList);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(RestaurantModel), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<RestaurantModel>> GetRestaurantById(GetRestaurantByIdRequest request)
-        //{
-        //    var Restaurant = await _restaurantService.GetRestaurantById(request.Id);
-
-        //    return Ok(Restaurant);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurantsByName(GetResturantsByNameRequest request)
-        //{
-        //    var Restaurants = await _restaurantService.GetRestaurantsByName(request.Name);
-
-        //    return Ok(Restaurants);
-        //}
-
-        //[Route("[action]")]
-        //[HttpPost]
-        //[ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        //public async Task<ActionResult<IEnumerable<RestaurantModel>>> GetRestaurantsByCategoryId(GetRestaurantsByCategoryIdRequest request)
-        //{
-        //    var Restaurants = await _restaurantService.GetRestaurantsByCategoryId(request.CategoryId);
-
-        //    return Ok(Restaurants);
-        //}
     }
 }

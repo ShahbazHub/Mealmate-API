@@ -29,5 +29,111 @@ namespace Mealmate.Infrastructure.Repository
             return await GetAsync(spec);
         }
 
+        public Task<IPagedList<MenuItem>> SearchAsync(PageSearchArgs args)
+        {
+            var query = Table.Include(p => p.MenuItemAllergens)
+                             .Include(p => p.MenuItemDietaries)
+                             .Include(p => p.MenuItemOptions);
+
+            var orderByList = new List<Tuple<SortingOption, Expression<Func<MenuItem, object>>>>();
+
+            if (args.SortingOptions != null)
+            {
+                foreach (var sortingOption in args.SortingOptions)
+                {
+                    switch (sortingOption.Field)
+                    {
+                        case "id":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<MenuItem, object>>>(sortingOption, p => p.Id));
+                            break;
+                        case "name":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<MenuItem, object>>>(sortingOption, p => p.Name));
+                            break;
+                    }
+                }
+            }
+
+            if (orderByList.Count == 0)
+            {
+                orderByList.Add(new Tuple<SortingOption, Expression<Func<MenuItem, object>>>(new SortingOption { Direction = SortingOption.SortingDirection.ASC }, p => p.Id));
+            }
+
+            //TODO: FilteringOption.Operator will be handled
+            var filterList = new List<Tuple<FilteringOption, Expression<Func<MenuItem, bool>>>>();
+
+            if (args.FilteringOptions != null)
+            {
+                foreach (var filteringOption in args.FilteringOptions)
+                {
+                    switch (filteringOption.Field)
+                    {
+                        case "id":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<MenuItem, bool>>>(filteringOption, p => p.Id == (int)filteringOption.Value));
+                            break;
+                        case "name":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<MenuItem, bool>>>(filteringOption, p => p.Name.Contains((string)filteringOption.Value)));
+                            break;
+                    }
+                }
+            }
+
+            var pagedList = new PagedList<MenuItem>(query, new PagingArgs { PageIndex = args.PageIndex, PageSize = args.PageSize, PagingStrategy = args.PagingStrategy }, orderByList, filterList);
+
+            return Task.FromResult<IPagedList<MenuItem>>(pagedList);
+        }
+
+        public Task<IPagedList<MenuItem>> SearchAsync(int menuId, PageSearchArgs args)
+        {
+            var query = Table.Include(p => p.MenuItemAllergens)
+                             .Include(p => p.MenuItemDietaries)
+                             .Include(p => p.MenuItemOptions)
+                             .Where(p => p.MenuId == menuId);
+
+            var orderByList = new List<Tuple<SortingOption, Expression<Func<MenuItem, object>>>>();
+
+            if (args.SortingOptions != null)
+            {
+                foreach (var sortingOption in args.SortingOptions)
+                {
+                    switch (sortingOption.Field)
+                    {
+                        case "id":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<MenuItem, object>>>(sortingOption, p => p.Id));
+                            break;
+                        case "name":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<MenuItem, object>>>(sortingOption, p => p.Name));
+                            break;
+                    }
+                }
+            }
+
+            if (orderByList.Count == 0)
+            {
+                orderByList.Add(new Tuple<SortingOption, Expression<Func<MenuItem, object>>>(new SortingOption { Direction = SortingOption.SortingDirection.ASC }, p => p.Id));
+            }
+
+            //TODO: FilteringOption.Operator will be handled
+            var filterList = new List<Tuple<FilteringOption, Expression<Func<MenuItem, bool>>>>();
+
+            if (args.FilteringOptions != null)
+            {
+                foreach (var filteringOption in args.FilteringOptions)
+                {
+                    switch (filteringOption.Field)
+                    {
+                        case "id":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<MenuItem, bool>>>(filteringOption, p => p.Id == (int)filteringOption.Value));
+                            break;
+                        case "name":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<MenuItem, bool>>>(filteringOption, p => p.Name.Contains((string)filteringOption.Value)));
+                            break;
+                    }
+                }
+            }
+
+            var pagedList = new PagedList<MenuItem>(query, new PagingArgs { PageIndex = args.PageIndex, PageSize = args.PageSize, PagingStrategy = args.PagingStrategy }, orderByList, filterList);
+
+            return Task.FromResult<IPagedList<MenuItem>>(pagedList);
+        }
     }
 }

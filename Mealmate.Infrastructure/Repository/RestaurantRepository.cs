@@ -40,7 +40,7 @@ namespace Mealmate.Infrastructure.Repository
             // return await GetAllAsync();
         }
 
-        public Task<IPagedList<Restaurant>> SearchRestaurantsAsync(PageSearchArgs args)
+        public Task<IPagedList<Restaurant>> SearchAsync(PageSearchArgs args)
         {
             var query = Table.Include(p => p.Branches);
 

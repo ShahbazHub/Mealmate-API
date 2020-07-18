@@ -23,5 +23,106 @@ namespace Mealmate.Infrastructure.Repository
         {
         }
 
+        public Task<IPagedList<Table>> SearchAsync(PageSearchArgs args)
+        {
+            var query = Table.Include(p => p.Orders);
+
+            var orderByList = new List<Tuple<SortingOption, Expression<Func<Table, object>>>>();
+
+            if (args.SortingOptions != null)
+            {
+                foreach (var sortingOption in args.SortingOptions)
+                {
+                    switch (sortingOption.Field)
+                    {
+                        case "id":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<Table, object>>>(sortingOption, p => p.Id));
+                            break;
+                        case "name":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<Table, object>>>(sortingOption, p => p.Name));
+                            break;
+                    }
+                }
+            }
+
+            if (orderByList.Count == 0)
+            {
+                orderByList.Add(new Tuple<SortingOption, Expression<Func<Table, object>>>(new SortingOption { Direction = SortingOption.SortingDirection.ASC }, p => p.Id));
+            }
+
+            //TODO: FilteringOption.Operator will be handled
+            var filterList = new List<Tuple<FilteringOption, Expression<Func<Table, bool>>>>();
+
+            if (args.FilteringOptions != null)
+            {
+                foreach (var filteringOption in args.FilteringOptions)
+                {
+                    switch (filteringOption.Field)
+                    {
+                        case "id":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<Table, bool>>>(filteringOption, p => p.Id == (int)filteringOption.Value));
+                            break;
+                        case "name":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<Table, bool>>>(filteringOption, p => p.Name.Contains((string)filteringOption.Value)));
+                            break;
+                    }
+                }
+            }
+
+            var pagedList = new PagedList<Table>(query, new PagingArgs { PageIndex = args.PageIndex, PageSize = args.PageSize, PagingStrategy = args.PagingStrategy }, orderByList, filterList);
+
+            return Task.FromResult<IPagedList<Table>>(pagedList);
+        }
+
+        public Task<IPagedList<Table>> SearchAsync(int locationId, PageSearchArgs args)
+        {
+            var query = Table.Include(p => p.Orders).Where(p => p.LocationId == locationId);
+
+            var orderByList = new List<Tuple<SortingOption, Expression<Func<Table, object>>>>();
+
+            if (args.SortingOptions != null)
+            {
+                foreach (var sortingOption in args.SortingOptions)
+                {
+                    switch (sortingOption.Field)
+                    {
+                        case "id":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<Table, object>>>(sortingOption, p => p.Id));
+                            break;
+                        case "name":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<Table, object>>>(sortingOption, p => p.Name));
+                            break;
+                    }
+                }
+            }
+
+            if (orderByList.Count == 0)
+            {
+                orderByList.Add(new Tuple<SortingOption, Expression<Func<Table, object>>>(new SortingOption { Direction = SortingOption.SortingDirection.ASC }, p => p.Id));
+            }
+
+            //TODO: FilteringOption.Operator will be handled
+            var filterList = new List<Tuple<FilteringOption, Expression<Func<Table, bool>>>>();
+
+            if (args.FilteringOptions != null)
+            {
+                foreach (var filteringOption in args.FilteringOptions)
+                {
+                    switch (filteringOption.Field)
+                    {
+                        case "id":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<Table, bool>>>(filteringOption, p => p.Id == (int)filteringOption.Value));
+                            break;
+                        case "name":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<Table, bool>>>(filteringOption, p => p.Name.Contains((string)filteringOption.Value)));
+                            break;
+                    }
+                }
+            }
+
+            var pagedList = new PagedList<Table>(query, new PagingArgs { PageIndex = args.PageIndex, PageSize = args.PageSize, PagingStrategy = args.PagingStrategy }, orderByList, filterList);
+
+            return Task.FromResult<IPagedList<Table>>(pagedList);
+        }
     }
 }
