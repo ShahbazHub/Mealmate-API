@@ -121,9 +121,9 @@ namespace Mealmate.Application.Services
             return AllergenModelPagedList;
         }
 
-        public async Task<IPagedList<MenuItemModel>> Search(int branchId, PageSearchArgs args)
+        public async Task<IPagedList<MenuItemModel>> Search(int menuId, PageSearchArgs args)
         {
-            var TablePagedList = await _menuItemRepository.SearchAsync(branchId, args);
+            var TablePagedList = await _menuItemRepository.SearchAsync(menuId, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var AllergenModels = _mapper.Map<List<MenuItemModel>>(TablePagedList.Items);

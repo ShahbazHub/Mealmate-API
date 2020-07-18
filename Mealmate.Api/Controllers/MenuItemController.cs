@@ -28,13 +28,15 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet("{menuId}")]
+        [Route("{menuId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(int menuId, string props)
+        public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(
+            int menuId, [FromBody] SearchPageRequest request, string props)
         {
             try
             {
-                var MenuItems = await _menuItemService.Get(menuId);
+                var MenuItems = await _menuItemService.Search(menuId, request.Args);
                 JToken _jtoken = TokenService.CreateJToken(MenuItems, props);
                 return Ok(_jtoken);
             }
@@ -44,7 +46,8 @@ namespace Mealmate.Api.Controllers
             }
         }
 
-        [HttpGet("{menuItemId}")]
+        [Route("single/{menuItemId}")]
+        [HttpGet()]
         [ProducesResponseType(typeof(MenuItemModel), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<MenuItemModel>> Get(int menuItemId)
         {
