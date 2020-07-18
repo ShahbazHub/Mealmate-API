@@ -34,7 +34,10 @@ namespace Mealmate.Infrastructure.IoC
             builder.RegisterType<AllergenRepository>().As<IAllergenRepository>().InstancePerRequest();
             builder.RegisterType<DietaryRepository>().As<IDietaryRepository>().InstancePerRequest();
             builder.RegisterType<CuisineTypeRepository>().As<ICuisineTypeRepository>().InstancePerRequest();
+
             builder.RegisterType<OptionItemRepository>().As<IOptionItemRepository>().InstancePerRequest();
+            builder.RegisterType<OptionItemAllergenRepository>().As<IOptionItemAllergenRepository>().InstancePerRequest();
+            builder.RegisterType<OptionItemDietaryRepository>().As<IOptionItemDietaryRepository>().InstancePerRequest();
 
             builder.RegisterType<MenuItemAllergenRepository>().As<IMenuItemAllergenRepository>().InstancePerRequest();
             builder.RegisterType<MenuItemDietaryRepository>().As<IMenuItemDietaryRepository>().InstancePerRequest();

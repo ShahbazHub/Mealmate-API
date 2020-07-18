@@ -9,6 +9,8 @@ namespace Mealmate.Core.Entities
         public string Name { get; set; }
         public DateTimeOffset Created { get; set; }
         public virtual ICollection<MenuItemOption> MenuItemOptions { get; set; }
+        public virtual ICollection<OptionItemAllergen> OptionItemAllergens { get; set; }
+        public virtual ICollection<OptionItemDietary> OptionItemDietaries { get; set; }
 
         public int BranchId { get; set; }
 
@@ -17,6 +19,8 @@ namespace Mealmate.Core.Entities
         public OptionItem()
         {
             MenuItemOptions = new HashSet<MenuItemOption>();
+            OptionItemAllergens = new HashSet<OptionItemAllergen>();
+            OptionItemDietaries = new HashSet<OptionItemDietary>();
         }
     }
 }

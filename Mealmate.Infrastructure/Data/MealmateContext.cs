@@ -37,6 +37,8 @@ namespace Mealmate.Infrastructure.Data
 
             //Lookup Schema
             modelBuilder.ApplyConfiguration(new OptionItemConfiguration());
+            modelBuilder.ApplyConfiguration(new OptionItemAllergenConfiguration());
+            modelBuilder.ApplyConfiguration(new OptionItemDietaryConfiguration());
 
             //Mealmate Schema
             modelBuilder.ApplyConfiguration(new BranchConfiguration());

@@ -31,7 +31,10 @@ namespace Mealmate.Application.Mapper
             CreateMap<Allergen, AllergenModel>().ReverseMap();
             CreateMap<Dietary, DietaryModel>().ReverseMap();
             CreateMap<CuisineType, CuisineTypeModel>().ReverseMap();
+
             CreateMap<OptionItem, OptionItemModel>().ReverseMap();
+            CreateMap<OptionItemAllergen, OptionItemAllergenModel>().ReverseMap();
+            CreateMap<OptionItemDietary, OptionItemDietaryModel>().ReverseMap();
 
             // Sale
             CreateMap<Order, OrderModel>().ReverseMap();
