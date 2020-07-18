@@ -87,6 +87,38 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
+        public async Task<IPagedList<UserDietaryModel>> Search(PageSearchArgs args)
+        {
+            var TablePagedList = await _UserDietaryRepository.SearchAsync(args);
 
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var DietaryModels = _mapper.Map<List<UserDietaryModel>>(TablePagedList.Items);
+
+            var DietaryModelPagedList = new PagedList<UserDietaryModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                DietaryModels);
+
+            return DietaryModelPagedList;
+        }
+
+        public async Task<IPagedList<UserDietaryModel>> Search(int userId, PageSearchArgs args)
+        {
+            var TablePagedList = await _UserDietaryRepository.SearchAsync(userId, args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var DietaryModels = _mapper.Map<List<UserDietaryModel>>(TablePagedList.Items);
+
+            var DietaryModelPagedList = new PagedList<UserDietaryModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                DietaryModels);
+
+            return DietaryModelPagedList;
+        }
     }
 }

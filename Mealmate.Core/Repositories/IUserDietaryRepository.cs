@@ -8,5 +8,7 @@ namespace Mealmate.Core.Repositories
 {
     public interface IUserDietaryRepository : IRepository<UserDietary>
     {
+        Task<IPagedList<UserDietary>> SearchAsync(PageSearchArgs args);
+        Task<IPagedList<UserDietary>> SearchAsync(int userId, PageSearchArgs args);
     }
 }

@@ -8,5 +8,7 @@ namespace Mealmate.Core.Repositories
 {
     public interface IUserAllergenRepository : IRepository<UserAllergen>
     {
+        Task<IPagedList<UserAllergen>> SearchAsync(PageSearchArgs args);
+        Task<IPagedList<UserAllergen>> SearchAsync(int userId, PageSearchArgs args);
     }
 }
