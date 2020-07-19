@@ -80,7 +80,7 @@ namespace Mealmate.Api
                 //.AddEntityFrameworkSqlServer()
                 .AddDbContext<MealmateContext>(options =>
                         options
-                        .EnableSensitiveDataLogging(true)
+                        //.EnableSensitiveDataLogging(true)
                         .UseSqlServer(MealmateSettings.ConnectionString,
                         sqlOptions =>
                         {

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,9 @@ namespace Mealmate.Api.Helpers
             string _serializedTracks = JsonConvert.SerializeObject(obj, Formatting.None,
                 new JsonSerializerSettings()
                 {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
+                }); ;
 
             JToken jtoken = JToken.Parse(_serializedTracks);
             if (!string.IsNullOrEmpty(props))
