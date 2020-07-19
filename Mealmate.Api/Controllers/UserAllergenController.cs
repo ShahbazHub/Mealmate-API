@@ -34,13 +34,12 @@ namespace Mealmate.Api.Controllers
         [Route("{userId}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<UserAllergenModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<UserAllergenModel>>> Get(
-            int userId, [FromBody] SearchPageRequest request, string props)
+        public async Task<ActionResult<IEnumerable<UserAllergenModel>>> Get(int userId, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var UserAllergens = await _userAllergenService.Search(userId, request.Args);
-                JToken _jtoken = TokenService.CreateJToken(UserAllergens, props);
+                var UserAllergens = await _userAllergenService.Search(userId, request);
+                JToken _jtoken = TokenService.CreateJToken(UserAllergens, request.Props);
                 return Ok(_jtoken);
             }
             catch (Exception)

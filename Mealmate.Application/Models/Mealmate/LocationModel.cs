@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Mealmate.Application.Models
 {
@@ -11,7 +12,7 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
         public int BranchId { get; set; }
         //public BranchModel Branch { get; set; }
-
+        [JsonIgnore]
         public ICollection<TableModel> Tables { get; set; }
 
     }

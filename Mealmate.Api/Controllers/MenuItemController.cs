@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Mealmate.Api.Requests;
+using Mealmate.Core.Paging;
 
 namespace Mealmate.Api.Controllers
 {
@@ -31,13 +32,12 @@ namespace Mealmate.Api.Controllers
         [Route("{menuId}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(
-            int menuId, [FromBody] SearchPageRequest request, string props)
+        public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(int menuId, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var MenuItems = await _menuItemService.Search(menuId, request.Args);
-                JToken _jtoken = TokenService.CreateJToken(MenuItems, props);
+                var MenuItems = await _menuItemService.Search(menuId, request);
+                JToken _jtoken = TokenService.CreateJToken(MenuItems, request.Props);
                 return Ok(_jtoken);
             }
             catch (Exception)

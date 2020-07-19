@@ -34,13 +34,12 @@ namespace Mealmate.Api.Controllers
         [Route("{userId}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<UserDietaryModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<UserDietaryModel>>> Get(
-            int userId, [FromBody] SearchPageRequest request, string props)
+        public async Task<ActionResult<IEnumerable<UserDietaryModel>>> Get(int userId, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var UserDietarys = await _userDietaryService.Search(userId, request.Args);
-                JToken _jtoken = TokenService.CreateJToken(UserDietarys, props);
+                var UserDietarys = await _userDietaryService.Search(userId, request);
+                JToken _jtoken = TokenService.CreateJToken(UserDietarys, request.Props);
                 return Ok(_jtoken);
             }
             catch (Exception)

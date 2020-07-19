@@ -28,5 +28,8 @@ namespace Mealmate.Core.Paging
         /// Filtering options
         /// </summary>
         public List<FilteringOption> FilteringOptions { get; set; }
+
+        // used for JToken Filtering...
+        public string Props { get; set; }
     }
 }
