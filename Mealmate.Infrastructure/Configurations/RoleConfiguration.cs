@@ -9,6 +9,9 @@ namespace Mealmate.Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<Role> builder)
         {
             builder.ToTable("Role", "Identity");
+            builder.Property(p => p.Id)
+                   .ValueGeneratedNever();
+
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()

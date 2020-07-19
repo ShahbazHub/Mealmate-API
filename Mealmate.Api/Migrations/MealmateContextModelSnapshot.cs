@@ -192,6 +192,9 @@ namespace Mealmate.Api.Migrations
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<int>("CuisineTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -210,6 +213,8 @@ namespace Mealmate.Api.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK_MenuItem");
+
+                    b.HasIndex("CuisineTypeId");
 
                     b.HasIndex("MenuId");
 
@@ -552,9 +557,7 @@ namespace Mealmate.Api.Migrations
             modelBuilder.Entity("Mealmate.Core.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -599,16 +602,11 @@ namespace Mealmate.Api.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RoleId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
-                    b.HasIndex("RoleId1");
-
-                    b.ToTable("AspNetRoleClaims");
+                    b.ToTable("RoleClaim","Identity");
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.Table", b =>
@@ -855,27 +853,6 @@ namespace Mealmate.Api.Migrations
                     b.ToTable("UserToken","Identity");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RoleClaim","Identity");
-                });
-
             modelBuilder.Entity("Mealmate.Core.Entities.Branch", b =>
                 {
                     b.HasOne("Mealmate.Core.Entities.Restaurant", "Restaurant")
@@ -908,6 +885,13 @@ namespace Mealmate.Api.Migrations
 
             modelBuilder.Entity("Mealmate.Core.Entities.MenuItem", b =>
                 {
+                    b.HasOne("Mealmate.Core.Entities.CuisineType", "CuisineType")
+                        .WithMany("MenuItems")
+                        .HasForeignKey("CuisineTypeId")
+                        .HasConstraintName("FK_MenuItem_CuisineType")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Mealmate.Core.Entities.Menu", "Menu")
                         .WithMany("MenuItems")
                         .HasForeignKey("MenuId")
@@ -1080,15 +1064,11 @@ namespace Mealmate.Api.Migrations
 
             modelBuilder.Entity("Mealmate.Core.Entities.RoleClaim", b =>
                 {
-                    b.HasOne("Mealmate.Core.Entities.Role", null)
-                        .WithMany()
+                    b.HasOne("Mealmate.Core.Entities.Role", "Role")
+                        .WithMany("RoleClaims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Mealmate.Core.Entities.Role", "Role")
-                        .WithMany("RoleClaims")
-                        .HasForeignKey("RoleId1");
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.Table", b =>

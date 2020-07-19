@@ -16,6 +16,10 @@ namespace Mealmate.Core.Entities
         public int MenuId { get; set; }
         public virtual Menu Menu { get; set; }
 
+
+        public int CuisineTypeId { get; set; }
+        public virtual CuisineType CuisineType { get; set; }
+
         public virtual ICollection<MenuItemOption> MenuItemOptions { get; set; }
         public virtual ICollection<MenuItemAllergen> MenuItemAllergens { get; set; }
         public virtual ICollection<MenuItemDietary> MenuItemDietaries { get; set; }
