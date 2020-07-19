@@ -6,6 +6,8 @@ using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
+using Mealmate.Core.Paging;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,13 +30,12 @@ namespace Mealmate.Api.Controllers
         #region Read
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CuisineTypeModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<CuisineTypeModel>>> Get(
-            [FromBody] SearchPageRequest request, string props)
+        public async Task<ActionResult<IEnumerable<CuisineTypeModel>>> Get([FromQuery] PageSearchArgs request)
         {
             try
             {
-                var result = await _cuisineTypeService.Search(request.Args);
-                JToken _jtoken = TokenService.CreateJToken(result, props);
+                var result = await _cuisineTypeService.Search(request);
+                JToken _jtoken = TokenService.CreateJToken(result, request.Props);
                 return Ok(_jtoken);
             }
             catch (Exception)

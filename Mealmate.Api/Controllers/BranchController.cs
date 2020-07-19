@@ -32,13 +32,12 @@ namespace Mealmate.Api.Controllers
         [HttpGet]
         [Route("{restaurantId}")]
         [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(
-            int restaurantId, [FromBody] SearchPageRequest request, string props)
+        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(int restaurantId, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var Branches = await _branchService.Search(restaurantId, request.Args);
-                JToken _jtoken = TokenService.CreateJToken(Branches, props);
+                var Branches = await _branchService.Search(restaurantId, request);
+                JToken _jtoken = TokenService.CreateJToken(Branches, request.Props);
                 return Ok(_jtoken);
             }
             catch (Exception)

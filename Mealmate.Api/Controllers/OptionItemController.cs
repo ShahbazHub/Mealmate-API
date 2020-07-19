@@ -7,6 +7,8 @@ using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Entities.Lookup;
+using Mealmate.Core.Paging;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,16 +29,14 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("{branchId}")]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<OptionItemModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OptionItemModel>>> Get(
-            int branchId, [FromBody] SearchPageRequest request, string props)
+        public async Task<ActionResult<IEnumerable<OptionItemModel>>> Get([FromQuery] PageSearchArgs request)
         {
             try
             {
-                var result = await _optionItemService.Search(request.Args);
-                JToken _jtoken = TokenService.CreateJToken(result, props);
+                var result = await _optionItemService.Search(request);
+                JToken _jtoken = TokenService.CreateJToken(result, request.Props);
                 return Ok(_jtoken);
             }
             catch (Exception)

@@ -30,6 +30,8 @@ using System.Reflection;
 using System.IO;
 using Mealmate.Api.Helpers;
 using Autofac.Core;
+using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace Mealmate.Api
 {
@@ -44,6 +46,10 @@ namespace Mealmate.Api
                     configure.EnableEndpointRouting = false;
                     configure.SuppressAsyncSuffixInActionNames = false;
                 })
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                })
                 .AddFluentValidation(fv =>
                 {
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
@@ -53,6 +59,7 @@ namespace Mealmate.Api
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 })
+
                 .AddControllersAsServices();
 
             services.AddCors(options =>
@@ -141,7 +148,6 @@ namespace Mealmate.Api
                     },
                     TermsOfService = new Uri("https://dev.azure.com/mealmate/MealMate/_git/Mealmate-DotNet")
                 });
-
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",

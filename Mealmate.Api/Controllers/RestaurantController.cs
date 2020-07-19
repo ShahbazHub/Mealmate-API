@@ -35,12 +35,12 @@ namespace Mealmate.Api.Controllers
         #region Read
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get([FromBody] SearchPageRequest request, string props)
+        public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get([FromQuery] PageSearchArgs pageSearchArgs)
         {
             try
             {
-                var Restaurants = await _restaurantService.Search(request.Args);
-                JToken _jtoken = TokenService.CreateJToken(Restaurants, props);
+                var Restaurants = await _restaurantService.Search(pageSearchArgs);
+                JToken _jtoken = TokenService.CreateJToken(Restaurants, pageSearchArgs.Props);
                 return Ok(_jtoken);
             }
             catch (Exception)
