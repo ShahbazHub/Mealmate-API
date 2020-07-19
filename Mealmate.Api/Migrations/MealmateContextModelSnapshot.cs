@@ -703,7 +703,7 @@ namespace Mealmate.Api.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR(25)")
+                        .HasColumnType("NVARCHAR(350)")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");

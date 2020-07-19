@@ -52,7 +52,7 @@ namespace Mealmate.Infrastructure.Data
                     FirstName = "System",
                     LastName = "Administrator",
                     Email = "admin@gmail.com",
-                    UserName = "admin"
+                    UserName = "admin@gmail.com"
                 };
 
                 var result = await _userManager.CreateAsync(user, "Server@123");

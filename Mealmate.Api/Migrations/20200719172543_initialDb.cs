@@ -43,7 +43,7 @@ namespace Mealmate.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(type: "NVARCHAR(25)", maxLength: 256, nullable: false),
+                    UserName = table.Column<string>(type: "NVARCHAR(350)", maxLength: 256, nullable: false),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "VARCHAR(350)", maxLength: 256, nullable: false),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),

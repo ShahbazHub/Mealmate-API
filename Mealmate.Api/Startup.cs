@@ -51,8 +51,6 @@ namespace Mealmate.Api
                 .AddCustomConfiguration(_config)
                 .AddCustomAuthentication(_mealMateSettings)
                 .AddCustomIntegrations(_env);
-
-            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -78,7 +76,7 @@ namespace Mealmate.Api
                 options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
             });
             app.UseMiddleware<LoggingMiddleware>();
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("CorsPolicy");
 

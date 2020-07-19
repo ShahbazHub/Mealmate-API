@@ -53,7 +53,7 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
-                var Branch = await _branchService.Get(branchId);
+                var Branch = await _branchService.GetById(branchId);
                 return Ok(Branch);
             }
             catch (Exception)

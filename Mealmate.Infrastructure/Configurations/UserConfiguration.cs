@@ -11,7 +11,7 @@ namespace Mealmate.Infrastructure.Configurations
             builder.ToTable("User", "Identity");
 
             builder.Property(p => p.UserName)
-                .HasColumnType("NVARCHAR(25)")
+                .HasColumnType("NVARCHAR(350)")
                 .IsRequired();
 
             builder.Property(p => p.Email)

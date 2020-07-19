@@ -45,10 +45,10 @@ namespace Mealmate.Api
                 {
                     configure.SuppressAsyncSuffixInActionNames = false;
                 })
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                })
+                //.AddJsonOptions(options =>
+                //{
+                //    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                //})
                 .AddFluentValidation(fv =>
                 {
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
@@ -77,7 +77,7 @@ namespace Mealmate.Api
         {
             // Add Mealmate DbContext
             services
-                .AddEntityFrameworkSqlServer()
+                //.AddEntityFrameworkSqlServer()
                 .AddDbContext<MealmateContext>(options =>
                         options
                         .EnableSensitiveDataLogging(true)
@@ -90,7 +90,7 @@ namespace Mealmate.Api
                         }
                     )
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
-                    ServiceLifetime.Singleton
+                    ServiceLifetime.Scoped
                  );
 
             services.AddTransient<IEmailService, EmailService>();
@@ -116,6 +116,8 @@ namespace Mealmate.Api
                             options.Password.RequireNonAlphanumeric = false;
                             options.Password.RequireUppercase = false;
                             options.User.RequireUniqueEmail = true;
+
+                            //options.SignIn.RequireConfirmedEmail = true;
                         })
                         .AddEntityFrameworkStores<MealmateContext>()
                         .AddDefaultTokenProviders();

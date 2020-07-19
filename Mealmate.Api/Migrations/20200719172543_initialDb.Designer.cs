@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    [Migration("20200719110839_initialDb")]
+    [Migration("20200719172543_initialDb")]
     partial class initialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -705,7 +705,7 @@ namespace Mealmate.Api.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR(25)")
+                        .HasColumnType("NVARCHAR(350)")
                         .HasMaxLength(256);
 
                     b.HasKey("Id");
