@@ -43,7 +43,6 @@ namespace Mealmate.Api
             services
                 .AddMvc(configure =>
                 {
-                    configure.EnableEndpointRouting = false;
                     configure.SuppressAsyncSuffixInActionNames = false;
                 })
                 .AddJsonOptions(options =>
@@ -76,15 +75,12 @@ namespace Mealmate.Api
 
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, MealmateSettings MealmateSettings)
         {
-            // use in-memory database
-            //services.AddDbContext<MealmateContext>(c => c.UseInMemoryDatabase("Mealmate"));
-
             // Add Mealmate DbContext
-            // .AddEntityFrameworkSqlServer()
             services
+                .AddEntityFrameworkSqlServer()
                 .AddDbContext<MealmateContext>(options =>
                         options
-                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                        .EnableSensitiveDataLogging(true)
                         .UseSqlServer(MealmateSettings.ConnectionString,
                         sqlOptions =>
                         {
@@ -92,8 +88,9 @@ namespace Mealmate.Api
                             sqlOptions.MigrationsAssembly("Mealmate.Api");
                             sqlOptions.MigrationsHistoryTable("__MigrationsHistory", "Migration");
                         }
-                    ),
-                    ServiceLifetime.Transient
+                    )
+                    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking),
+                    ServiceLifetime.Singleton
                  );
 
             services.AddTransient<IEmailService, EmailService>();
@@ -118,17 +115,13 @@ namespace Mealmate.Api
                             options.Password.RequireLowercase = false;
                             options.Password.RequireNonAlphanumeric = false;
                             options.Password.RequireUppercase = false;
-
                             options.User.RequireUniqueEmail = true;
-                            //options.Tokens.ProviderMap.Add("CustomEmailConfirmation",
-                            //    new TokenProviderDescriptor(typeof(CustomEmailConfirmationTokenProvider<IdentityUser>)));
-                            //options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
                         })
                         .AddEntityFrameworkStores<MealmateContext>()
                         .AddDefaultTokenProviders();
                 }
             }
-            services.AddTransient<CustomEmailConfirmationTokenProvider<IdentityUser>>();
+            services.AddScoped<CustomEmailConfirmationTokenProvider<User>>();
             return services;
         }
 

@@ -19,45 +19,45 @@ namespace Mealmate.Infrastructure.IoC
         {
 
             // repositories
-            builder.RegisterType<RestaurantRepository>().As<IRestaurantRepository>().InstancePerRequest();
-            builder.RegisterType<BranchRepository>().As<IBranchRepository>().InstancePerRequest();
-            builder.RegisterType<LocationRepository>().As<ILocationRepository>().InstancePerRequest();
+            builder.RegisterType<RestaurantRepository>().As<IRestaurantRepository>().InstancePerDependency();
+            builder.RegisterType<BranchRepository>().As<IBranchRepository>().InstancePerDependency();
+            builder.RegisterType<LocationRepository>().As<ILocationRepository>().InstancePerDependency();
 
-            builder.RegisterType<MenuRepository>().As<IMenuRepository>().InstancePerRequest();
-            builder.RegisterType<MenuItemRepository>().As<IMenuItemRepository>().InstancePerRequest();
-            builder.RegisterType<MenuItemOptionRepository>().As<IMenuItemOptionRepository>().InstancePerRequest();
+            builder.RegisterType<MenuRepository>().As<IMenuRepository>().InstancePerDependency();
+            builder.RegisterType<MenuItemRepository>().As<IMenuItemRepository>().InstancePerDependency();
+            builder.RegisterType<MenuItemOptionRepository>().As<IMenuItemOptionRepository>().InstancePerDependency();
 
-            builder.RegisterType<QRCodeRepository>().As<IQRCodeRepository>().InstancePerRequest();
-            builder.RegisterType<TableRepository>().As<ITableRepository>().InstancePerRequest();
+            builder.RegisterType<QRCodeRepository>().As<IQRCodeRepository>().InstancePerDependency();
+            builder.RegisterType<TableRepository>().As<ITableRepository>().InstancePerDependency();
 
             // Lookups
-            builder.RegisterType<AllergenRepository>().As<IAllergenRepository>().InstancePerRequest();
-            builder.RegisterType<DietaryRepository>().As<IDietaryRepository>().InstancePerRequest();
-            builder.RegisterType<CuisineTypeRepository>().As<ICuisineTypeRepository>().InstancePerRequest();
+            builder.RegisterType<AllergenRepository>().As<IAllergenRepository>().InstancePerDependency();
+            builder.RegisterType<DietaryRepository>().As<IDietaryRepository>().InstancePerDependency();
+            builder.RegisterType<CuisineTypeRepository>().As<ICuisineTypeRepository>().InstancePerDependency();
 
-            builder.RegisterType<OptionItemRepository>().As<IOptionItemRepository>().InstancePerRequest();
-            builder.RegisterType<OptionItemAllergenRepository>().As<IOptionItemAllergenRepository>().InstancePerRequest();
-            builder.RegisterType<OptionItemDietaryRepository>().As<IOptionItemDietaryRepository>().InstancePerRequest();
+            builder.RegisterType<OptionItemRepository>().As<IOptionItemRepository>().InstancePerDependency();
+            builder.RegisterType<OptionItemAllergenRepository>().As<IOptionItemAllergenRepository>().InstancePerDependency();
+            builder.RegisterType<OptionItemDietaryRepository>().As<IOptionItemDietaryRepository>().InstancePerDependency();
 
-            builder.RegisterType<MenuItemAllergenRepository>().As<IMenuItemAllergenRepository>().InstancePerRequest();
-            builder.RegisterType<MenuItemDietaryRepository>().As<IMenuItemDietaryRepository>().InstancePerRequest();
+            builder.RegisterType<MenuItemAllergenRepository>().As<IMenuItemAllergenRepository>().InstancePerDependency();
+            builder.RegisterType<MenuItemDietaryRepository>().As<IMenuItemDietaryRepository>().InstancePerDependency();
 
 
-            builder.RegisterType<UserAllergenRepository>().As<IUserAllergenRepository>().InstancePerRequest();
-            builder.RegisterType<UserDietaryRepository>().As<IUserDietaryRepository>().InstancePerRequest();
+            builder.RegisterType<UserAllergenRepository>().As<IUserAllergenRepository>().InstancePerDependency();
+            builder.RegisterType<UserDietaryRepository>().As<IUserDietaryRepository>().InstancePerDependency();
 
             // Sale
-            builder.RegisterType<OrderRepository>().As<IOrderRepository>().InstancePerRequest();
-            builder.RegisterType<OrderItemRepository>().As<IOrderItemRepository>().InstancePerRequest();
-            builder.RegisterType<OrderItemDetailRepository>().As<IOrderItemDetailRepository>().InstancePerRequest();
+            builder.RegisterType<OrderRepository>().As<IOrderRepository>().InstancePerDependency();
+            builder.RegisterType<OrderItemRepository>().As<IOrderItemRepository>().InstancePerDependency();
+            builder.RegisterType<OrderItemDetailRepository>().As<IOrderItemDetailRepository>().InstancePerDependency();
 
 
-            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerRequest();
-            builder.RegisterGeneric(typeof(EnumRepository<>)).As(typeof(IEnumRepository<>)).InstancePerRequest();
-            builder.RegisterGeneric(typeof(RepositoryBase<,>)).As(typeof(IRepositoryBase<,>)).InstancePerRequest();
-            builder.RegisterGeneric(typeof(LoggerAdapter<>)).As(typeof(IAppLogger<>)).InstancePerRequest();
+            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();
+            builder.RegisterGeneric(typeof(EnumRepository<>)).As(typeof(IEnumRepository<>)).InstancePerDependency();
+            builder.RegisterGeneric(typeof(RepositoryBase<,>)).As(typeof(IRepositoryBase<,>)).InstancePerDependency();
+            builder.RegisterGeneric(typeof(LoggerAdapter<>)).As(typeof(IAppLogger<>)).InstancePerDependency();
 
-            builder.RegisterType<MealmateContextSeed>();
+            builder.RegisterType<MealmateContextSeed>().InstancePerDependency();
 
             //builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly)
             //    .AsImplementedInterfaces();

@@ -18,6 +18,5 @@ namespace Mealmate.Api.Requests
         public bool IsRestaurantAdmin { get; set; } = false;
         public string RestaurantName { get; set; }
         public string RestaurantDescription { get; set; }
-        public int CuisineTypeId { get; set; }
     }
 }

@@ -19,7 +19,6 @@ namespace Mealmate.Infrastructure.Data
         public MealmateContext(DbContextOptions<MealmateContext> options)
             : base(options)
         {
-
         }
 
         private IDbContextTransaction _currentTransaction;
@@ -32,7 +31,6 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.RegisterEntities(typeToRegisters);
 
             modelBuilder.RegisterConvention();
-
             base.OnModelCreating(modelBuilder);
 
             //Lookup Schema
@@ -75,7 +73,7 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemDetailConfiguration());
-
+            
             // Custom
             modelBuilder.RegisterCustomMappings(typeToRegisters);
         }

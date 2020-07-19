@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+
 using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Configuration;
 using Mealmate.Core.Entities;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,10 +14,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,12 +35,14 @@ namespace Mealmate.Api.Controllers
         private readonly MealmateSettings _mealmateSettings;
         private readonly IRestaurantService _restaurantService;
         private readonly IEmailService _emailService;
+        private RoleManager<Role> _roleManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
+        private UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
         public AccountController(SignInManager<User> signInManager,
           UserManager<User> userManager,
+          RoleManager<Role> roleManager,
           IOptions<MealmateSettings> options,
           IMapper mapper,
           IRestaurantService restaurantService,
@@ -48,6 +54,7 @@ namespace Mealmate.Api.Controllers
             _mealmateSettings = options.Value;
             _restaurantService = restaurantService;
             _emailService = emailService;
+            _roleManager = roleManager;
         }
 
         #region Create JWT
@@ -176,21 +183,35 @@ namespace Mealmate.Api.Controllers
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
+
                 if (result.Succeeded)
                 {
-                    var newUser = await _userManager.FindByEmailAsync(model.Email);
-                    //Todo:Temp fix.. Flag is required where request is from frontend or mobile app...
+                    bool roleExists = await _roleManager.RoleExistsAsync(ApplicationRoles.RestaurantAdmin);
+                    if (!roleExists)
+                    {
+                        //Create Role
+                        await _roleManager.CreateAsync(new Role(ApplicationRoles.RestaurantAdmin));
+                    }
+                    var userIsInRole = await _userManager.IsInRoleAsync(user, ApplicationRoles.RestaurantAdmin);
+                    if (!userIsInRole)
+                    {
+                        await _userManager.AddToRoleAsync(user, ApplicationRoles.RestaurantAdmin);
+                    }
+
                     if (model.IsRestaurantAdmin)
                     {
                         await _restaurantService.Create(new RestaurantModel
                         {
-                            OwnerId = newUser.Id,
+                            OwnerId = user.Id,
                             Name = model.RestaurantName,
                             Description = model.RestaurantDescription
                         });
 
-                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        
+                        string siteURL = _mealmateSettings.ClientAppUrl;
+                        var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
+                        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
                         var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
                         await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
                     }

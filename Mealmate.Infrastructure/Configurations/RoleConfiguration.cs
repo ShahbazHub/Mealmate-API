@@ -10,7 +10,7 @@ namespace Mealmate.Infrastructure.Configurations
         {
             builder.ToTable("Role", "Identity");
             builder.Property(p => p.Id)
-                   .ValueGeneratedNever();
+                   .ValueGeneratedOnAdd();
 
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")

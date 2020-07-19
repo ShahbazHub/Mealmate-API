@@ -88,6 +88,7 @@ namespace Mealmate.Api
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

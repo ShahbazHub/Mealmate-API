@@ -39,7 +39,7 @@ namespace Mealmate.Infrastructure.Data
 
             //// users
             await SeedUsersAsync();
-            await SeedRolesAsync();
+            //await SeedRolesAsync();
 
         }
         private async Task SeedUsersAsync()

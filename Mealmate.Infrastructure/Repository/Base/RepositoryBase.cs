@@ -18,9 +18,10 @@ namespace Mealmate.Infrastructure.Repository.Base
         public RepositoryBase(MealmateContext context)
         {
             _context = context;
+            
         }
 
-        private readonly DbContext _context;
+        private  DbContext _context;
 
         private DbSet<T> _entities;
 
@@ -38,7 +39,7 @@ namespace Mealmate.Infrastructure.Repository.Base
         public async virtual Task<T> GetByIdAsync(TId id)
         {
             var entity = await Entities.FindAsync(id);
-            //_context.Entry(entity).State = EntityState.Detached;
+            _context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
 
@@ -46,7 +47,6 @@ namespace Mealmate.Infrastructure.Repository.Base
         {
             Entities.AddRange(entities);
             await _context.SaveChangesAsync();
-
             return entities;
         }
 

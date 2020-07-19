@@ -3,6 +3,7 @@
     public class MealmateSettings
     {
         public string ConnectionString { get; set; }
+        public string ClientAppUrl { get; set; }
 
         public Tokens Tokens { get; set; }
         public string ClientId { get; set; }

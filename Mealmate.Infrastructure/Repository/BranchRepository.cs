@@ -21,6 +21,7 @@ namespace Mealmate.Infrastructure.Repository
         public BranchRepository(MealmateContext context)
             : base(context)
         {
+          
         }
 
         public Task<IPagedList<Branch>> SearchAsync(int restaurantId, PageSearchArgs args)

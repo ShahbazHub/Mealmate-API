@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    [Migration("20200719091550_InitialDb")]
-    partial class InitialDb
+    [Migration("20200719110839_initialDb")]
+    partial class initialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -559,7 +559,9 @@ namespace Mealmate.Api.Migrations
             modelBuilder.Entity("Mealmate.Core.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
