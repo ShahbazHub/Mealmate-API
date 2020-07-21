@@ -1,0 +1,28 @@
+<div class="container-fluid justify-content-center">
+  <div id="demo">
+    <br />
+    <br />
+    <h1>
+      Welcome To <strong>Mealmate</strong> Scan QR Code to
+      <strong>JOIN US</strong>
+    </h1>
+    <br />
+    <qrcode
+      [elementType]="'url'"
+      [qrdata]="data1.name + ''"
+      [width]="data1.width"
+      [errorCorrectionLevel]="'M'"
+    ></qrcode>
+  </div>
+  <br />
+  <button
+    class="btn btn-sm btn-outline-info"
+    style="width: 100%;"
+    printSectionId="demo"
+    ngxPrint
+  >
+    <i class="flaticon2-fax icon-md text-muted"></i>Print
+  </button>
+  <br />
+  <br />
+</div>
