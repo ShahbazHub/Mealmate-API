@@ -32,13 +32,14 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         [HttpGet]
-        [Route("{branchId}")]
+        [Route("{branchId}/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<LocationModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<LocationModel>>> Get(int branchId, [FromQuery] PageSearchArgs request)
+        public async Task<ActionResult<IEnumerable<LocationModel>>> Get(
+            int branchId, int isActive, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var Locations = await _locationService.Search(branchId, request);
+                var Locations = await _locationService.Search(branchId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Locations, request.Props);
                 return Ok(_jtoken);
             }

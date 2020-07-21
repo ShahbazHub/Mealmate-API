@@ -12,6 +12,6 @@ namespace Mealmate.Application.Interfaces
         Task<LocationModel> Create(LocationModel model);
         Task Update(LocationModel model);
         Task Delete(int id);
-        Task<IPagedList<LocationModel>> Search(int branchId, PageSearchArgs args);
+        Task<IPagedList<LocationModel>> Search(int branchId, int isActive, PageSearchArgs args);
     }
 }

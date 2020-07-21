@@ -21,12 +21,17 @@ namespace Mealmate.Infrastructure.Repository
         public BranchRepository(MealmateContext context)
             : base(context)
         {
-          
+
         }
 
-        public Task<IPagedList<Branch>> SearchAsync(int restaurantId, PageSearchArgs args)
+        public Task<IPagedList<Branch>> SearchAsync(int restaurantId, int isActive, PageSearchArgs args)
         {
             var query = Table.Include(p => p.Locations).Where(p => p.RestaurantId == restaurantId);
+            if (isActive == 1 || isActive == 0)
+            {
+                var status = isActive == 1 ? true : false;
+                query = query.Where(p => p.IsActive == status);
+            }
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<Branch, object>>>>();
 

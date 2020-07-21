@@ -9,6 +9,6 @@ namespace Mealmate.Core.Repositories
     public interface ILocationRepository : IRepository<Location>
     {
         Task<IPagedList<Location>> SearchAsync(PageSearchArgs args);
-        Task<IPagedList<Location>> SearchAsync(int branchId, PageSearchArgs args);
+        Task<IPagedList<Location>> SearchAsync(int branchId, int isActive, PageSearchArgs args);
     }
 }

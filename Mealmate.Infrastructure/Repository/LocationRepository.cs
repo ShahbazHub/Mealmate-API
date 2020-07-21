@@ -72,10 +72,14 @@ namespace Mealmate.Infrastructure.Repository
             return Task.FromResult<IPagedList<Location>>(pagedList);
         }
 
-        public Task<IPagedList<Location>> SearchAsync(int branchId, PageSearchArgs args)
+        public Task<IPagedList<Location>> SearchAsync(int branchId, int isActive, PageSearchArgs args)
         {
             var query = Table.Include(p => p.Tables).Where(p => p.BranchId == branchId);
-
+            if (isActive == 1 || isActive == 0)
+            {
+                var status = isActive == 1 ? true : false;
+                query = query.Where(p => p.IsActive == status);
+            }
             var orderByList = new List<Tuple<SortingOption, Expression<Func<Location, object>>>>();
 
             if (args.SortingOptions != null)

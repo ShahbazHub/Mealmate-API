@@ -13,6 +13,6 @@ namespace Mealmate.Application.Interfaces
         Task Update(TableModel model);
         Task Delete(int id);
         Task<IPagedList<TableModel>> Search(PageSearchArgs args);
-        Task<IPagedList<TableModel>> Search(int branchId, PageSearchArgs args);
+        Task<IPagedList<TableModel>> Search(int locationId, int isActive, PageSearchArgs args);
     }
 }

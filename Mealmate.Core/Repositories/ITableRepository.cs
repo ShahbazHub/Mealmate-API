@@ -9,6 +9,6 @@ namespace Mealmate.Core.Repositories
     public interface ITableRepository : IRepository<Table>
     {
         Task<IPagedList<Table>> SearchAsync(PageSearchArgs args);
-        Task<IPagedList<Table>> SearchAsync(int locationId, PageSearchArgs args);
+        Task<IPagedList<Table>> SearchAsync(int locationId, int isActive, PageSearchArgs args);
     }
 }
