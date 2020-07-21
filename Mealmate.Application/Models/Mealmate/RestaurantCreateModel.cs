@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Mealmate.Application.Models
 {
-    public class RestaurantCreateModel : BaseModel
+    public class RestaurantCreateModel
     {
         [Required]
         public string Name { get; set; }

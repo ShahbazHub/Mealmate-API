@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Mealmate.Application.Models
 {
-    public class LocationCreateModel : BaseModel
+    public class LocationCreateModel
     {
         [Required]
         public string Name { get; set; }

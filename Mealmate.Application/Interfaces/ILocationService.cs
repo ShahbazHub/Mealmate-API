@@ -10,7 +10,7 @@ namespace Mealmate.Application.Interfaces
         Task<IEnumerable<LocationModel>> Get(int branchId);
         Task<LocationModel> GetById(int id);
         Task<LocationModel> Create(LocationCreateModel model);
-        Task Update(LocationUpdateModel model);
+        Task Update(int id, LocationUpdateModel model);
         Task Delete(int id);
         Task<IPagedList<LocationModel>> Search(int branchId, int isActive, PageSearchArgs args);
     }

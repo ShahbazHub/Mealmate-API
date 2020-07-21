@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Mealmate.Application.Models
 {
-    public class BranchUpdateModel : BaseModel
+    public class BranchUpdateModel 
     {
         [Required]
         public string Name { get; set; }

@@ -74,12 +74,12 @@ namespace Mealmate.Application.Services
             return _mapper.Map<LocationModel>(await _locationRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(LocationUpdateModel model)
+        public async Task Update(int id, LocationUpdateModel model)
         {
-            var existingLocation = await _locationRepository.GetByIdAsync(model.Id);
+            var existingLocation = await _locationRepository.GetByIdAsync(id);
             if (existingLocation == null)
             {
-                throw new ApplicationException($"Location with this id {model.Id} does not exists");
+                throw new ApplicationException($"Location with this id {id} does not exists");
             }
 
             existingLocation.Name = model.Name;

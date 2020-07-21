@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Mealmate.Application.Models
 {
-    public class TableCreateModel : BaseModel
+    public class TableCreateModel
     {
         [Required]
         public string Name { get; set; }

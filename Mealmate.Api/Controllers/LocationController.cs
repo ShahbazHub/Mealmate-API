@@ -85,14 +85,14 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(LocationUpdateModel request)
+        public async Task<ActionResult> Update(int id, LocationUpdateModel request)
         {
             try
             {
-                await _locationService.Update(request);
+                await _locationService.Update(id, request);
                 return Ok();
             }
             catch (Exception)
