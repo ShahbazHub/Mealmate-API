@@ -102,13 +102,20 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(RestaurantUpdateModel request)
+        public async Task<ActionResult> Update(int id, RestaurantUpdateModel request)
         {
-            var result = await _restaurantService.Update(request);
-            return Ok(result);
+            try
+            {
+                var result = await _restaurantService.Update(id, request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         #endregion
 

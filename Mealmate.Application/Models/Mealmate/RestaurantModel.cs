@@ -11,10 +11,10 @@ namespace Mealmate.Application.Models
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; }
         public int OwnerId { get; set; }
 
-        [JsonIgnore]
-        public ICollection<BranchModel> Branches { get; set; }
+        // [JsonIgnore]
+        // public ICollection<BranchModel> Branches { get; set; }
     }
 }

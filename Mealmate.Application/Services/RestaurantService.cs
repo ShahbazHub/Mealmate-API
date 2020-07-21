@@ -78,9 +78,9 @@ namespace Mealmate.Application.Services
             return _mapper.Map<RestaurantModel>(await _restaurantRepository.GetByIdAsync(id));
         }
 
-        public async Task<RestaurantModel> Update(RestaurantUpdateModel model)
+        public async Task<RestaurantModel> Update(int id, RestaurantUpdateModel model)
         {
-            var existingRestaurant = await _restaurantRepository.GetByIdAsync(model.Id);
+            var existingRestaurant = await _restaurantRepository.GetByIdAsync(id);
             if (existingRestaurant == null)
             {
                 throw new ApplicationException("Restaurant with this id is not exists");

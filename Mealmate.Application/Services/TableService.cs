@@ -74,9 +74,9 @@ namespace Mealmate.Application.Services
             return _mapper.Map<TableModel>(await _tableRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(TableUpdateModel model)
+        public async Task Update(int id, TableUpdateModel model)
         {
-            var existingTable = await _tableRepository.GetByIdAsync(model.Id);
+            var existingTable = await _tableRepository.GetByIdAsync(id);
             if (existingTable == null)
             {
                 throw new ApplicationException("Table with this id is not exists");

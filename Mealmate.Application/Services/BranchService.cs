@@ -76,9 +76,9 @@ namespace Mealmate.Application.Services
             return _mapper.Map<BranchModel>(await _branchRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(BranchUpdateModel model)
+        public async Task Update(int id, BranchUpdateModel model)
         {
-            var existingBranch = await _branchRepository.GetByIdAsync(model.Id);
+            var existingBranch = await _branchRepository.GetByIdAsync(id);
             if (existingBranch == null)
             {
                 throw new ApplicationException("Branch with this id is not exists");
