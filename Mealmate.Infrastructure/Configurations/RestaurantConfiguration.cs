@@ -22,6 +22,10 @@ namespace Mealmate.Infrastructure.Configurations
             builder.Property(p => p.Description)
                 .HasColumnType("NVARCHAR(1000)");
 
+            builder.Property(p => p.IsActive)
+                    .HasColumnType("BIT")
+                    .IsRequired();
+
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()

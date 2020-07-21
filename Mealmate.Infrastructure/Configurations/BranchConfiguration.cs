@@ -19,6 +19,10 @@ namespace Mealmate.Infrastructure.Configurations
                     .HasColumnType("INT")
                     .IsRequired();
 
+            builder.Property(p => p.IsActive)
+                    .HasColumnType("BIT")
+                    .IsRequired();
+
             builder.Property(p => p.Name)
                 .HasColumnType("NVARCHAR(250)")
                 .IsRequired();

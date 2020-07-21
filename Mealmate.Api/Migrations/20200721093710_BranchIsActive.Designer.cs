@@ -4,14 +4,16 @@ using Mealmate.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    partial class MealmateContextModelSnapshot : ModelSnapshot
+    [Migration("20200721093710_BranchIsActive")]
+    partial class BranchIsActive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,9 +90,6 @@ namespace Mealmate.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("BIT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -542,9 +541,6 @@ namespace Mealmate.Api.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("NVARCHAR(1000)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("BIT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("NVARCHAR(250)");
@@ -631,9 +627,6 @@ namespace Mealmate.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("BIT");
 
                     b.Property<int>("LocationId")
                         .HasColumnType("INT");

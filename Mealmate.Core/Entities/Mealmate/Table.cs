@@ -10,6 +10,7 @@ namespace Mealmate.Core.Entities
         public string Name { get; set; }
         public DateTimeOffset Created { get; set; }
 
+        public bool IsActive { get; set; }
         public int LocationId { get; set; }
         public virtual Location Location { get; set; }
 
