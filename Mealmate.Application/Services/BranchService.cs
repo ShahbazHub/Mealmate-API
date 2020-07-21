@@ -50,9 +50,11 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("Branch with this id is not exists");
             }
 
-            await _branchRepository.DeleteAsync(existingBranch);
+            existingBranch.IsActive = false;
 
-            _logger.LogInformation("Entity successfully deleted - MealmateAppService");
+            await _branchRepository.SaveAsync(existingBranch);
+
+            _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
         public async Task<IEnumerable<BranchModel>> Get(int restaurantId)

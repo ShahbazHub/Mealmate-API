@@ -10,7 +10,7 @@ namespace Mealmate.Application.Models
     {
         public string Name { get; set; }
         public DateTimeOffset Created { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         public int BranchId { get; set; }
         //public BranchModel Branch { get; set; }
         [JsonIgnore]

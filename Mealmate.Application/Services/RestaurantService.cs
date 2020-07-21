@@ -51,9 +51,10 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("Restaurant with this id is not exists");
             }
 
-            await _restaurantRepository.DeleteAsync(existingRestaurant);
+            existingRestaurant.IsActive = false;
+            await _restaurantRepository.SaveAsync(existingRestaurant);
 
-            _logger.LogInformation("Entity successfully deleted - MealmateAppService");
+            _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
         public async Task<IEnumerable<RestaurantModel>> Get(int ownerId)

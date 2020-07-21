@@ -50,9 +50,10 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("Table with this id is not exists");
             }
 
-            await _tableRepository.DeleteAsync(existingTable);
+            existingTable.IsActive = false;
+            await _tableRepository.SaveAsync(existingTable);
 
-            _logger.LogInformation("Entity successfully deleted - MealmateAppService");
+            _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
         public async Task<IEnumerable<TableModel>> Get(int locationId)

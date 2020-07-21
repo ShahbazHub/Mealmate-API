@@ -50,9 +50,10 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("Location with this id is not exists");
             }
 
-            await _locationRepository.DeleteAsync(existingLocation);
+            existingLocation.IsActive = false;
+            await _locationRepository.SaveAsync(existingLocation);
 
-            _logger.LogInformation("Entity successfully deleted - MealmateAppService");
+            _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
         public async Task<IEnumerable<LocationModel>> Get(int branchId)
