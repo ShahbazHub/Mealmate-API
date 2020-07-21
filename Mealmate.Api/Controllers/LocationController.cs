@@ -69,10 +69,18 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<LocationModel>> Create(LocationModel request)
+        public async Task<ActionResult<LocationModel>> Create(LocationCreateModel request)
         {
-            var result = await _locationService.Create(request);
-            return Ok(result);
+            try
+            {
+                var result = await _locationService.Create(request);
+                return Ok(result);
+
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
@@ -80,10 +88,18 @@ namespace Mealmate.Api.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(LocationModel request)
+        public async Task<ActionResult> Update(LocationUpdateModel request)
         {
-            await _locationService.Update(request);
-            return Ok();
+            try
+            {
+                await _locationService.Update(request);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
         }
         #endregion
 
@@ -93,8 +109,15 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(int locationId)
         {
-            await _locationService.Delete(locationId);
-            return Ok();
+            try
+            {
+                await _locationService.Delete(locationId);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 

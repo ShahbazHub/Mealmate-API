@@ -31,9 +31,17 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<BranchModel> Create(BranchModel model)
+        public async Task<BranchModel> Create(BranchCreateModel model)
         {
-            var newbranch = _mapper.Map<Branch>(model);
+            var newbranch = new Branch
+            {
+                Address = model.Address,
+                Created = DateTime.Now,
+                IsActive = true,
+                Name = model.Name,
+                RestaurantId = model.RestaurantId
+            };
+
             newbranch = await _branchRepository.SaveAsync(newbranch);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -50,9 +58,11 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("Branch with this id is not exists");
             }
 
-            await _branchRepository.DeleteAsync(existingBranch);
+            existingBranch.IsActive = false;
 
-            _logger.LogInformation("Entity successfully deleted - MealmateAppService");
+            await _branchRepository.SaveAsync(existingBranch);
+
+            _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
         public async Task<IEnumerable<BranchModel>> Get(int restaurantId)
@@ -66,7 +76,7 @@ namespace Mealmate.Application.Services
             return _mapper.Map<BranchModel>(await _branchRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(BranchModel model)
+        public async Task Update(BranchUpdateModel model)
         {
             var existingBranch = await _branchRepository.GetByIdAsync(model.Id);
             if (existingBranch == null)
@@ -74,7 +84,9 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("Branch with this id is not exists");
             }
 
-            existingBranch = _mapper.Map<Branch>(model);
+            existingBranch.Address = model.Address;
+            existingBranch.Name = model.Name;
+            existingBranch.IsActive = model.IsActive;
 
             await _branchRepository.SaveAsync(existingBranch);
 
