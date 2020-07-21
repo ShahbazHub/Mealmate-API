@@ -9,6 +9,7 @@ namespace Mealmate.Application.Models
         public string Name { get; set; }
         public DateTimeOffset Created { get; set; }
 
+        public bool IsActive { get; set; }
         public int LocationId { get; set; }
         //public LocationModel Location { get; set; }
 

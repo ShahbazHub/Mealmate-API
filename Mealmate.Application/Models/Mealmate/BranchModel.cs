@@ -11,6 +11,7 @@ namespace Mealmate.Application.Models
         public string Name { get; set; }
         public string Address { get; set; }
         public DateTimeOffset Created { get; set; }
+        public bool IsActive { get; set; }
         public int RestaurantId { get; set; }
         [JsonIgnore]
         public ICollection<LocationModel> Locations { get; set; }
