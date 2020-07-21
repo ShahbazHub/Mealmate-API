@@ -1,0 +1,163 @@
+<kt-portlet>
+  <!-- See prop => '../../_core/models/data-sources/_base.datasource.ts' (loading$) -->
+  <kt-portlet-header [class]="'card-head-lg'">
+    <!-- PORTLET LOADING | Binded to TABLE Datasource -->
+
+    <ng-container ktPortletTitle>
+      <span
+        >Qrcodes <br />
+        <small>List of Qrcodes</small>
+      </span>
+      <!-- For localisations we use @ngx-translate | See off. documentations => https://github.com/ngx-translate/core -->
+      <!-- Localization libraries (en/fr) are here => '../../../.././config/i18n/en.ts|fr.ts' -->
+    </ng-container>
+
+    <ng-container ktPortletTools>
+      <!-- <button
+        (click)="addQrcodes()"
+        mat-raised-button
+        matTooltip="Create new customer"
+        color="primary"
+        type="button"
+      >
+        <span>New Qrcodes</span>
+      </button> -->
+      <!-- Buttons (Material Angular) | See off.documenations 'https://material.angular.io/components/button/overview' -->
+      <!-- mat-raised-button | Rectangular contained button w/ elevation  -->
+    </ng-container>
+  </kt-portlet-header>
+
+  <kt-portlet-body>
+    <div class="form mb-3">
+      <div class="form-filtration">
+        <div class="row align-items-center">
+          <div class="col-md-12">
+            <mat-form-field>
+              <mat-select
+                [(value)]="filterStatus"
+                (selectionChange)="loadQrcodesList()"
+              >
+                <mat-option value="">All</mat-option>
+                <mat-option value="0">Branch No. 1</mat-option>
+                <mat-option value="1">Branch No. 2</mat-option>
+                <mat-option value="Pending">Branch No. 3</mat-option>
+              </mat-select>
+              <mat-hint align="start">
+                <strong>Filter</strong> by Branch
+              </mat-hint>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <!-- end::FILTERS -->
+    </div>
+    <div class="example-container mat-elevation-z8">
+      <div
+        class="example-loading-shade"
+        *ngIf="isLoadingResults || isRateLimitReached"
+      >
+        <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+        <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
+          No Data Found!
+        </div>
+      </div>
+      <mat-table
+        #TableOneSort
+        [dataSource]="dataSourceOne"
+        matSort
+        class="example-table"
+        matSortActive="created"
+        matSortDisableClear
+        matSortDirection="asc"
+      >
+        <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+        <!-- Number Column -->
+
+        <!-- Title Column -->
+
+        <ng-container matColumnDef="title">
+          <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
+          <mat-cell *matCellDef="let row"
+            ><a
+              (click)="fetchDietariesItems()"
+              style="color: blue; font-family: 'Kanit', sans-serif;"
+              >{{ row.title }}</a
+            ></mat-cell
+          >
+        </ng-container>
+        <!-- State Column -->
+        <!-- <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row.description }}</mat-cell>
+        </ng-container> -->
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef mat-sort-header
+            >Status</mat-header-cell
+          >
+          <mat-cell *matCellDef="let row">
+            <span
+              class="label label-lg label-light-{{
+                getItemCssClassByStatus(row.status)
+              }} label-inline"
+              >{{ getItemStatusString(row.status) }}</span
+            >
+          </mat-cell>
+        </ng-container>
+
+        <!-- Created Column -->
+        <ng-container matColumnDef="created">
+          <mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            disableClear="true"
+          >
+            Created
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{ row.created_at | date }}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <ng-template ngxPermissionsOnly="canDeleteECommerceData">
+              <button
+                mat-icon-button
+                color="primary"
+                matTooltip="Edit Dietaries"
+                (click)="openDialog()"
+              >
+                <mat-icon>visibility</mat-icon></button
+              >&nbsp;
+            </ng-template>
+            <a
+              href="#"
+              class="btn btn-light btn-hover-primary btn-sm btn-icon mr-2"
+            >
+              <i class="flaticon2-fax icon-md text-muted"></i>
+            </a>
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumnsOne"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumnsOne"></mat-row>
+      </mat-table>
+      <mat-paginator
+        #TableOnePaginator="matPaginator"
+        [length]="resultsLength"
+        [pageSize]="30"
+      >
+      </mat-paginator>
+    </div>
+  </kt-portlet-body>
+</kt-portlet>
+
+<ng-template>
+  <div [class.isPrinting]="printService.isPrinting">
+    <div style="text-align: center;">
+      <h1>Welcome to {{ title }}!</h1>
+      <button (click)="onPrintInvoice()">PRINT INVOICE</button>
+    </div>
+    <!-- <router-outlet></router-outlet> -->
+    <!-- <app-print-layout name="print"></app-print-layout> -->
+  </div>
+  &nbsp;
+</ng-template>
