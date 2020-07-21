@@ -31,9 +31,16 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<LocationModel> Create(LocationModel model)
+        public async Task<LocationModel> Create(LocationCreateModel model)
         {
-            var newlocation = _mapper.Map<Location>(model);
+            var newlocation = new Location
+            {
+                Name = model.Name,
+                BranchId = model.BranchId,
+                IsActive = model.IsActive,
+                Created = DateTime.Now
+            };
+
             newlocation = await _locationRepository.SaveAsync(newlocation);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -67,7 +74,7 @@ namespace Mealmate.Application.Services
             return _mapper.Map<LocationModel>(await _locationRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(LocationModel model)
+        public async Task Update(LocationUpdateModel model)
         {
             var existingLocation = await _locationRepository.GetByIdAsync(model.Id);
             if (existingLocation == null)
@@ -75,7 +82,8 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException($"Location with this id {model.Id} does not exists");
             }
 
-            existingLocation = _mapper.Map<Location>(model);
+            existingLocation.Name = model.Name;
+            existingLocation.IsActive = model.IsActive;
 
             await _locationRepository.SaveAsync(existingLocation);
 

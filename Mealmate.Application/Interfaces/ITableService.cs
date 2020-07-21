@@ -9,8 +9,8 @@ namespace Mealmate.Application.Interfaces
     {
         Task<IEnumerable<TableModel>> Get(int locationId);
         Task<TableModel> GetById(int id);
-        Task<TableModel> Create(TableModel model);
-        Task Update(TableModel model);
+        Task<TableModel> Create(TableCreateModel model);
+        Task Update(TableUpdateModel model);
         Task Delete(int id);
         Task<IPagedList<TableModel>> Search(PageSearchArgs args);
         Task<IPagedList<TableModel>> Search(int locationId, int isActive, PageSearchArgs args);

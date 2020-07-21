@@ -9,8 +9,8 @@ namespace Mealmate.Application.Interfaces
     {
         Task<IEnumerable<BranchModel>> Get(int restaurantId);
         Task<BranchModel> GetById(int id);
-        Task<BranchModel> Create(BranchModel model);
-        Task Update(BranchModel model);
+        Task<BranchModel> Create(BranchCreateModel model);
+        Task Update(BranchUpdateModel model);
         Task Delete(int id);
         Task<IPagedList<BranchModel>> Search(PageSearchArgs args);
         Task<IPagedList<BranchModel>> Search(int restaurantId, int isActive, PageSearchArgs args);

@@ -71,10 +71,18 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(TableModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<TableModel>> Create(TableModel request)
+        public async Task<ActionResult<TableModel>> Create(TableCreateModel request)
         {
-            var result = await _tableService.Create(request);
-            return Ok(result);
+            try
+            {
+                var result = await _tableService.Create(request);
+                return Ok(result);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+
         }
         #endregion
 
@@ -82,10 +90,17 @@ namespace Mealmate.Api.Controllers
         [HttpPut]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(TableModel request)
+        public async Task<ActionResult> Update(TableUpdateModel request)
         {
-            await _tableService.Update(request);
-            return Ok();
+            try
+            {
+                await _tableService.Update(request);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
@@ -95,8 +110,15 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(int tableId)
         {
-            await _tableService.Delete(tableId);
-            return Ok();
+            try
+            {
+                await _tableService.Delete(tableId);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 

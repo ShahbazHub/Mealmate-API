@@ -200,15 +200,16 @@ namespace Mealmate.Api.Controllers
 
                     if (model.IsRestaurantAdmin)
                     {
-                        await _restaurantService.Create(new RestaurantModel
+                        await _restaurantService.Create(new RestaurantCreateModel
                         {
                             OwnerId = user.Id,
                             Name = model.RestaurantName,
-                            Description = model.RestaurantDescription
+                            Description = model.RestaurantDescription,
+                            IsActive = true
                         });
 
                         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        
+
                         string siteURL = _mealmateSettings.ClientAppUrl;
                         var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
                         //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);

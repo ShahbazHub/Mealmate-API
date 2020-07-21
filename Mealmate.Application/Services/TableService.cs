@@ -31,9 +31,16 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<TableModel> Create(TableModel model)
+        public async Task<TableModel> Create(TableCreateModel model)
         {
-            var newtable = _mapper.Map<Table>(model);
+            var newtable = new Table
+            {
+                Name = model.Name,
+                IsActive = model.IsActive,
+                Created = DateTime.Now,
+                LocationId = model.LocationId
+            };
+
             newtable = await _tableRepository.SaveAsync(newtable);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -67,7 +74,7 @@ namespace Mealmate.Application.Services
             return _mapper.Map<TableModel>(await _tableRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(TableModel model)
+        public async Task Update(TableUpdateModel model)
         {
             var existingTable = await _tableRepository.GetByIdAsync(model.Id);
             if (existingTable == null)
@@ -75,7 +82,8 @@ namespace Mealmate.Application.Services
                 throw new ApplicationException("Table with this id is not exists");
             }
 
-            existingTable = _mapper.Map<Table>(model);
+            existingTable.Name = model.Name;
+            existingTable.IsActive = model.IsActive;
 
             await _tableRepository.SaveAsync(existingTable);
 

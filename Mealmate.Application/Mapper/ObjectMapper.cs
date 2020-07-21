@@ -17,6 +17,7 @@ namespace Mealmate.Application.Mapper
 
             // Mealmate
             CreateMap<Restaurant, RestaurantModel>().ReverseMap();
+
             CreateMap<Branch, BranchModel>().ReverseMap();
             CreateMap<Location, LocationModel>().ReverseMap();
             CreateMap<Menu, MenuModel>().ReverseMap();
