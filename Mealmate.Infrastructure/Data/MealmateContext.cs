@@ -1,5 +1,6 @@
 ﻿using Mealmate.Core.Entities;
 using Mealmate.Core.Entities.Base;
+using Mealmate.Core.Entities.Lookup;
 using Mealmate.Infrastructure.Configurations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -24,8 +25,31 @@ namespace Mealmate.Infrastructure.Data
         private IDbContextTransaction _currentTransaction;
         public IDbContextTransaction GetCurrentTransaction => _currentTransaction;
 
+        // User items
+        public DbSet<UserRestaurant> UserRestaurants { get; set; }
+        public DbSet<UserAllergen> UserAllergens { get; set; }
+        public DbSet<UserDietary> UserDietaries { get; set; }
 
+        // Restaurant
+        public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<Branch> Branches { get; set; }
+        public DbSet<Location> Locaations { get; set; }
+        public DbSet<Table> Tables { get; set; }
+
+        // Menus
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<MenuItemAllergen> MenuItemAllergens { get; set; }
+        public DbSet<MenuItemDietary> MenuItemDietaries { get; set; }
+        public DbSet<MenuItemOption> MenuItemOptions { get; set; }
+
+        // Lookups
+        public DbSet<Allergen> Allergens { get; set; }
+        public DbSet<Dietary> Dietaries { get; set; }
+        public DbSet<CuisineType> CuisineTypes { get; set; }
+        public DbSet<OptionItem> OptionItems { get; set; }
+        public DbSet<OptionItemAllergen> OptionItemAllergens { get; set; }
+        public DbSet<OptionItemDietary> OptionItemDietaries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

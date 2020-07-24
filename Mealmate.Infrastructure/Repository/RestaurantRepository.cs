@@ -18,10 +18,11 @@ namespace Mealmate.Infrastructure.Repository
 {
     public class RestaurantRepository : Repository<Restaurant>, IRestaurantRepository
     {
-
+        private readonly MealmateContext _context;
         public RestaurantRepository(MealmateContext context)
             : base(context)
         {
+            _context = context;
         }
 
         public override async Task<Restaurant> GetByIdAsync(int id)
@@ -125,10 +126,19 @@ namespace Mealmate.Infrastructure.Repository
 
         public async Task<IEnumerable<Restaurant>> GetByOwnerId(int OwnerId)
         {
+            List<Restaurant> temp = new List<Restaurant>();
 
-            throw new NotImplementedException();
-            // var spec = new RestaurantWithBranchesSpecification(p => p.OwnerId == OwnerId);
-            // return await GetAsync(spec);
+            var result = await _context.UserRestaurants
+                                 .Where(p => p.OwnerId == OwnerId)
+                                 .Include(p => p.Restaurant)
+                                 .ToListAsync();
+
+            foreach (var item in result)
+            {
+                temp.Add(item.Restaurant);
+            }
+
+            return temp;
         }
     }
 }
