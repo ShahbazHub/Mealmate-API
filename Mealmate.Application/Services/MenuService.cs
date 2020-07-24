@@ -31,9 +31,17 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<MenuModel> Create(MenuModel model)
+        public async Task<MenuModel> Create(MenuCreateModel model)
         {
-            var newmenu = _mapper.Map<Menu>(model);
+            var newmenu = new Menu
+            {
+                BranchId = model.BranchId,
+                Created = DateTime.Now,
+                IsActive = model.IsActive,
+                Name = model.Name,
+                ServiceTime = model.ServiceTime
+            };
+
             newmenu = await _menuRepository.SaveAsync(newmenu);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -63,18 +71,21 @@ namespace Mealmate.Application.Services
 
         public async Task<MenuModel> GetById(int id)
         {
-            return _mapper.Map<MenuModel>(await _menuRepository.GetByIdAsync(id));
+            var result = await _menuRepository.GetAsync(x => x.Id == id);
+            return _mapper.Map<MenuModel>(result);
         }
 
-        public async Task Update(MenuModel model)
+        public async Task Update(int id, MenuUpdateModel model)
         {
-            var existingMenu = await _menuRepository.GetByIdAsync(model.Id);
+            var existingMenu = await _menuRepository.GetByIdAsync(id);
             if (existingMenu == null)
             {
                 throw new ApplicationException("Menu with this id is not exists");
             }
 
-            existingMenu = _mapper.Map<Menu>(model);
+            existingMenu.IsActive = model.IsActive;
+            existingMenu.Name = model.Name;
+            existingMenu.ServiceTime = model.ServiceTime;
 
             await _menuRepository.SaveAsync(existingMenu);
 
@@ -98,9 +109,9 @@ namespace Mealmate.Application.Services
             return AllergenModelPagedList;
         }
 
-        public async Task<IPagedList<MenuModel>> Search(int branchId, PageSearchArgs args)
+        public async Task<IPagedList<MenuModel>> Search(int branchId, int isActive, PageSearchArgs args)
         {
-            var TablePagedList = await _menuRepository.SearchAsync(branchId, args);
+            var TablePagedList = await _menuRepository.SearchAsync(branchId, isActive, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var AllergenModels = _mapper.Map<List<MenuModel>>(TablePagedList.Items);
@@ -114,106 +125,5 @@ namespace Mealmate.Application.Services
 
             return AllergenModelPagedList;
         }
-
-        //public async Task<IEnumerable<MenuModel>> GetMenuList()
-        //{
-        //    var MenuList = await _menuRepository.ListAllAsync();
-
-        //    var MenuModels = ObjectMapper.Mapper.Map<IEnumerable<MenuModel>>(MenuList);
-
-        //    return MenuModels;
-        //}
-
-        //public async Task<IPagedList<MenuModel>> SearchMenus(PageSearchArgs args)
-        //{
-        //    var MenuPagedList = await _menuRepository.SearchMenusAsync(args);
-
-        //    //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-        //    var MenuModels = ObjectMapper.Mapper.Map<List<MenuModel>>(MenuPagedList.Items);
-
-        //    var MenuModelPagedList = new PagedList<MenuModel>(
-        //        MenuPagedList.PageIndex,
-        //        MenuPagedList.PageSize,
-        //        MenuPagedList.TotalCount,
-        //        MenuPagedList.TotalPages,
-        //        MenuModels);
-
-        //    return MenuModelPagedList;
-        //}
-
-        //public async Task<MenuModel> GetMenuById(int MenuId)
-        //{
-        //    var Menu = await _menuRepository.GetByIdAsync(MenuId);
-
-        //    var MenuModel = ObjectMapper.Mapper.Map<MenuModel>(Menu);
-
-        //    return MenuModel;
-        //}
-
-        //public async Task<IEnumerable<MenuModel>> GetMenusByName(string name)
-        //{
-        //    var spec = new MenuWithMenuesSpecification(name);
-        //    var MenuList = await _menuRepository.GetAsync(spec);
-
-        //    var MenuModels = ObjectMapper.Mapper.Map<IEnumerable<MenuModel>>(MenuList);
-
-        //    return MenuModels;
-        //}
-
-        //public async Task<IEnumerable<MenuModel>> GetMenusByCategoryId(int categoryId)
-        //{
-        //    var spec = new MenuWithMenuesSpecification(categoryId);
-        //    var MenuList = await _menuRepository.GetAsync(spec);
-
-        //    var MenuModels = ObjectMapper.Mapper.Map<IEnumerable<MenuModel>>(MenuList);
-
-        //    return MenuModels;
-        //}
-
-        //public async Task<MenuModel> CreateMenu(MenuModel Menu)
-        //{
-        //    var existingMenu = await _menuRepository.GetByIdAsync(Menu.Id);
-        //    if (existingMenu != null)
-        //    {
-        //        throw new ApplicationException("Menu with this id already exists");
-        //    }
-
-        //    var newMenu = ObjectMapper.Mapper.Map<Menu>(Menu);
-        //    newMenu = await _menuRepository.SaveAsync(newMenu);
-
-        //    _logger.LogInformation("Entity successfully added - MealmateAppService");
-
-        //    var newMenuModel = ObjectMapper.Mapper.Map<MenuModel>(newMenu);
-        //    return newMenuModel;
-        //}
-
-        //public async Task UpdateMenu(MenuModel Menu)
-        //{
-        //    var existingMenu = await _menuRepository.GetByIdAsync(Menu.Id);
-        //    if (existingMenu == null)
-        //    {
-        //        throw new ApplicationException("Menu with this id is not exists");
-        //    }
-
-        //    existingMenu.Name = Menu.Name;
-        //    existingMenu.Description = Menu.Description;
-
-        //    await _menuRepository.SaveAsync(existingMenu);
-
-        //    _logger.LogInformation("Entity successfully updated - MealmateAppService");
-        //}
-
-        //public async Task DeleteMenuById(int MenuId)
-        //{
-        //    var existingMenu = await _menuRepository.GetByIdAsync(MenuId);
-        //    if (existingMenu == null)
-        //    {
-        //        throw new ApplicationException("Menu with this id is not exists");
-        //    }
-
-        //    await _menuRepository.DeleteAsync(existingMenu);
-
-        //    _logger.LogInformation("Entity successfully deleted - MealmateAppService");
-        //}
     }
 }

@@ -12,5 +12,7 @@ namespace Mealmate.Application.Models
         public int AllergenId { get; set; }
         public AllergenModel Allergen { get; set; }
         public int MenuItemId { get; set; }
+        public bool IsActive { get; set; }
+
     }
 }

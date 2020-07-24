@@ -9,6 +9,6 @@ namespace Mealmate.Core.Repositories
     public interface IOptionItemDietaryRepository : IRepository<OptionItemDietary>
     {
         Task<IPagedList<OptionItemDietary>> SearchAsync(PageSearchArgs args);
-        Task<IPagedList<OptionItemDietary>> SearchAsync(int optionItemId, PageSearchArgs args);
+        Task<IPagedList<OptionItemDietary>> SearchAsync(int optionItemId, int isActive, PageSearchArgs args);
     }
 }

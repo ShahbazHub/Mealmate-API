@@ -14,6 +14,7 @@ namespace Mealmate.Core.Entities
 
         public int MenuItemId { get; set; }
         public virtual MenuItem MenuItem { get; set; }
+        public bool IsActive { get; set; }
 
         public MenuItemDietary()
         {

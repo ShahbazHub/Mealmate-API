@@ -33,7 +33,7 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet]
+        [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<RestaurantModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<RestaurantModel>>> Get([FromQuery] PageSearchArgs pageSearchArgs)
         {
@@ -78,7 +78,7 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
-                var temp = await _restaurantService.Get(restaurantId);
+                var temp = await _restaurantService.GetById(restaurantId);
                 return Ok(temp);
             }
             catch (Exception)
@@ -93,11 +93,18 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(RestaurantModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<RestaurantModel>> Create(RestaurantCreateModel request)
+        public async Task<ActionResult<RestaurantModel>> Create(RestaurantWithOwnerCreateModel request)
         {
-            var commandResult = await _restaurantService.Create(request);
-
-            return Ok(commandResult);
+            try
+            {
+                var commandResult = await _restaurantService.Create(request.OwnerId,
+                new RestaurantCreateModel { Name = request.Name, Description = request.Description, IsActive = request.IsActive });
+                return Ok(commandResult);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 

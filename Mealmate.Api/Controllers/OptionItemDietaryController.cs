@@ -31,14 +31,15 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("{optionItemId}")]
+        [Route("{optionItemId}/{isActive}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<OptionItemDietaryModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OptionItemDietaryModel>>> Get(int optionItemId, [FromQuery] PageSearchArgs request)
+        public async Task<ActionResult<IEnumerable<OptionItemDietaryModel>>> Get(
+            int optionItemId, int isActive, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var OptionItemDietarys = await _optionItemDietaryService.Search(optionItemId, request);
+                var OptionItemDietarys = await _optionItemDietaryService.Search(optionItemId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(OptionItemDietarys, request.Props);
                 return Ok(_jtoken);
             }
@@ -69,21 +70,35 @@ namespace Mealmate.Api.Controllers
         [HttpPost()]
         [ProducesResponseType(typeof(OptionItemDietaryModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<OptionItemDietaryModel>> Create([FromBody] OptionItemDietaryModel request)
+        public async Task<ActionResult<OptionItemDietaryModel>> Create([FromBody] OptionItemDietaryCreateModel request)
         {
-            var result = await _optionItemDietaryService.Create(request);
-            return Created($"api/optionitemdietaries/{result.Id}", result);
+            try
+            {
+                var result = await _optionItemDietaryService.Create(request);
+                return Created($"api/optionitemdietaries/{result.Id}", result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
         #region Update
-        [HttpPut()]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update([FromBody] OptionItemDietaryModel request)
+        public async Task<ActionResult> Update(int id, [FromBody] OptionItemDietaryUpdateModel request)
         {
-            await _optionItemDietaryService.Update(request);
-            return Ok();
+            try
+            {
+                await _optionItemDietaryService.Update(id, request);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 

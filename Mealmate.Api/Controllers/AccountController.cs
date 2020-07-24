@@ -34,6 +34,7 @@ namespace Mealmate.Api.Controllers
     {
         private readonly MealmateSettings _mealmateSettings;
         private readonly IRestaurantService _restaurantService;
+        private readonly IUserRestaurantService _userRestaurantService;
         private readonly IEmailService _emailService;
         private RoleManager<Role> _roleManager;
         private readonly SignInManager<User> _signInManager;
@@ -46,6 +47,7 @@ namespace Mealmate.Api.Controllers
           IOptions<MealmateSettings> options,
           IMapper mapper,
           IRestaurantService restaurantService,
+          IUserRestaurantService userRestaurantService,
           IEmailService emailService)
         {
             _mapper = mapper;
@@ -53,6 +55,7 @@ namespace Mealmate.Api.Controllers
             _userManager = userManager;
             _mealmateSettings = options.Value;
             _restaurantService = restaurantService;
+            _userRestaurantService = userRestaurantService;
             _emailService = emailService;
             _roleManager = roleManager;
         }
@@ -200,21 +203,35 @@ namespace Mealmate.Api.Controllers
 
                     if (model.IsRestaurantAdmin)
                     {
-                        await _restaurantService.Create(new RestaurantCreateModel
+                        var restaurant = new RestaurantCreateModel
                         {
-                            OwnerId = user.Id,
                             Name = model.RestaurantName,
                             Description = model.RestaurantDescription,
-                            IsActive = true
-                        });
+                            IsActive = true,
+                        };
 
-                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var data = await _restaurantService.Create(restaurant);
 
-                        string siteURL = _mealmateSettings.ClientAppUrl;
-                        var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
-                        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                        var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
-                        await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
+                        if (data != null)
+                        {
+
+                            var userRestaurant = new UserRestaurantCreateModel
+                            {
+                                OwnerId = user.Id,
+                                RestaurantId = data.Id,
+                                IsActive = true
+                            };
+
+                            await _userRestaurantService.Create(userRestaurant);
+
+                            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                            string siteURL = _mealmateSettings.ClientAppUrl;
+                            var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
+                            //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                            var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                            await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
+                        }
                     }
 
                     var restaurants = await _restaurantService.Get(user.Id);

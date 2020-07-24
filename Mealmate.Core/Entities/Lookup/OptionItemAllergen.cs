@@ -9,10 +9,12 @@ namespace Mealmate.Core.Entities
     {
         public int OptionItemId { get; set; }
         public virtual OptionItem OptionItem { get; set; }
+
         public int AllergenId { get; set; }
         public virtual Allergen Allergen { get; set; }
-        public DateTimeOffset Created { get; set; }
 
+        public DateTimeOffset Created { get; set; }
+        public bool IsActive { get; set; }
 
         public OptionItemAllergen()
         {

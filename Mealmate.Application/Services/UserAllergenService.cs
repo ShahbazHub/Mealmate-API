@@ -31,15 +31,15 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<UserAllergenModel> Create(UserAllergenModel model)
+        public async Task<UserAllergenModel> Create(UserAllergenCreateModel model)
         {
-            var existingUser = await _UserAllergenRepository.GetByIdAsync(model.Id);
-            if (existingUser != null)
+            var newUser = new UserAllergen
             {
-                throw new ApplicationException("User with this id already exists");
-            }
+                AllergenId = model.AllergenId,
+                Created = DateTime.Now,
+                UserId = model.UserId
+            };
 
-            var newUser = _mapper.Map<UserAllergen>(model);
             newUser = await _UserAllergenRepository.SaveAsync(newUser);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -72,15 +72,15 @@ namespace Mealmate.Application.Services
             return _mapper.Map<UserAllergenModel>(await _UserAllergenRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(UserAllergenModel model)
+        public async Task Update(int id, UserAllergenUpdateModel model)
         {
-            var existingUser = await _UserAllergenRepository.GetByIdAsync(model.Id);
+            var existingUser = await _UserAllergenRepository.GetByIdAsync(id);
             if (existingUser == null)
             {
                 throw new ApplicationException("User with this id is not exists");
             }
 
-            existingUser = _mapper.Map<UserAllergen>(model);
+            existingUser.IsActive = model.IsActive;
 
             await _UserAllergenRepository.SaveAsync(existingUser);
 
@@ -104,9 +104,9 @@ namespace Mealmate.Application.Services
             return AllergenModelPagedList;
         }
 
-        public async Task<IPagedList<UserAllergenModel>> Search(int userId, PageSearchArgs args)
+        public async Task<IPagedList<UserAllergenModel>> Search(int userId, int isActive, PageSearchArgs args)
         {
-            var TablePagedList = await _UserAllergenRepository.SearchAsync(userId, args);
+            var TablePagedList = await _UserAllergenRepository.SearchAsync(userId, isActive, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var AllergenModels = _mapper.Map<List<UserAllergenModel>>(TablePagedList.Items);

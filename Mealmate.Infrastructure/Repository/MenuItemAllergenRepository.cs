@@ -74,10 +74,15 @@ namespace Mealmate.Infrastructure.Repository
             return Task.FromResult<IPagedList<MenuItemAllergen>>(pagedList);
         }
 
-        public Task<IPagedList<MenuItemAllergen>> SearchAsync(int menuItemId, PageSearchArgs args)
+        public Task<IPagedList<MenuItemAllergen>> SearchAsync(int menuItemId, int isActive, PageSearchArgs args)
         {
             var query = Table.Include(p => p.Allergen)
                              .Where(p => p.MenuItemId == menuItemId);
+            if (isActive == 1 || isActive == 0)
+            {
+                var status = isActive == 1 ? true : false;
+                query = query.Where(p => p.IsActive == status);
+            }
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<MenuItemAllergen, object>>>>();
 

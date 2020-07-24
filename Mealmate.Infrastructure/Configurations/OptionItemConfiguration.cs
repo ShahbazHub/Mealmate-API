@@ -28,6 +28,10 @@ namespace Mealmate.Infrastructure.Configurations
                 .IsRequired()
                 .HasDefaultValueSql("GETDATE()");
 
+            builder.Property(p => p.IsActive)
+                    .HasColumnType("BIT")
+                    .IsRequired();
+
             builder.HasOne(p => p.Branch)
                .WithMany(p => p.OptionItems)
                .HasForeignKey(p => p.BranchId)

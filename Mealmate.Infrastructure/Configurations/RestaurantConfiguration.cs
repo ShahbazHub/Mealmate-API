@@ -33,21 +33,6 @@ namespace Mealmate.Infrastructure.Configurations
 
             builder.Property(p => p.Photo)
                 .HasColumnType("VARBINARY(MAX)");
-
-            builder.HasOne(p => p.Owner)
-                .WithMany(p => p.Restaurants)
-                .HasForeignKey(p => p.OwnerId)
-                .HasConstraintName("FK_Restaurant_User")
-                .IsRequired()
-                .OnDelete(DeleteBehavior.NoAction);
-
-            // builder.HasOne(p => p.CuisineType)
-            //     .WithMany(p => p.Restaurants)
-            //     .HasForeignKey(p => p.CuisineTypeId)
-            //     .HasConstraintName("FK_Restaurant_CuisineType")
-            //     .IsRequired()
-            //     .OnDelete(DeleteBehavior.NoAction);
-
         }
     }
 }

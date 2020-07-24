@@ -29,14 +29,15 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         [HttpGet()]
-        [Route("{branchId}")]
+        [Route("{branchId}/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<MenuModel>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<IEnumerable<MenuModel>>> Get(int branchId, [FromQuery] PageSearchArgs request)
+        public async Task<ActionResult<IEnumerable<MenuModel>>> Get(
+            int branchId, int isActive, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var Menus = await _menuService.Search(branchId, request);
+                var Menus = await _menuService.Search(branchId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Menus, request.Props);
                 return Ok(_jtoken);
             }
@@ -68,7 +69,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(MenuModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuModel>> Create([FromBody]MenuModel request)
+        public async Task<ActionResult<MenuModel>> Create([FromBody] MenuCreateModel request)
         {
             var result = await _menuService.Create(request);
             return Ok(result);
@@ -76,12 +77,12 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update([FromBody]MenuModel request)
+        public async Task<ActionResult> Update(int id, [FromBody] MenuUpdateModel request)
         {
-            await _menuService.Update(request);
+            await _menuService.Update(id, request);
             return Ok();
         }
         #endregion

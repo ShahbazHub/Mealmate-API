@@ -31,14 +31,15 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [Route("{menuItemId}")]
+        [Route("{menuItemId}/{isActive}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemDietaryModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<MenuItemDietaryModel>>> Get(int menuItemId, [FromQuery] PageSearchArgs request)
+        public async Task<ActionResult<IEnumerable<MenuItemDietaryModel>>> Get(
+            int menuItemId, int isActive, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var MenuItemDietarys = await _menuItemDietaryService.Search(menuItemId, request);
+                var MenuItemDietarys = await _menuItemDietaryService.Search(menuItemId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItemDietarys, request.Props);
                 return Ok(_jtoken);
             }
@@ -69,21 +70,36 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(MenuItemDietaryModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuItemDietaryModel>> Create([FromBody] MenuItemDietaryModel request)
+        public async Task<ActionResult<MenuItemDietaryModel>> Create([FromBody] MenuItemDietaryCreateModel request)
         {
-            var result = await _menuItemDietaryService.Create(request);
-            return Created($"api/menuitemdietaries/{result.Id}", result);
+            try
+            {
+                var result = await _menuItemDietaryService.Create(request);
+                return Created($"api/menuitemdietaries/{result.Id}", result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
         #region Update
-        [HttpPut]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update([FromBody] MenuItemDietaryModel request)
+        public async Task<ActionResult> Update(int id, [FromBody] MenuItemDietaryUpdateModel request)
         {
-            await _menuItemDietaryService.Update(request);
-            return Ok();
+            try
+            {
+                await _menuItemDietaryService.Update(id, request);
+                return Ok();
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
         }
         #endregion
 
@@ -93,8 +109,15 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Delete(int menuItemDietaryId)
         {
-            await _menuItemDietaryService.Delete(menuItemDietaryId);
-            return Ok();
+            try
+            {
+                await _menuItemDietaryService.Delete(menuItemDietaryId);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 

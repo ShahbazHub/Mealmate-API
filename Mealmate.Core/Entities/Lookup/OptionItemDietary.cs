@@ -12,7 +12,7 @@ namespace Mealmate.Core.Entities
         public int DietaryId { get; set; }
         public virtual Dietary Dietary { get; set; }
         public DateTimeOffset Created { get; set; }
-
+        public bool IsActive { get; set; }
 
         public OptionItemDietary()
         {

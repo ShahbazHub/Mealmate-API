@@ -8,12 +8,9 @@ namespace Mealmate.Application.Models
 {
     public class CuisineTypeModel : BaseModel
     {
-        [Required]
         public string Name { get; set; }
-
-        [Required]
         public DateTimeOffset Created { get; set; }
-
+        public bool IsActive { get; set; }
         public ICollection<MenuItemModel> MenuItems { get; set; }
     }
 }

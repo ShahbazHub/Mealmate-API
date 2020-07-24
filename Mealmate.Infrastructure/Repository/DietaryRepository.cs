@@ -23,9 +23,14 @@ namespace Mealmate.Infrastructure.Repository
             : base(context)
         {
         }
-        public Task<IPagedList<Dietary>> SearchAsync(PageSearchArgs args)
+        public Task<IPagedList<Dietary>> SearchAsync(int isActive, PageSearchArgs args)
         {
             var query = Table;
+            if (isActive == 1 || isActive == 0)
+            {
+                var status = isActive == 1 ? true : false;
+                query = query.Where(p => p.IsActive == status);
+            }
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<Dietary, object>>>>();
 

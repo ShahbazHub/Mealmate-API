@@ -10,6 +10,6 @@ namespace Mealmate.Core.Repositories
     {
         Task<IEnumerable<MenuItem>> GetWithDetailsAsync();
         Task<IPagedList<MenuItem>> SearchAsync(PageSearchArgs args);
-        Task<IPagedList<MenuItem>> SearchAsync(int menuId, PageSearchArgs args);
+        Task<IPagedList<MenuItem>> SearchAsync(int menuId, int isActive, PageSearchArgs args);
     }
 }

@@ -35,15 +35,20 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<MenuItemModel> Create(MenuItemModel model)
+        public async Task<MenuItemModel> Create(MenuItemCreateModel model)
         {
-            var existingMenuItem = await _menuItemRepository.GetByIdAsync(model.Id);
-            if (existingMenuItem != null)
+            var newmenuItem = new MenuItem
             {
-                throw new ApplicationException("menuItem with this id already exists");
-            }
+                Created = DateTime.Now,
+                CuisineTypeId = model.CuisineTypeId,
+                Description = model.Description,
+                IsActive = model.IsActive,
+                MenuId = model.MenuId,
+                Name = model.Name,
+                Photo = model.Photo,
+                Price = model.Price
+            };
 
-            var newmenuItem = _mapper.Map<MenuItem>(model);
             newmenuItem = await _menuItemRepository.SaveAsync(newmenuItem);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -88,15 +93,21 @@ namespace Mealmate.Application.Services
             return _mapper.Map<IEnumerable<MenuItemModel>>(result);
         }
 
-        public async Task Update(MenuItemModel model)
+        public async Task Update(int id, MenuItemUpdateModel model)
         {
-            var existingMenuItem = await _menuItemRepository.GetByIdAsync(model.Id);
+            var existingMenuItem = await _menuItemRepository.GetByIdAsync(id);
             if (existingMenuItem == null)
             {
                 throw new ApplicationException("MenuItem with this id is not exists");
             }
 
-            existingMenuItem = _mapper.Map<MenuItem>(model);
+
+            existingMenuItem.Created = DateTime.Now;
+            existingMenuItem.CuisineTypeId = model.CuisineTypeId;
+            existingMenuItem.Description = model.Description;
+            existingMenuItem.IsActive = model.IsActive;
+            existingMenuItem.Name = model.Name;
+            existingMenuItem.Photo = model.Photo;
 
             await _menuItemRepository.SaveAsync(existingMenuItem);
 
@@ -121,9 +132,9 @@ namespace Mealmate.Application.Services
             return AllergenModelPagedList;
         }
 
-        public async Task<IPagedList<MenuItemModel>> Search(int menuId, PageSearchArgs args)
+        public async Task<IPagedList<MenuItemModel>> Search(int menuId, int isActive, PageSearchArgs args)
         {
-            var TablePagedList = await _menuItemRepository.SearchAsync(menuId, args);
+            var TablePagedList = await _menuItemRepository.SearchAsync(menuId, isActive, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var AllergenModels = _mapper.Map<List<MenuItemModel>>(TablePagedList.Items);

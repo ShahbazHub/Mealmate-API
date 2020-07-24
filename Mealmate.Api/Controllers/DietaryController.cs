@@ -28,13 +28,14 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet]
+        [HttpGet("list/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<DietaryModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<DietaryModel>>> Get([FromQuery] PageSearchArgs request)
+        public async Task<ActionResult<IEnumerable<DietaryModel>>> Get(
+            int isActive, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var result = await _dietaryService.Search(request);
+                var result = await _dietaryService.Search(isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
                 return Ok(_jtoken);
             }
@@ -56,7 +57,7 @@ namespace Mealmate.Api.Controllers
 
         #region Create
         [HttpPost()]
-        public async Task<ActionResult> Create([FromBody] DietaryModel model)
+        public async Task<ActionResult> Create([FromBody] DietaryCreateModel model)
         {
             if (ModelState.IsValid)
             {
@@ -72,17 +73,17 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut()]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(DietaryModel model)
+        public async Task<ActionResult> Update(int id, DietaryUpdateModel model)
         {
             //TODO: Add you code here
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _dietaryService.Update(model);
+                    await _dietaryService.Update(id, model);
                 }
             }
             catch (Exception ex)

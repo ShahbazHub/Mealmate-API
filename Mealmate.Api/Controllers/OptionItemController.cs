@@ -29,13 +29,14 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet]
+        [HttpGet("{branchId}/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<OptionItemModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OptionItemModel>>> Get([FromQuery] PageSearchArgs request)
+        public async Task<ActionResult<IEnumerable<OptionItemModel>>> Get(
+            int branchId, int isActive, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var result = await _optionItemService.Search(request);
+                var result = await _optionItemService.Search(branchId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
                 return Ok(_jtoken);
             }
@@ -50,9 +51,16 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<OptionItemModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<OptionItemModel>>> Get(int optionItemId)
         {
-            var temp = await _optionItemService.GetById(optionItemId);
+            try
+            {
+                var temp = await _optionItemService.GetById(optionItemId);
 
-            return Ok(temp);
+                return Ok(temp);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 
@@ -60,7 +68,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost()]
         [ProducesResponseType(typeof(IEnumerable<OptionItemModel>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Create([FromBody] OptionItemModel model)
+        public async Task<ActionResult> Create([FromBody] OptionItemCreateModel model)
         {
             if (ModelState.IsValid)
             {
@@ -76,17 +84,17 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut()]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(OptionItemModel model)
+        public async Task<ActionResult> Update(int id, OptionItemUpdateModel model)
         {
             //TODO: Add you code here
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _optionItemService.Update(model);
+                    await _optionItemService.Update(id, model);
                 }
             }
             catch (Exception ex)

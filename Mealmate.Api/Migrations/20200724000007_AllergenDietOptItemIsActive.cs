@@ -2,22 +2,22 @@
 
 namespace Mealmate.Api.Migrations
 {
-    public partial class TableIsActive : Migration
+    public partial class AllergenDietOptItemIsActive : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
                 name: "IsActive",
-                schema: "Mealmate",
-                table: "Table",
+                schema: "Lookup",
+                table: "OptionItemDietary",
                 type: "BIT",
                 nullable: false,
                 defaultValue: false);
 
             migrationBuilder.AddColumn<bool>(
                 name: "IsActive",
-                schema: "Mealmate",
-                table: "Restaurant",
+                schema: "Lookup",
+                table: "OptionItemAllergen",
                 type: "BIT",
                 nullable: false,
                 defaultValue: false);
@@ -27,13 +27,13 @@ namespace Mealmate.Api.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "IsActive",
-                schema: "Mealmate",
-                table: "Table");
+                schema: "Lookup",
+                table: "OptionItemDietary");
 
             migrationBuilder.DropColumn(
                 name: "IsActive",
-                schema: "Mealmate",
-                table: "Restaurant");
+                schema: "Lookup",
+                table: "OptionItemAllergen");
         }
     }
 }

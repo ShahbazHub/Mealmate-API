@@ -9,9 +9,9 @@ namespace Mealmate.Application.Interfaces
     {
         Task<IEnumerable<DietaryModel>> Get();
         Task<DietaryModel> GetById(int id);
-        Task<DietaryModel> Create(DietaryModel model);
-        Task Update(DietaryModel model);
+        Task<DietaryModel> Create(DietaryCreateModel model);
+        Task Update(int id, DietaryUpdateModel model);
         Task Delete(int id);
-        Task<IPagedList<DietaryModel>> Search(PageSearchArgs args);
+        Task<IPagedList<DietaryModel>> Search(int isActive, PageSearchArgs args);
     }
 }

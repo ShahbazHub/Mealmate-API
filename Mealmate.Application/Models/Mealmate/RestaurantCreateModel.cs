@@ -14,7 +14,5 @@ namespace Mealmate.Application.Models
         public string Description { get; set; }
         [Required]
         public bool IsActive { get; set; } = true;
-        [Required]
-        public int OwnerId { get; set; }
     }
 }

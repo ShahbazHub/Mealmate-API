@@ -73,7 +73,15 @@ namespace Mealmate.Application.Services
 
         public async Task<BranchModel> GetById(int id)
         {
-            return _mapper.Map<BranchModel>(await _branchRepository.GetByIdAsync(id));
+            BranchModel result = null;
+
+            var model = await _branchRepository.GetByIdAsync(id);
+            if (model != null)
+            {
+                result = _mapper.Map<BranchModel>(model);
+            }
+
+            return result;
         }
 
         public async Task Update(int id, BranchUpdateModel model)

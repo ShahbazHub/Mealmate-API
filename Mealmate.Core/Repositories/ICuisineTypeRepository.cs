@@ -9,6 +9,6 @@ namespace Mealmate.Core.Repositories
 {
     public interface ICuisineTypeRepository : IRepository<CuisineType>
     {
-        Task<IPagedList<CuisineType>> SearchAsync(PageSearchArgs args);
+        Task<IPagedList<CuisineType>> SearchAsync(int isActive, PageSearchArgs args);
     }
 }

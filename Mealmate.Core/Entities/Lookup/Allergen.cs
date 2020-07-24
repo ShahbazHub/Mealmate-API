@@ -11,6 +11,7 @@ namespace Mealmate.Core.Entities.Lookup
         public byte[] Photo { get; set; }
         public DateTimeOffset Created { get; set; }
 
+        public bool IsActive { get; set; }
         public virtual ICollection<OptionItemAllergen> OptionItemAllergens { get; set; }
 
         public Allergen()

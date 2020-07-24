@@ -10,9 +10,9 @@ namespace Mealmate.Core.Repositories
     {
         Task<IEnumerable<Restaurant>> GetRestaurantListAsync();
         Task<IPagedList<Restaurant>> SearchAsync(PageSearchArgs args);
-        Task<IEnumerable<Restaurant>> GetRestaurantByNameAsync(string RestaurantName);
-        Task<Restaurant> GetRestaurantByIdWithBranchesAsync(int RestaurantId);
-        Task<IEnumerable<Restaurant>> GetRestaurantWithBranchesByOwnerIdAsync(int OwnerId);
+        Task<IEnumerable<Restaurant>> Get(string RestaurantName);
+        Task<Restaurant> GetById(int RestaurantId);
+        Task<IEnumerable<Restaurant>> GetByOwnerId(int OwnerId);
         //Task<IEnumerable<Restaurant>> GetRestaurantByBranchAsync(int branchId);
     }
 }

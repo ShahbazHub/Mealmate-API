@@ -18,6 +18,7 @@ namespace Mealmate.Application.Models
 
         public int CuisineTypeId { get; set; }
         public CuisineTypeModel CuisineType { get; set; }
+        public bool IsActive { get; set; }
 
         public ICollection<MenuItemOptionModel> MenuItemOptions { get; set; }
         public ICollection<MenuItemAllergenModel> MenuItemAllergens { get; set; }

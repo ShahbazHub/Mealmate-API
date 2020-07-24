@@ -2,14 +2,14 @@
 
 namespace Mealmate.Api.Migrations
 {
-    public partial class LocationIsActive : Migration
+    public partial class MenuIsActive : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
                 name: "IsActive",
                 schema: "Mealmate",
-                table: "Location",
+                table: "Menu",
                 type: "BIT",
                 nullable: false,
                 defaultValue: false);
@@ -20,7 +20,7 @@ namespace Mealmate.Api.Migrations
             migrationBuilder.DropColumn(
                 name: "IsActive",
                 schema: "Mealmate",
-                table: "Location");
+                table: "Menu");
         }
     }
 }

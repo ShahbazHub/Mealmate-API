@@ -12,9 +12,5 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
 
         public bool IsActive { get; set; }
-        public int OwnerId { get; set; }
-
-        // [JsonIgnore]
-        // public ICollection<BranchModel> Branches { get; set; }
     }
 }

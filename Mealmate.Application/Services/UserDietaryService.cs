@@ -31,15 +31,15 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<UserDietaryModel> Create(UserDietaryModel model)
+        public async Task<UserDietaryModel> Create(UserDietaryCreateModel model)
         {
-            var existingUser = await _UserDietaryRepository.GetByIdAsync(model.Id);
-            if (existingUser != null)
+            var newUser = new UserDietary
             {
-                throw new ApplicationException("User with this id already exists");
-            }
+                Created = DateTime.Now,
+                DietaryId = model.DietaryId,
+                IsActive = model.IsActive
+            };
 
-            var newUser = _mapper.Map<UserDietary>(model);
             newUser = await _UserDietaryRepository.SaveAsync(newUser);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -72,15 +72,15 @@ namespace Mealmate.Application.Services
             return _mapper.Map<UserDietaryModel>(await _UserDietaryRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(UserDietaryModel model)
+        public async Task Update(int id, UserDietaryUpdateModel model)
         {
-            var existingUser = await _UserDietaryRepository.GetByIdAsync(model.Id);
+            var existingUser = await _UserDietaryRepository.GetByIdAsync(id);
             if (existingUser == null)
             {
                 throw new ApplicationException("User with this id is not exists");
             }
 
-            existingUser = _mapper.Map<UserDietary>(model);
+            existingUser.IsActive = model.IsActive;
 
             await _UserDietaryRepository.SaveAsync(existingUser);
 
@@ -104,9 +104,9 @@ namespace Mealmate.Application.Services
             return DietaryModelPagedList;
         }
 
-        public async Task<IPagedList<UserDietaryModel>> Search(int userId, PageSearchArgs args)
+        public async Task<IPagedList<UserDietaryModel>> Search(int userId, int isActive, PageSearchArgs args)
         {
-            var TablePagedList = await _UserDietaryRepository.SearchAsync(userId, args);
+            var TablePagedList = await _UserDietaryRepository.SearchAsync(userId, isActive, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var DietaryModels = _mapper.Map<List<UserDietaryModel>>(TablePagedList.Items);

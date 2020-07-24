@@ -12,5 +12,7 @@ namespace Mealmate.Application.Models
         public int DietaryId { get; set; }
         public DietaryModel Dietary { get; set; }
         public int MenuItemId { get; set; }
+        public bool IsActive { get; set; }
+
     }
 }

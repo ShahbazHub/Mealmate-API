@@ -15,6 +15,9 @@ namespace Mealmate.Core.Entities
         public int UserId { get; set; }
         public virtual User User { get; set; }
 
+        public bool IsActive { get; set; }
+
+
         public UserDietary()
         {
         }

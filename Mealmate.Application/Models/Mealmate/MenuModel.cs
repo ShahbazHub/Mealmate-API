@@ -11,7 +11,6 @@ namespace Mealmate.Application.Models
         public TimeSpan ServiceTime { get; set; }
         public DateTimeOffset Created { get; set; }
         public int BranchId { get; set; }
-        
-        //public ICollection<MenuItemModel> MenuItems { get; set; }
+        public bool IsActive { get; set; }
     }
 }

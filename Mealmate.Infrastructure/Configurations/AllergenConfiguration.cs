@@ -29,6 +29,9 @@ namespace Mealmate.Infrastructure.Configurations
                 .IsRequired()
                 .HasDefaultValueSql("GETDATE()");
 
+            builder.Property(p => p.IsActive)
+                    .HasColumnType("BIT")
+                    .IsRequired();
         }
     }
 }

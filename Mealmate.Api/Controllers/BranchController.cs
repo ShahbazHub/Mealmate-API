@@ -54,8 +54,14 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
-                var Branch = await _branchService.GetById(branchId);
-                return Ok(Branch);
+                var model = await _branchService.GetById(branchId);
+
+                if (model == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(model);
             }
             catch (Exception)
             {

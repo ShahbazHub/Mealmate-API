@@ -32,15 +32,16 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<DietaryModel> Create(DietaryModel model)
+        public async Task<DietaryModel> Create(DietaryCreateModel model)
         {
-            var existingTable = await _dietaryRepository.GetByIdAsync(model.Id);
-            if (existingTable != null)
+            var new_dietary = new Dietary
             {
-                throw new ApplicationException("_dietary with this id already exists");
-            }
+                Created = DateTime.Now,
+                IsActive = model.IsActive,
+                Name = model.Name,
+                Photo = model.Photo
+            };
 
-            var new_dietary = _mapper.Map<Dietary>(model);
             new_dietary = await _dietaryRepository.SaveAsync(new_dietary);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -73,15 +74,17 @@ namespace Mealmate.Application.Services
             return _mapper.Map<DietaryModel>(await _dietaryRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(DietaryModel model)
+        public async Task Update(int id, DietaryUpdateModel model)
         {
-            var existingTable = await _dietaryRepository.GetByIdAsync(model.Id);
+            var existingTable = await _dietaryRepository.GetByIdAsync(id);
             if (existingTable == null)
             {
                 throw new ApplicationException("Dietary with this id is not exists");
             }
 
-            existingTable = _mapper.Map<Dietary>(model);
+            existingTable.Name = model.Name;
+            existingTable.IsActive = model.IsActive;
+            existingTable.Photo = model.Photo;
 
             await _dietaryRepository.SaveAsync(existingTable);
 
@@ -89,9 +92,9 @@ namespace Mealmate.Application.Services
         }
 
 
-        public async Task<IPagedList<DietaryModel>> Search(PageSearchArgs args)
+        public async Task<IPagedList<DietaryModel>> Search(int isActive, PageSearchArgs args)
         {
-            var TablePagedList = await _dietaryRepository.SearchAsync(args);
+            var TablePagedList = await _dietaryRepository.SearchAsync(isActive, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var tempModels = _mapper.Map<List<DietaryModel>>(TablePagedList.Items);
@@ -105,105 +108,6 @@ namespace Mealmate.Application.Services
 
             return tempModelPagedList;
         }
-        //public async Task<IEnumerable<DietaryModel>> GetTableList()
-        //{
-        //    var TableList = await _dietaryRepository.ListAllAsync();
 
-        //    var DietaryModels = ObjectMapper.Mapper.Map<IEnumerable<DietaryModel>>(TableList);
-
-        //    return DietaryModels;
-        //}
-
-        //public async Task<IPagedList<DietaryModel>> SearchTables(PageSearchArgs args)
-        //{
-        //    var TablePagedList = await _dietaryRepository.SearchTablesAsync(args);
-
-        //    //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-        //    var DietaryModels = ObjectMapper.Mapper.Map<List<DietaryModel>>(TablePagedList.Items);
-
-        //    var DietaryModelPagedList = new PagedList<DietaryModel>(
-        //        TablePagedList.PageIndex,
-        //        TablePagedList.PageSize,
-        //        TablePagedList.TotalCount,
-        //        TablePagedList.TotalPages,
-        //        DietaryModels);
-
-        //    return DietaryModelPagedList;
-        //}
-
-        //public async Task<DietaryModel> GetTableById(int TableId)
-        //{
-        //    var Dietary = await _dietaryRepository.GetByIdAsync(TableId);
-
-        //    var DietaryModel = ObjectMapper.Mapper.Map<DietaryModel>(Dietary);
-
-        //    return DietaryModel;
-        //}
-
-        //public async Task<IEnumerable<DietaryModel>> GetTablesByName(string name)
-        //{
-        //    var spec = new TableWithTableesSpecification(name);
-        //    var TableList = await _dietaryRepository.GetAsync(spec);
-
-        //    var DietaryModels = ObjectMapper.Mapper.Map<IEnumerable<DietaryModel>>(TableList);
-
-        //    return DietaryModels;
-        //}
-
-        //public async Task<IEnumerable<DietaryModel>> GetTablesByCategoryId(int categoryId)
-        //{
-        //    var spec = new TableWithTableesSpecification(categoryId);
-        //    var TableList = await _dietaryRepository.GetAsync(spec);
-
-        //    var DietaryModels = ObjectMapper.Mapper.Map<IEnumerable<DietaryModel>>(TableList);
-
-        //    return DietaryModels;
-        //}
-
-        //public async Task<DietaryModel> CreateTable(DietaryModel Dietary)
-        //{
-        //    var existingTable = await _dietaryRepository.GetByIdAsync(Dietary.Id);
-        //    if (existingTable != null)
-        //    {
-        //        throw new ApplicationException("Dietary with this id already exists");
-        //    }
-
-        //    var newTable = ObjectMapper.Mapper.Map<Dietary>(Dietary);
-        //    newTable = await _dietaryRepository.SaveAsync(newTable);
-
-        //    _logger.LogInformation("Entity successfully added - MealmateAppService");
-
-        //    var newDietaryModel = ObjectMapper.Mapper.Map<DietaryModel>(newTable);
-        //    return newDietaryModel;
-        //}
-
-        //public async Task UpdateTable(DietaryModel Dietary)
-        //{
-        //    var existingTable = await _dietaryRepository.GetByIdAsync(Dietary.Id);
-        //    if (existingTable == null)
-        //    {
-        //        throw new ApplicationException("Dietary with this id is not exists");
-        //    }
-
-        //    existingTable.Name = Dietary.Name;
-        //    existingTable.Description = Dietary.Description;
-
-        //    await _dietaryRepository.SaveAsync(existingTable);
-
-        //    _logger.LogInformation("Entity successfully updated - MealmateAppService");
-        //}
-
-        //public async Task DeleteTableById(int TableId)
-        //{
-        //    var existingTable = await _dietaryRepository.GetByIdAsync(TableId);
-        //    if (existingTable == null)
-        //    {
-        //        throw new ApplicationException("Dietary with this id is not exists");
-        //    }
-
-        //    await _dietaryRepository.DeleteAsync(existingTable);
-
-        //    _logger.LogInformation("Entity successfully deleted - MealmateAppService");
-        //}
     }
 }

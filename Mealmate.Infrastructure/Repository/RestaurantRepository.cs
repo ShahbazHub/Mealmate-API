@@ -18,10 +18,10 @@ namespace Mealmate.Infrastructure.Repository
 {
     public class RestaurantRepository : Repository<Restaurant>, IRestaurantRepository
     {
+
         public RestaurantRepository(MealmateContext context)
             : base(context)
         {
-
         }
 
         public override async Task<Restaurant> GetByIdAsync(int id)
@@ -103,7 +103,7 @@ namespace Mealmate.Infrastructure.Repository
             return Task.FromResult<IPagedList<Restaurant>>(RestaurantPagedList);
         }
 
-        public async Task<IEnumerable<Restaurant>> GetRestaurantByNameAsync(string RestaurantName)
+        public async Task<IEnumerable<Restaurant>> Get(string RestaurantName)
         {
             var spec = new RestaurantWithBranchesSpecification(RestaurantName);
             return await GetAsync(spec);
@@ -117,15 +117,18 @@ namespace Mealmate.Infrastructure.Repository
             //    .ToListAsync();
         }
 
-        public async Task<Restaurant> GetRestaurantByIdWithBranchesAsync(int RestaurantId)
+        public async Task<Restaurant> GetById(int RestaurantId)
         {
             var spec = new RestaurantWithBranchesSpecification(RestaurantId);
             return (await GetAsync(spec)).FirstOrDefault();
         }
-        public async Task<IEnumerable<Restaurant>> GetRestaurantWithBranchesByOwnerIdAsync(int OwnerId)
+
+        public async Task<IEnumerable<Restaurant>> GetByOwnerId(int OwnerId)
         {
-            var spec = new RestaurantWithBranchesSpecification(p => p.OwnerId == OwnerId);
-            return await GetAsync(spec);
+
+            throw new NotImplementedException();
+            // var spec = new RestaurantWithBranchesSpecification(p => p.OwnerId == OwnerId);
+            // return await GetAsync(spec);
         }
     }
 }

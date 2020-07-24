@@ -9,6 +9,7 @@ namespace Mealmate.Core.Entities
     {
         public string Name { get; set; }
         public DateTimeOffset Created { get; set; }
+        public bool IsActive { get; set; }
 
         public virtual ICollection<MenuItem> MenuItems { get; set; }
     }

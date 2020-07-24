@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Mealmate.Api.Migrations
 {
-    public partial class initialDb : Migration
+    public partial class InitialDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -111,6 +111,24 @@ namespace Mealmate.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Dietary", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Restaurant",
+                schema: "Mealmate",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
+                    Description = table.Column<string>(type: "NVARCHAR(1000)", nullable: true),
+                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
+                    Photo = table.Column<byte[]>(type: "VARBINARY(MAX)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Restaurant", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -231,30 +249,6 @@ namespace Mealmate.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Restaurant",
-                schema: "Mealmate",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
-                    Description = table.Column<string>(type: "NVARCHAR(1000)", nullable: true),
-                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
-                    OwnerId = table.Column<int>(nullable: false),
-                    Photo = table.Column<byte[]>(type: "VARBINARY(MAX)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Restaurant", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Restaurant_User",
-                        column: x => x.OwnerId,
-                        principalSchema: "Identity",
-                        principalTable: "User",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "UserAllergen",
                 schema: "Identity",
                 columns: table => new
@@ -313,6 +307,35 @@ namespace Mealmate.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserRestaurant",
+                schema: "Identity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OwnerId = table.Column<int>(type: "INT", nullable: false),
+                    RestaurantId = table.Column<int>(type: "INT", nullable: false),
+                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRestaurant", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserRestaurant_User",
+                        column: x => x.OwnerId,
+                        principalSchema: "Identity",
+                        principalTable: "User",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserRestaurant_Restaurant",
+                        column: x => x.RestaurantId,
+                        principalSchema: "Mealmate",
+                        principalTable: "Restaurant",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Branch",
                 schema: "Mealmate",
                 columns: table => new
@@ -322,6 +345,7 @@ namespace Mealmate.Api.Migrations
                     Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
                     Address = table.Column<string>(type: "NVARCHAR(1000)", nullable: true),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
                     RestaurantId = table.Column<int>(type: "INT", nullable: false)
                 },
                 constraints: table =>
@@ -366,6 +390,7 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
                     BranchId = table.Column<int>(type: "INT", nullable: false)
                 },
                 constraints: table =>
@@ -469,6 +494,7 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
                     LocationId = table.Column<int>(type: "INT", nullable: false)
                 },
                 constraints: table =>
@@ -778,6 +804,18 @@ namespace Mealmate.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserRestaurant_OwnerId",
+                schema: "Identity",
+                table: "UserRestaurant",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRestaurant_RestaurantId",
+                schema: "Identity",
+                table: "UserRestaurant",
+                column: "RestaurantId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRole_RoleId",
                 schema: "Identity",
                 table: "UserRole",
@@ -892,12 +930,6 @@ namespace Mealmate.Api.Migrations
                 column: "TableId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Restaurant_OwnerId",
-                schema: "Mealmate",
-                table: "Restaurant",
-                column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Table_LocationId",
                 schema: "Mealmate",
                 table: "Table",
@@ -960,6 +992,10 @@ namespace Mealmate.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserLogin",
+                schema: "Identity");
+
+            migrationBuilder.DropTable(
+                name: "UserRestaurant",
                 schema: "Identity");
 
             migrationBuilder.DropTable(
@@ -1035,6 +1071,10 @@ namespace Mealmate.Api.Migrations
                 schema: "Mealmate");
 
             migrationBuilder.DropTable(
+                name: "User",
+                schema: "Identity");
+
+            migrationBuilder.DropTable(
                 name: "Table",
                 schema: "Mealmate");
 
@@ -1049,10 +1089,6 @@ namespace Mealmate.Api.Migrations
             migrationBuilder.DropTable(
                 name: "Restaurant",
                 schema: "Mealmate");
-
-            migrationBuilder.DropTable(
-                name: "User",
-                schema: "Identity");
         }
     }
 }

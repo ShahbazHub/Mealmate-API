@@ -31,15 +31,16 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<OptionItemDietaryModel> Create(OptionItemDietaryModel model)
+        public async Task<OptionItemDietaryModel> Create(OptionItemDietaryCreateModel model)
         {
-            var existingOptionItem = await _optionItemDietaryRepository.GetByIdAsync(model.Id);
-            if (existingOptionItem != null)
+            var newoptionItem = new OptionItemDietary
             {
-                throw new ApplicationException("optionItem with this id already exists");
-            }
+                Created = DateTime.Now,
+                DietaryId = model.DietaryId,
+                IsActive = model.IsActive,
+                OptionItemId = model.OptionItemId
+            };
 
-            var newoptionItem = _mapper.Map<OptionItemDietary>(model);
             newoptionItem = await _optionItemDietaryRepository.SaveAsync(newoptionItem);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -72,15 +73,15 @@ namespace Mealmate.Application.Services
             return _mapper.Map<OptionItemDietaryModel>(await _optionItemDietaryRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(OptionItemDietaryModel model)
+        public async Task Update(int id, OptionItemDietaryUpdateModel model)
         {
-            var existingOptionItem = await _optionItemDietaryRepository.GetByIdAsync(model.Id);
+            var existingOptionItem = await _optionItemDietaryRepository.GetByIdAsync(id);
             if (existingOptionItem == null)
             {
                 throw new ApplicationException("OptionItem with this id is not exists");
             }
 
-            existingOptionItem = _mapper.Map<OptionItemDietary>(model);
+            existingOptionItem.IsActive = model.IsActive;
 
             await _optionItemDietaryRepository.SaveAsync(existingOptionItem);
 
@@ -104,9 +105,9 @@ namespace Mealmate.Application.Services
             return DietaryModelPagedList;
         }
 
-        public async Task<IPagedList<OptionItemDietaryModel>> Search(int branchId, PageSearchArgs args)
+        public async Task<IPagedList<OptionItemDietaryModel>> Search(int optionItemId, int isActive, PageSearchArgs args)
         {
-            var TablePagedList = await _optionItemDietaryRepository.SearchAsync(branchId, args);
+            var TablePagedList = await _optionItemDietaryRepository.SearchAsync(optionItemId, isActive, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var DietaryModels = _mapper.Map<List<OptionItemDietaryModel>>(TablePagedList.Items);

@@ -24,6 +24,9 @@ namespace Mealmate.Infrastructure.Data
         private IDbContextTransaction _currentTransaction;
         public IDbContextTransaction GetCurrentTransaction => _currentTransaction;
 
+
+        public DbSet<Branch> Branches { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var typeToRegisters = typeof(Entity).GetTypeInfo().Assembly.DefinedTypes.Select(t => t.AsType());
@@ -39,14 +42,15 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new OptionItemDietaryConfiguration());
 
             //Mealmate Schema
+            modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
             modelBuilder.ApplyConfiguration(new BranchConfiguration());
             modelBuilder.ApplyConfiguration(new LocationConfiguration());
+            modelBuilder.ApplyConfiguration(new TableConfiguration());
+
             modelBuilder.ApplyConfiguration(new MenuConfiguration());
             modelBuilder.ApplyConfiguration(new MenuItemConfiguration());
             modelBuilder.ApplyConfiguration(new MenuItemOptionConfiguration());
             modelBuilder.ApplyConfiguration(new QRCodeConfiguration());
-            modelBuilder.ApplyConfiguration(new RestaurantConfiguration());
-            modelBuilder.ApplyConfiguration(new TableConfiguration());
 
             //Identity Schema
             modelBuilder.ApplyConfiguration(new UserAllergenConfiguration());
@@ -61,6 +65,8 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
 
+            modelBuilder.ApplyConfiguration(new UserRestaurantConfiguration());
+
             // Lookups
             modelBuilder.ApplyConfiguration(new DietaryConfiguration());
             modelBuilder.ApplyConfiguration(new AllergenConfiguration());
@@ -73,7 +79,7 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemDetailConfiguration());
-            
+
             // Custom
             modelBuilder.RegisterCustomMappings(typeToRegisters);
         }

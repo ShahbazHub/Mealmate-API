@@ -31,9 +31,15 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<OptionItemModel> Create(OptionItemModel model)
+        public async Task<OptionItemModel> Create(OptionItemCreateModel model)
         {
-            var newoptionItem = _mapper.Map<OptionItem>(model);
+            var newoptionItem = new OptionItem
+            {
+                BranchId = model.BranchId,
+                Created = DateTime.Now,
+                IsActive = model.IsActive,
+                Name = model.Name
+            };
             newoptionItem = await _optionItemRepository.SaveAsync(newoptionItem);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -63,18 +69,25 @@ namespace Mealmate.Application.Services
 
         public async Task<OptionItemModel> GetById(int id)
         {
-            return _mapper.Map<OptionItemModel>(await _optionItemRepository.GetByIdAsync(id));
+            var model = await _optionItemRepository.GetByIdAsync(id);
+            if (model == null)
+            {
+                throw new Exception("No data found");
+            }
+
+            return _mapper.Map<OptionItemModel>(model);
         }
 
-        public async Task Update(OptionItemModel model)
+        public async Task Update(int id, OptionItemUpdateModel model)
         {
-            var existingOptionItem = await _optionItemRepository.GetByIdAsync(model.Id);
+            var existingOptionItem = await _optionItemRepository.GetByIdAsync(id);
             if (existingOptionItem == null)
             {
                 throw new ApplicationException("OptionItem with this id is not exists");
             }
 
-            existingOptionItem = _mapper.Map<OptionItem>(model);
+            existingOptionItem.Name = model.Name;
+            existingOptionItem.IsActive = model.IsActive;
 
             await _optionItemRepository.SaveAsync(existingOptionItem);
 
@@ -98,9 +111,9 @@ namespace Mealmate.Application.Services
             return AllergenModelPagedList;
         }
 
-        public async Task<IPagedList<OptionItemModel>> Search(int branchId, PageSearchArgs args)
+        public async Task<IPagedList<OptionItemModel>> Search(int branchId, int isActive, PageSearchArgs args)
         {
-            var TablePagedList = await _optionItemRepository.SearchAsync(branchId, args);
+            var TablePagedList = await _optionItemRepository.SearchAsync(branchId, isActive, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var AllergenModels = _mapper.Map<List<OptionItemModel>>(TablePagedList.Items);

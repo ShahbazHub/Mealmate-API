@@ -1,6 +1,6 @@
 ﻿using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
-
+using Mealmate.Core.Paging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +28,7 @@ namespace Mealmate.Api.Controllers
         #region Read
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<UserModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<UserModel>>> Get()
+        public async Task<ActionResult<IEnumerable<UserModel>>> Get([FromQuery] PageSearchArgs request)
         {
             var result = await _userService.Get();
             return Ok(result);

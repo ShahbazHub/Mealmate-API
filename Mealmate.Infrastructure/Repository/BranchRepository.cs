@@ -18,10 +18,18 @@ namespace Mealmate.Infrastructure.Repository
 {
     public class BranchRepository : Repository<Branch>, IBranchRepository
     {
+        private readonly MealmateContext _context;
         public BranchRepository(MealmateContext context)
             : base(context)
         {
-
+            _context = context;
+        }
+        public override async Task<Branch> GetByIdAsync(int id)
+        {
+            //_context.Branches.FirstOrDefaultAsync(p)
+            //TODO: should be refactored
+            var temp = await GetAsync(p => p.Id == id);
+            return temp.FirstOrDefault();
         }
 
         public Task<IPagedList<Branch>> SearchAsync(int restaurantId, int isActive, PageSearchArgs args)

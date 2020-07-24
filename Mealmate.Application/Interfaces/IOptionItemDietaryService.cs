@@ -9,11 +9,11 @@ namespace Mealmate.Application.Interfaces
     {
         Task<IEnumerable<OptionItemDietaryModel>> Get(int optionItemId);
         Task<OptionItemDietaryModel> GetById(int id);
-        Task<OptionItemDietaryModel> Create(OptionItemDietaryModel model);
-        Task Update(OptionItemDietaryModel model);
+        Task<OptionItemDietaryModel> Create(OptionItemDietaryCreateModel model);
+        Task Update(int id, OptionItemDietaryUpdateModel model);
         Task Delete(int id);
 
         Task<IPagedList<OptionItemDietaryModel>> Search(PageSearchArgs args);
-        Task<IPagedList<OptionItemDietaryModel>> Search(int optionItemId, PageSearchArgs args);
+        Task<IPagedList<OptionItemDietaryModel>> Search(int optionItemId, int isActive, PageSearchArgs args);
     }
 }

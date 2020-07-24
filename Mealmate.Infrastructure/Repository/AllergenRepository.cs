@@ -24,9 +24,14 @@ namespace Mealmate.Infrastructure.Repository
         {
         }
 
-        public Task<IPagedList<Allergen>> SearchAsync(PageSearchArgs args)
+        public Task<IPagedList<Allergen>> SearchAsync(int isActive, PageSearchArgs args)
         {
             var query = Table;
+            if (isActive == 1 || isActive == 0)
+            {
+                var status = isActive == 1 ? true : false;
+                query = query.Where(p => p.IsActive == status);
+            }
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<Allergen, object>>>>();
 

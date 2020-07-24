@@ -19,15 +19,18 @@ namespace Mealmate.Application.Services
     public class RestaurantService : IRestaurantService
     {
         private readonly IRestaurantRepository _restaurantRepository;
+        private readonly IUserRestaurantRepository _userRestaurantRepository;
         private readonly IAppLogger<RestaurantService> _logger;
         private readonly IMapper _mapper;
 
         public RestaurantService(
             IRestaurantRepository restaurantRepository,
+            IUserRestaurantRepository userRestaurantRepository,
             IAppLogger<RestaurantService> logger,
             IMapper mapper)
         {
             _restaurantRepository = restaurantRepository ?? throw new ArgumentNullException(nameof(restaurantRepository));
+            _userRestaurantRepository = userRestaurantRepository ?? throw new ArgumentNullException(nameof(userRestaurantRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
         }
@@ -39,10 +42,8 @@ namespace Mealmate.Application.Services
                 Description = model.Description,
                 IsActive = model.IsActive,
                 Name = model.Name,
-                Created = DateTime.Now,
-                OwnerId = model.OwnerId
+                Created = DateTime.Now
             };
-
 
             newrestaurant = await _restaurantRepository.SaveAsync(newrestaurant);
 
@@ -50,6 +51,39 @@ namespace Mealmate.Application.Services
 
             var newrestaurantmodel = _mapper.Map<RestaurantModel>(newrestaurant);
             return newrestaurantmodel;
+        }
+
+        public async Task<UserRestaurantModel> Create(int ownerId, RestaurantCreateModel model)
+        {
+            var newrestaurant = new Restaurant
+            {
+                Description = model.Description,
+                IsActive = model.IsActive,
+                Name = model.Name,
+                Created = DateTime.Now
+            };
+
+            newrestaurant = await _restaurantRepository.SaveAsync(newrestaurant);
+
+            if (newrestaurant != null)
+            {
+                var userRestaurant = new UserRestaurant
+                {
+                    Created = DateTime.Now,
+                    IsActive = true,
+                    OwnerId = ownerId,
+                    RestaurantId = newrestaurant.Id
+                };
+
+                var result = await _userRestaurantRepository.SaveAsync(userRestaurant);
+
+                _logger.LogInformation("Resource created successfully - mealmateappservice");
+
+                var data = _mapper.Map<UserRestaurantModel>(result);
+                return data;
+            }
+
+            throw new Exception("Error while creating resource");
         }
 
         public async Task Delete(int id)
@@ -68,9 +102,15 @@ namespace Mealmate.Application.Services
 
         public async Task<IEnumerable<RestaurantModel>> Get(int ownerId)
         {
+            List<RestaurantModel> result = new List<RestaurantModel>();
+            var model = await _userRestaurantRepository.Search(ownerId);
 
-            var result = await _restaurantRepository.GetRestaurantWithBranchesByOwnerIdAsync(ownerId);
-            return _mapper.Map<IEnumerable<RestaurantModel>>(result);
+            var data = _mapper.Map<IEnumerable<UserRestaurantModel>>(model);
+            foreach (var item in data)
+            {
+                result.Add(item.Restaurant);
+            }
+            return result;
         }
 
         public async Task<RestaurantModel> GetById(int id)
@@ -112,105 +152,7 @@ namespace Mealmate.Application.Services
 
             return AllergenModelPagedList;
         }
-        //public async Task<IEnumerable<RestaurantModel>> GetRestaurantList()
-        //{
-        //    var RestaurantList = await _restaurantRepository.ListAllAsync();
 
-        //    var RestaurantModels = ObjectMapper.Mapper.Map<IEnumerable<RestaurantModel>>(RestaurantList);
 
-        //    return RestaurantModels;
-        //}
-
-        //public async Task<IPagedList<RestaurantModel>> SearchRestaurants(PageSearchArgs args)
-        //{
-        //    var RestaurantPagedList = await _restaurantRepository.SearchRestaurantsAsync(args);
-
-        //    //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-        //    var RestaurantModels = ObjectMapper.Mapper.Map<List<RestaurantModel>>(RestaurantPagedList.Items);
-
-        //    var RestaurantModelPagedList = new PagedList<RestaurantModel>(
-        //        RestaurantPagedList.PageIndex,
-        //        RestaurantPagedList.PageSize,
-        //        RestaurantPagedList.TotalCount,
-        //        RestaurantPagedList.TotalPages,
-        //        RestaurantModels);
-
-        //    return RestaurantModelPagedList;
-        //}
-
-        //public async Task<RestaurantModel> GetRestaurantById(int RestaurantId)
-        //{
-        //    var Restaurant = await _restaurantRepository.GetByIdAsync(RestaurantId);
-
-        //    var RestaurantModel = ObjectMapper.Mapper.Map<RestaurantModel>(Restaurant);
-
-        //    return RestaurantModel;
-        //}
-
-        //public async Task<IEnumerable<RestaurantModel>> GetRestaurantsByName(string name)
-        //{
-        //    var spec = new RestaurantWithBranchesSpecification(name);
-        //    var RestaurantList = await _restaurantRepository.GetAsync(spec);
-
-        //    var RestaurantModels = ObjectMapper.Mapper.Map<IEnumerable<RestaurantModel>>(RestaurantList);
-
-        //    return RestaurantModels;
-        //}
-
-        //public async Task<IEnumerable<RestaurantModel>> GetRestaurantsByCategoryId(int categoryId)
-        //{
-        //    var spec = new RestaurantWithBranchesSpecification(categoryId);
-        //    var RestaurantList = await _restaurantRepository.GetAsync(spec);
-
-        //    var RestaurantModels = ObjectMapper.Mapper.Map<IEnumerable<RestaurantModel>>(RestaurantList);
-
-        //    return RestaurantModels;
-        //}
-
-        //public async Task<RestaurantModel> CreateRestaurant(RestaurantModel Restaurant)
-        //{
-        //    var existingRestaurant = await _restaurantRepository.GetByIdAsync(Restaurant.Id);
-        //    if (existingRestaurant != null)
-        //    {
-        //        throw new ApplicationException("Restaurant with this id already exists");
-        //    }
-
-        //    var newRestaurant = ObjectMapper.Mapper.Map<Restaurant>(Restaurant);
-        //    newRestaurant = await _restaurantRepository.SaveAsync(newRestaurant);
-
-        //    _logger.LogInformation("Entity successfully added - MealmateAppService");
-
-        //    var newRestaurantModel = ObjectMapper.Mapper.Map<RestaurantModel>(newRestaurant);
-        //    return newRestaurantModel;
-        //}
-
-        //public async Task UpdateRestaurant(RestaurantModel Restaurant)
-        //{
-        //    var existingRestaurant = await _restaurantRepository.GetByIdAsync(Restaurant.Id);
-        //    if (existingRestaurant == null)
-        //    {
-        //        throw new ApplicationException("Restaurant with this id is not exists");
-        //    }
-
-        //    existingRestaurant.Name = Restaurant.Name;
-        //    existingRestaurant.Description = Restaurant.Description;
-
-        //    await _restaurantRepository.SaveAsync(existingRestaurant);
-
-        //    _logger.LogInformation("Entity successfully updated - MealmateAppService");
-        //}
-
-        //public async Task DeleteRestaurantById(int RestaurantId)
-        //{
-        //    var existingRestaurant = await _restaurantRepository.GetByIdAsync(RestaurantId);
-        //    if (existingRestaurant == null)
-        //    {
-        //        throw new ApplicationException("Restaurant with this id is not exists");
-        //    }
-
-        //    await _restaurantRepository.DeleteAsync(existingRestaurant);
-
-        //    _logger.LogInformation("Entity successfully deleted - MealmateAppService");
-        //}
     }
 }

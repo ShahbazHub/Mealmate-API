@@ -31,15 +31,15 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<MenuItemDietaryModel> Create(MenuItemDietaryModel model)
+        public async Task<MenuItemDietaryModel> Create(MenuItemDietaryCreateModel model)
         {
-            var existingMenuItem = await _menuItemDietaryRepository.GetByIdAsync(model.Id);
-            if (existingMenuItem != null)
+            var newmenuItem = new MenuItemDietary
             {
-                throw new ApplicationException("menuItem with this id already exists");
-            }
-
-            var newmenuItem = _mapper.Map<MenuItemDietary>(model);
+                Created = DateTime.Now,
+                DietaryId = model.DietaryId,
+                IsActive = model.IsActive,
+                MenuItemId = model.MenuItemId
+            };
             newmenuItem = await _menuItemDietaryRepository.SaveAsync(newmenuItem);
 
             _logger.LogInformation("entity successfully added - mealmateappservice");
@@ -72,15 +72,15 @@ namespace Mealmate.Application.Services
             return _mapper.Map<MenuItemDietaryModel>(await _menuItemDietaryRepository.GetByIdAsync(id));
         }
 
-        public async Task Update(MenuItemDietaryModel model)
+        public async Task Update(int id, MenuItemDietaryUpdateModel model)
         {
-            var existingMenuItem = await _menuItemDietaryRepository.GetByIdAsync(model.Id);
+            var existingMenuItem = await _menuItemDietaryRepository.GetByIdAsync(id);
             if (existingMenuItem == null)
             {
                 throw new ApplicationException("MenuItem with this id is not exists");
             }
 
-            existingMenuItem = _mapper.Map<MenuItemDietary>(model);
+            existingMenuItem.IsActive = model.IsActive;
 
             await _menuItemDietaryRepository.SaveAsync(existingMenuItem);
 
@@ -104,9 +104,9 @@ namespace Mealmate.Application.Services
             return AllergenModelPagedList;
         }
 
-        public async Task<IPagedList<MenuItemDietaryModel>> Search(int branchId, PageSearchArgs args)
+        public async Task<IPagedList<MenuItemDietaryModel>> Search(int branchId, int isActive, PageSearchArgs args)
         {
-            var TablePagedList = await _menuItemDietaryRepository.SearchAsync(branchId, args);
+            var TablePagedList = await _menuItemDietaryRepository.SearchAsync(branchId, isActive, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var AllergenModels = _mapper.Map<List<MenuItemDietaryModel>>(TablePagedList.Items);
