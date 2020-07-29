@@ -29,6 +29,7 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
+        [AllowAnonymous]
         [HttpGet("list/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<AllergenModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<AllergenModel>>> Get(
@@ -45,7 +46,7 @@ namespace Mealmate.Api.Controllers
                 return BadRequest();
             }
         }
-
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<AllergenModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<AllergenModel>>> Get(int id)

@@ -24,26 +24,27 @@ namespace Mealmate.Application.Services
         private readonly UserManager<User> _userManager;
         private readonly IRestaurantService _restaurantService;
         private readonly RoleManager<Role> _roleManager;
-        private readonly UserRestaurantService _userRestaurantService;
-        private readonly MealmateSettings _mealmateSettings;
-        private readonly ILogger _logger;
+        //private readonly UserRestaurantService _userRestaurantService;
+        //private readonly MealmateSettings _mealmateSettings;
+        //private readonly ILogger _logger;
 
         public UserService(
             UserManager<User> userManager,
             IMapper mapper,
             IRestaurantService restaurantService,
-            RoleManager<Role> roleManager,
-            UserRestaurantService userRestaurantService,
-            IOptions<MealmateSettings> options,
-            ILogger logger)
+            RoleManager<Role> roleManager
+            //UserRestaurantService userRestaurantService,
+            //IOptions<MealmateSettings> options
+            //ILogger logger
+            )
         {
             _mapper = mapper;
             _userManager = userManager;
             _restaurantService = restaurantService;
             _roleManager = roleManager;
-            _userRestaurantService = userRestaurantService;
-            _mealmateSettings = options.Value;
-            _logger = logger;
+            //_userRestaurantService = userRestaurantService;
+            //_mealmateSettings = options.Value;
+            //_logger = logger;
         }
 
         public async Task<UserModel> Create(UserModel model)
@@ -93,7 +94,7 @@ namespace Mealmate.Application.Services
 
 
                 userModel = _mapper.Map<UserModel>(user);
-                await _userRestaurantService.Create(userRestaurant);
+                //await _userRestaurantService.Create(userRestaurant);
                 userModel.RestaurantId = userRestaurant.RestaurantId;
             }
             return userModel;
@@ -108,7 +109,7 @@ namespace Mealmate.Application.Services
             }
 
             await _userManager.DeleteAsync(existingUser);
-            _logger.LogInformation("Entity successfully deleted - MealmateAppService");
+            //_logger.LogInformation("Entity successfully deleted - MealmateAppService");
         }
 
         public async Task<IEnumerable<UserModel>> Get(System.Security.Claims.ClaimsPrincipal user)
@@ -144,7 +145,7 @@ namespace Mealmate.Application.Services
             existingUser = _mapper.Map<User>(model);
 
             await _userManager.UpdateAsync(existingUser);
-            _logger.LogInformation("Entity successfully updated - MealmateAppService");
+            //_logger.LogInformation("Entity successfully updated - MealmateAppService");
 
             return _mapper.Map<UserModel>(existingUser);
         }
