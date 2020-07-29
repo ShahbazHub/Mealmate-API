@@ -15,7 +15,7 @@ namespace Mealmate.Infrastructure.Configurations
             builder.Property(p => p.Id)
                 .ValueGeneratedOnAdd();
 
-            builder.Property(p => p.OwnerId)
+            builder.Property(p => p.UserId)
                 .HasColumnType("INT")
                 .IsRequired();
 
@@ -33,9 +33,9 @@ namespace Mealmate.Infrastructure.Configurations
                 .HasDefaultValueSql("GETDATE()");
 
 
-            builder.HasOne(p => p.Owner)
+            builder.HasOne(p => p.User)
                 .WithMany(p => p.UserRestaurants)
-                .HasForeignKey(p => p.OwnerId)
+                .HasForeignKey(p => p.UserId)
                 .HasConstraintName("FK_UserRestaurant_User")
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);

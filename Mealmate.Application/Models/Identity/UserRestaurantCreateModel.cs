@@ -10,9 +10,10 @@ namespace Mealmate.Application.Models
         public int RestaurantId { get; set; }
 
         [Required]
-        public int OwnerId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         public bool IsActive { get; set; } = true;
+        public bool IsOwner { get; set; } 
     }
 }

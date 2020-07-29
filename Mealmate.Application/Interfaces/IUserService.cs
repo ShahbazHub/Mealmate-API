@@ -8,10 +8,10 @@ namespace Mealmate.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserModel>> Get();
+        Task<IEnumerable<UserModel>> Get(System.Security.Claims.ClaimsPrincipal user);
         Task<UserModel> GetById(int id);
         Task<UserModel> Create(UserModel model);
-        Task Update(UserModel model);
+        Task<UserModel> Update(UserModel model);
         Task Delete(int id);
     }
 }

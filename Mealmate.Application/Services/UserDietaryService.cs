@@ -53,7 +53,7 @@ namespace Mealmate.Application.Services
             var existingUser = await _UserDietaryRepository.GetByIdAsync(id);
             if (existingUser == null)
             {
-                throw new ApplicationException("User with this id is not exists");
+                throw new ApplicationException("id is not exists");
             }
 
             await _UserDietaryRepository.DeleteAsync(existingUser);
@@ -77,7 +77,7 @@ namespace Mealmate.Application.Services
             var existingUser = await _UserDietaryRepository.GetByIdAsync(id);
             if (existingUser == null)
             {
-                throw new ApplicationException("User with this id is not exists");
+                throw new ApplicationException("this id is not exists");
             }
 
             existingUser.IsActive = model.IsActive;

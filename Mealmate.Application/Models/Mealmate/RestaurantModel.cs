@@ -9,6 +9,7 @@ namespace Mealmate.Application.Models
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public byte[] Photo { get; set; }
         public DateTimeOffset Created { get; set; }
 
         public bool IsActive { get; set; }

@@ -208,7 +208,7 @@ namespace Mealmate.Api.Controllers
                         {
                             Name = model.RestaurantName,
                             Description = model.RestaurantDescription,
-                            IsActive = true,
+                            IsActive = true
                         };
 
                         var data = await _restaurantService.Create(restaurant);
@@ -218,9 +218,11 @@ namespace Mealmate.Api.Controllers
 
                             var userRestaurant = new UserRestaurantCreateModel
                             {
-                                OwnerId = user.Id,
+                                UserId = user.Id,
                                 RestaurantId = data.Id,
-                                IsActive = true
+                                IsActive = true,
+                                IsOwner = true
+
                             };
 
                             await _userRestaurantService.Create(userRestaurant);

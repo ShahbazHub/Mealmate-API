@@ -124,12 +124,12 @@ namespace Mealmate.Infrastructure.Repository
             return (await GetAsync(spec)).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<Restaurant>> GetByOwnerId(int OwnerId)
+        public async Task<IEnumerable<Restaurant>> GetByUserId(int UserId)
         {
             List<Restaurant> temp = new List<Restaurant>();
 
             var result = await _context.UserRestaurants
-                                 .Where(p => p.OwnerId == OwnerId)
+                                 .Where(p => p.UserId == UserId)
                                  .Include(p => p.Restaurant)
                                  .ToListAsync();
 
