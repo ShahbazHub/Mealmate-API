@@ -1,17 +1,11 @@
+using Mealmate.Application.Models;
+
 using System.ComponentModel.DataAnnotations;
 
 namespace Mealmate.Api.Requests
 {
-    public class RegisterRequest
+    public class RegisterRequest : UserBaseModel
     {
-        [Required]
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
-
-        [Required]
-        public string Email { get; set; }
-
         [Required]
         public string Password { get; set; }
 

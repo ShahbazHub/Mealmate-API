@@ -25,7 +25,7 @@ namespace Mealmate.Infrastructure.Repository
 
         public Task<IPagedList<UserRestaurant>> SearchAsync(PageSearchArgs args)
         {
-            var query = Table.Include(p => p.Restaurant).Include(p => p.Owner);
+            var query = Table.Include(p => p.Restaurant).Include(p => p.User);
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<UserRestaurant, object>>>>();
 
@@ -74,9 +74,9 @@ namespace Mealmate.Infrastructure.Repository
             return Task.FromResult<IPagedList<UserRestaurant>>(pagedList);
         }
 
-        public Task<IPagedList<UserRestaurant>> SearchAsync(int ownerId, PageSearchArgs args)
+        public Task<IPagedList<UserRestaurant>> SearchAsync(int userId, PageSearchArgs args)
         {
-            var query = Table.Include(p => p.Restaurant).Where(p => p.OwnerId == ownerId);
+            var query = Table.Include(p => p.Restaurant).Where(p => p.UserId == userId);
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<UserRestaurant, object>>>>();
 
@@ -125,10 +125,10 @@ namespace Mealmate.Infrastructure.Repository
             return Task.FromResult<IPagedList<UserRestaurant>>(pagedList);
         }
 
-        public async Task<IEnumerable<UserRestaurant>> Search(int ownerId)
+        public async Task<IEnumerable<UserRestaurant>> Search(int userId)
         {
             var query = Table.Include(p => p.Restaurant)
-                             .Where(p => p.OwnerId == ownerId);
+                             .Where(p => p.UserId == userId);
 
             return await query.ToListAsync();
         }

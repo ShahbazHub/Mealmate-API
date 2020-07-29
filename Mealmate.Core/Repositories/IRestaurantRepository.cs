@@ -12,7 +12,7 @@ namespace Mealmate.Core.Repositories
         Task<IPagedList<Restaurant>> SearchAsync(PageSearchArgs args);
         Task<IEnumerable<Restaurant>> Get(string RestaurantName);
         Task<Restaurant> GetById(int RestaurantId);
-        Task<IEnumerable<Restaurant>> GetByOwnerId(int OwnerId);
+        Task<IEnumerable<Restaurant>> GetByUserId(int UserId);
         //Task<IEnumerable<Restaurant>> GetRestaurantByBranchAsync(int branchId);
     }
 }

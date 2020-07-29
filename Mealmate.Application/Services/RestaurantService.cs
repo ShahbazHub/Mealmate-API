@@ -53,7 +53,7 @@ namespace Mealmate.Application.Services
             return newrestaurantmodel;
         }
 
-        public async Task<UserRestaurantModel> Create(int ownerId, RestaurantCreateModel model)
+        public async Task<UserRestaurantModel> Create(int userId, RestaurantCreateModel model)
         {
             var newrestaurant = new Restaurant
             {
@@ -71,7 +71,7 @@ namespace Mealmate.Application.Services
                 {
                     Created = DateTime.Now,
                     IsActive = true,
-                    OwnerId = ownerId,
+                    UserId = userId,
                     RestaurantId = newrestaurant.Id
                 };
 

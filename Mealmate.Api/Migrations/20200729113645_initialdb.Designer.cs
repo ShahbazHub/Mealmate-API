@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    [Migration("20200723221557_MenuItemsIsActive")]
-    partial class MenuItemsIsActive
+    [Migration("20200729113645_initialdb")]
+    partial class initialdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -66,6 +66,9 @@ namespace Mealmate.Api.Migrations
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("BIT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("NVARCHAR(250)");
@@ -118,6 +121,9 @@ namespace Mealmate.Api.Migrations
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("BIT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("NVARCHAR(250)");
@@ -143,6 +149,9 @@ namespace Mealmate.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("BIT");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -346,6 +355,9 @@ namespace Mealmate.Api.Migrations
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("BIT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("NVARCHAR(250)");
@@ -372,6 +384,9 @@ namespace Mealmate.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("BIT");
 
                     b.Property<int>("OptionItemId")
                         .HasColumnType("INT");
@@ -400,6 +415,9 @@ namespace Mealmate.Api.Migrations
 
                     b.Property<int>("DietaryId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("BIT");
 
                     b.Property<int>("OptionItemId")
                         .HasColumnType("INT");
@@ -755,6 +773,9 @@ namespace Mealmate.Api.Migrations
                         .HasColumnType("DATETIMEOFFSET")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("BIT");
+
                     b.Property<int>("UserId")
                         .HasColumnType("INT");
 
@@ -806,6 +827,9 @@ namespace Mealmate.Api.Migrations
                     b.Property<int>("DietaryId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("BIT");
+
                     b.Property<int>("UserId")
                         .HasColumnType("INT");
 
@@ -855,18 +879,21 @@ namespace Mealmate.Api.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("BIT");
 
-                    b.Property<int>("OwnerId")
-                        .HasColumnType("INT");
-
                     b.Property<int>("RestaurantId")
                         .HasColumnType("INT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INT");
+
+                    b.Property<bool>("isOwner")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id")
                         .HasName("PK_UserRestaurant");
 
-                    b.HasIndex("OwnerId");
-
                     b.HasIndex("RestaurantId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserRestaurant","Identity");
                 });
@@ -1177,17 +1204,17 @@ namespace Mealmate.Api.Migrations
 
             modelBuilder.Entity("Mealmate.Core.Entities.UserRestaurant", b =>
                 {
-                    b.HasOne("Mealmate.Core.Entities.User", "Owner")
-                        .WithMany("UserRestaurants")
-                        .HasForeignKey("OwnerId")
-                        .HasConstraintName("FK_UserRestaurant_User")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Mealmate.Core.Entities.Restaurant", "Restaurant")
                         .WithMany("UserRestaurants")
                         .HasForeignKey("RestaurantId")
                         .HasConstraintName("FK_UserRestaurant_Restaurant")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Mealmate.Core.Entities.User", "User")
+                        .WithMany("UserRestaurants")
+                        .HasForeignKey("UserId")
+                        .HasConstraintName("FK_UserRestaurant_User")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

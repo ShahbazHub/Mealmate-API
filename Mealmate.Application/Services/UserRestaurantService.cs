@@ -10,7 +10,6 @@ using Mealmate.Core.Entities;
 using Mealmate.Core.Interfaces;
 using Mealmate.Core.Paging;
 using Mealmate.Core.Repositories;
-using Mealmate.Core.Specifications;
 using Mealmate.Infrastructure.Paging;
 
 namespace Mealmate.Application.Services
@@ -35,10 +34,11 @@ namespace Mealmate.Application.Services
         {
             var newUser = new UserRestaurant
             {
-                OwnerId = model.OwnerId,
+                UserId = model.UserId,
                 RestaurantId = model.RestaurantId,
                 Created = DateTime.Now,
-                IsActive = model.IsActive
+                IsActive = model.IsActive,
+                isOwner = model.IsOwner
             };
 
             newUser = await _UserRestaurantRepository.SaveAsync(newUser);
@@ -62,9 +62,9 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully deleted - MealmateAppService");
         }
 
-        public async Task<IEnumerable<UserRestaurantModel>> Get(int ownerId)
+        public async Task<IEnumerable<UserRestaurantModel>> Get(int userId)
         {
-            var result = await _UserRestaurantRepository.GetAsync(x => x.OwnerId == ownerId);
+            var result = await _UserRestaurantRepository.GetAsync(x => x.UserId == userId);
             return _mapper.Map<IEnumerable<UserRestaurantModel>>(result);
         }
 

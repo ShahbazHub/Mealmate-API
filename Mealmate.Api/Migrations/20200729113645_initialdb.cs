@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Mealmate.Api.Migrations
 {
-    public partial class InitialDb : Migration
+    public partial class initialdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -75,7 +75,8 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
                     Photo = table.Column<byte[]>(type: "VARBINARY(MAX)", nullable: false),
-                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()")
+                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,7 +91,8 @@ namespace Mealmate.Api.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
-                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()")
+                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,7 +108,8 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
                     Photo = table.Column<byte[]>(type: "VARBINARY(MAX)", nullable: false),
-                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()")
+                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -257,7 +260,8 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
                     AllergenId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(type: "INT", nullable: false)
+                    UserId = table.Column<int>(type: "INT", nullable: false),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -286,7 +290,8 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
                     DietaryId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(type: "INT", nullable: false)
+                    UserId = table.Column<int>(type: "INT", nullable: false),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -313,25 +318,26 @@ namespace Mealmate.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OwnerId = table.Column<int>(type: "INT", nullable: false),
+                    UserId = table.Column<int>(type: "INT", nullable: false),
                     RestaurantId = table.Column<int>(type: "INT", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
-                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
+                    isOwner = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserRestaurant", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserRestaurant_User",
-                        column: x => x.OwnerId,
-                        principalSchema: "Identity",
-                        principalTable: "User",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_UserRestaurant_Restaurant",
                         column: x => x.RestaurantId,
                         principalSchema: "Mealmate",
                         principalTable: "Restaurant",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserRestaurant_User",
+                        column: x => x.UserId,
+                        principalSchema: "Identity",
+                        principalTable: "User",
                         principalColumn: "Id");
                 });
 
@@ -368,6 +374,7 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
                     BranchId = table.Column<int>(type: "INT", nullable: false)
                 },
                 constraints: table =>
@@ -414,6 +421,7 @@ namespace Mealmate.Api.Migrations
                     Name = table.Column<string>(type: "NVARCHAR(250)", nullable: false),
                     ServiceTime = table.Column<TimeSpan>(type: "TIME(7)", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
                     BranchId = table.Column<int>(type: "INT", nullable: false)
                 },
                 constraints: table =>
@@ -436,7 +444,8 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OptionItemId = table.Column<int>(type: "INT", nullable: false),
                     AllergenId = table.Column<int>(nullable: false),
-                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()")
+                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -465,7 +474,8 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OptionItemId = table.Column<int>(type: "INT", nullable: false),
                     DietaryId = table.Column<int>(nullable: false),
-                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()")
+                    Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -519,6 +529,7 @@ namespace Mealmate.Api.Migrations
                     Description = table.Column<string>(nullable: true),
                     Photo = table.Column<byte[]>(nullable: true),
                     Price = table.Column<decimal>(type: "DECIMAL(10, 2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
                     MenuId = table.Column<int>(type: "INT", nullable: false),
                     CuisineTypeId = table.Column<int>(nullable: false)
@@ -600,7 +611,8 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
                     AllergenId = table.Column<int>(nullable: false),
-                    MenuItemId = table.Column<int>(type: "INT", nullable: false)
+                    MenuItemId = table.Column<int>(type: "INT", nullable: false),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -629,7 +641,8 @@ namespace Mealmate.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Created = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET", nullable: false, defaultValueSql: "GETDATE()"),
                     DietaryId = table.Column<int>(nullable: false),
-                    MenuItemId = table.Column<int>(type: "INT", nullable: false)
+                    MenuItemId = table.Column<int>(type: "INT", nullable: false),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -804,16 +817,16 @@ namespace Mealmate.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRestaurant_OwnerId",
-                schema: "Identity",
-                table: "UserRestaurant",
-                column: "OwnerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserRestaurant_RestaurantId",
                 schema: "Identity",
                 table: "UserRestaurant",
                 column: "RestaurantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRestaurant_UserId",
+                schema: "Identity",
+                table: "UserRestaurant",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRole_RoleId",
