@@ -9,8 +9,8 @@ namespace Mealmate.Application.Models
         public int RestaurantId { get; set; }
         public RestaurantModel Restaurant { get; set; }
 
-        public int OwnerId { get; set; }
-        public UserModel Owner { get; set; }
+        public int UserId { get; set; }
+        public UserModel User { get; set; }
 
         public DateTimeOffset Created { get; set; }
         public bool IsActive { get; set; }

@@ -135,12 +135,12 @@ namespace Mealmate.Application.Services
             {
                 temp.Add(new UserModel
                 {
-                    Created = item.Owner.Created,
-                    Email = item.Owner.Email,
-                    FirstName = item.Owner.FirstName,
-                    LastName = item.Owner.LastName,
-                    Id = item.Owner.Id,
-                    PhoneNumber = item.Owner.PhoneNumber,
+                    Created = item.User.Created,
+                    Email = item.User.Email,
+                    FirstName = item.User.FirstName,
+                    LastName = item.User.LastName,
+                    Id = item.User.Id,
+                    PhoneNumber = item.User.PhoneNumber,
                     RestaurantId = item.RestaurantId,
                 });
             }
