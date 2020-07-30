@@ -25,7 +25,7 @@ namespace Mealmate.Api.Controllers
         private readonly IUserService _userService;
         //private RoleManager<Role> _roleManager;
         //private UserManager<User> _userManager;
-        private IUserRestaurantService _userRestaurantService;
+        private readonly IUserRestaurantService _userRestaurantService;
         //private MealmateSettings _mealmateSettings;
         //private IEmailService _emailService;
 
@@ -55,7 +55,7 @@ namespace Mealmate.Api.Controllers
         {
             var user = this.User;
 
-            var result = await _userService.Get(user);
+            var result = await _userService.Get();
             return Ok(result);
         }
 

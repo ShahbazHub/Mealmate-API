@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -111,9 +112,8 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully deleted - MealmateAppService");
         }
 
-        public async Task<IEnumerable<UserModel>> Get(System.Security.Claims.ClaimsPrincipal user)
+        public async Task<IEnumerable<UserModel>> Get()
         {
-            var userid = _userManager.GetUserId(user);
             var result = _userManager.Users;
             var owners = _mapper.Map<IEnumerable<UserModel>>(result);
 
