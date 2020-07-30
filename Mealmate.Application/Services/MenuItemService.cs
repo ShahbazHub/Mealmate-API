@@ -195,6 +195,11 @@ namespace Mealmate.Application.Services
             }
             else
             {
+                var temp1 = await _menuItemAllergenRepository.GetAsync(p => p.MenuItemId == id);
+                foreach (var item in temp1)
+                {
+                    await _menuItemAllergenRepository.DeleteAsync(item);
+                }
 
                 foreach (var item in model.Allergens)
                 {
@@ -242,6 +247,12 @@ namespace Mealmate.Application.Services
             }
             else
             {
+                var temp1 = await _menuItemDietaryRepository.GetAsync(p => p.MenuItemId == id);
+                foreach (var item in temp1)
+                {
+                    await _menuItemDietaryRepository.DeleteAsync(item);
+                }
+
                 foreach (var item in model.Dietaries)
                 {
                     if (item.MenuItemDietaryId != 0)

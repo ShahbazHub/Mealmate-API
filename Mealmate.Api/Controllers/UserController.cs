@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -23,25 +24,30 @@ namespace Mealmate.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        //private RoleManager<Role> _roleManager;
-        //private UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
+        private readonly UserManager<User> _userManager;
         private readonly IUserRestaurantService _userRestaurantService;
+        private readonly IRestaurantService _restaurantService;
+
         //private MealmateSettings _mealmateSettings;
         //private IEmailService _emailService;
 
         public UserController(
                 IUserService userService,
-                //UserManager<User> userManager,
-                //RoleManager<Role> roleManager,
-                IUserRestaurantService userRestaurantService
+                UserManager<User> userManager,
+                RoleManager<Role> roleManager,
+                IUserRestaurantService userRestaurantService,
+                IRestaurantService restaurantService
                 //IOptions<MealmateSettings> options,
                 //IEmailService emailService
             )
         {
-            _userService = userService;
-            //_userManager = userManager;
-            //_roleManager = roleManager;
-            _userRestaurantService = userRestaurantService;
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _userRestaurantService = userRestaurantService ?? throw new ArgumentNullException(nameof(userRestaurantService));
+            _restaurantService = restaurantService ?? throw new ArgumentNullException(nameof(restaurantService));
+
+            _userManager = userManager;
+            _roleManager = roleManager;
             //_mealmateSettings = options.Value;
             //_emailService = emailService;
 
@@ -82,7 +88,7 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        #region create
+        #region Create / Regiaster
         [HttpPost("create")]
         public async Task<ActionResult> Create([FromBody] UserModel model)
         {

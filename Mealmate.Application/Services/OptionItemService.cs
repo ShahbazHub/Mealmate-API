@@ -173,6 +173,12 @@ namespace Mealmate.Application.Services
             }
             else
             {
+                var allergens = await _optionItemAllergenRepository.GetAsync(p => p.OptionItemId == id);
+                foreach (var item in allergens)
+                {
+                    await _optionItemAllergenRepository.DeleteAsync(item);
+                }
+
                 foreach (var item in model.Allergens)
                 {
                     if (item.OptionItemAllergenId != 0)
@@ -219,6 +225,12 @@ namespace Mealmate.Application.Services
             }
             else
             {
+                var dietaries = await _optionItemDietaryRepository.GetAsync(p => p.OptionItemId == id);
+                foreach (var item in dietaries)
+                {
+                    await _optionItemDietaryRepository.DeleteAsync(item);
+                }
+
                 foreach (var item in model.Dietaries)
                 {
                     if (item.OptionItemDietaryId != 0)
