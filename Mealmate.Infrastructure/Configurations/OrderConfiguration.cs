@@ -45,6 +45,12 @@ namespace Mealmate.Infrastructure.Configurations
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.HasOne(p => p.OrderState)
+                .WithMany(p => p.Orders)
+                .HasForeignKey(p => p.OrderStateId)
+                .HasConstraintName("FK_Order_OrderState")
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

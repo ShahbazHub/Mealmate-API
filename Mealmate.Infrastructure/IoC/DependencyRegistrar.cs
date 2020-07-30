@@ -48,6 +48,7 @@ namespace Mealmate.Infrastructure.IoC
             builder.RegisterType<UserDietaryRepository>().As<IUserDietaryRepository>().InstancePerDependency();
 
             // Sale
+            builder.RegisterType<OrderStateRepository>().As<IOrderStateRepository>().InstancePerDependency();
             builder.RegisterType<OrderRepository>().As<IOrderRepository>().InstancePerDependency();
             builder.RegisterType<OrderItemRepository>().As<IOrderItemRepository>().InstancePerDependency();
             builder.RegisterType<OrderItemDetailRepository>().As<IOrderItemDetailRepository>().InstancePerDependency();
