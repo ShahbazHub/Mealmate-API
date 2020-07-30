@@ -77,7 +77,12 @@ namespace Mealmate.Infrastructure.Repository
         public Task<IPagedList<OptionItem>> SearchAsync(
             int branchId, int isActive, PageSearchArgs args)
         {
-            var query = Table.Include(p => p.MenuItemOptions).Where(p => p.BranchId == branchId);
+            var query = Table.Include(p => p.MenuItemOptions)
+                             .Include(p => p.OptionItemAllergens)
+                             .ThenInclude(t => t.Allergen)
+                             .Include(p => p.OptionItemDietaries)
+                             .ThenInclude(u => u.Dietary)
+                .Where(p => p.BranchId == branchId);
             if (isActive == 1 || isActive == 0)
             {
                 var status = isActive == 1 ? true : false;

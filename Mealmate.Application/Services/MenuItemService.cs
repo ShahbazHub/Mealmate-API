@@ -20,17 +20,20 @@ namespace Mealmate.Application.Services
     {
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly IMenuItemAllergenRepository _menuItemAllergenRepository;
+        private readonly IMenuItemDietaryRepository _menuItemDietaryRepository;
         private readonly IAppLogger<MenuItemService> _logger;
         private readonly IMapper _mapper;
 
         public MenuItemService(
             IMenuItemRepository menuItemRepository,
             IMenuItemAllergenRepository menuItemAllergenRepository,
+            IMenuItemDietaryRepository menuItemDietaryRepository,
             IAppLogger<MenuItemService> logger,
             IMapper mapper)
         {
             _menuItemRepository = menuItemRepository ?? throw new ArgumentNullException(nameof(menuItemRepository));
             _menuItemAllergenRepository = menuItemAllergenRepository ?? throw new ArgumentNullException(nameof(menuItemAllergenRepository));
+            _menuItemDietaryRepository = menuItemDietaryRepository ?? throw new ArgumentNullException(nameof(menuItemDietaryRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
         }
@@ -51,6 +54,56 @@ namespace Mealmate.Application.Services
 
             newmenuItem = await _menuItemRepository.SaveAsync(newmenuItem);
 
+            _logger.LogInformation("entity successfully added - mealmateappservice");
+
+            var newmenuItemmodel = _mapper.Map<MenuItemModel>(newmenuItem);
+            return newmenuItemmodel;
+        }
+
+        public async Task<MenuItemModel> Create(MenuItemDetailCreateModel model)
+        {
+            var newmenuItem = new MenuItem
+            {
+                Created = DateTime.Now,
+                CuisineTypeId = model.CuisineTypeId,
+                Description = model.Description,
+                IsActive = model.IsActive,
+                MenuId = model.MenuId,
+                Name = model.Name,
+                Photo = model.Photo,
+                Price = model.Price
+            };
+
+            newmenuItem = await _menuItemRepository.SaveAsync(newmenuItem);
+            if (newmenuItem != null)
+            {
+                foreach (var item in model.Allergens)
+                {
+                    var temp = new MenuItemAllergen
+                    {
+                        MenuItemId = newmenuItem.Id,
+                        AllergenId = item.AllergenId,
+                        Created = DateTime.Now,
+                        IsActive = true
+                    };
+
+                    await _menuItemAllergenRepository.SaveAsync(temp);
+                }
+
+                foreach (var item in model.Dietaries)
+                {
+                    var temp = new MenuItemDietary
+                    {
+                        MenuItemId = newmenuItem.Id,
+                        DietaryId = item.DietaryId,
+                        Created = DateTime.Now,
+                        IsActive = true
+                    };
+
+                    await _menuItemDietaryRepository.SaveAsync(temp);
+
+                }
+            }
             _logger.LogInformation("entity successfully added - mealmateappservice");
 
             var newmenuItemmodel = _mapper.Map<MenuItemModel>(newmenuItem);
@@ -114,6 +167,119 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
+        public async Task Update(int id, MenuItemDetailUpdateModel model)
+        {
+            var existingMenuItem = await _menuItemRepository.GetByIdAsync(id);
+            if (existingMenuItem == null)
+            {
+                throw new ApplicationException("MenuItem with this id is not exists");
+            }
+
+
+            existingMenuItem.Created = DateTime.Now;
+            existingMenuItem.CuisineTypeId = model.CuisineTypeId;
+            existingMenuItem.Description = model.Description;
+            existingMenuItem.IsActive = model.IsActive;
+            existingMenuItem.Name = model.Name;
+            existingMenuItem.Photo = model.Photo;
+
+            await _menuItemRepository.SaveAsync(existingMenuItem);
+
+            if (model.Allergens.Count == 0)
+            {
+                var temp = await _menuItemAllergenRepository.GetAsync(p => p.MenuItemId == id);
+                foreach (var item in temp)
+                {
+                    await _menuItemAllergenRepository.DeleteAsync(item);
+                }
+            }
+            else
+            {
+
+                foreach (var item in model.Allergens)
+                {
+                    if (item.MenuItemAllergenId != 0)
+                    {
+                        if (!item.IsActive)
+                        {
+                            var temp = await _menuItemAllergenRepository.GetByIdAsync(item.MenuItemAllergenId);
+
+                            await _menuItemAllergenRepository.DeleteAsync(temp);
+                        }
+                    }
+                    else
+                    {
+                        if (item.IsActive)
+                        {
+                            var temp = new MenuItemAllergen
+                            {
+                                MenuItemId = id,
+                                AllergenId = item.AllergenId,
+                                Created = DateTime.Now,
+                                IsActive = true
+                            };
+                            await _menuItemAllergenRepository.SaveAsync(temp);
+                        }
+                        else
+                        {
+                            var temp = await _menuItemAllergenRepository.GetByIdAsync(item.MenuItemAllergenId);
+                            if (temp != null)
+                            {
+                                await _menuItemAllergenRepository.DeleteAsync(temp);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (model.Dietaries.Count == 0)
+            {
+                var temp = await _menuItemDietaryRepository.GetAsync(p => p.MenuItemId == id);
+                foreach (var item in temp)
+                {
+                    await _menuItemDietaryRepository.DeleteAsync(item);
+                }
+            }
+            else
+            {
+                foreach (var item in model.Dietaries)
+                {
+                    if (item.MenuItemDietaryId != 0)
+                    {
+                        if (!item.IsActive)
+                        {
+                            var temp = await _menuItemDietaryRepository.GetByIdAsync(item.MenuItemDietaryId);
+
+                            await _menuItemDietaryRepository.DeleteAsync(temp);
+                        }
+                    }
+                    else
+                    {
+                        if (item.IsActive)
+                        {
+                            var temp = new MenuItemDietary
+                            {
+                                MenuItemId = id,
+                                DietaryId = item.DietaryId,
+                                Created = DateTime.Now,
+                                IsActive = true
+                            };
+                            await _menuItemDietaryRepository.SaveAsync(temp);
+                        }
+                        else
+                        {
+                            var temp = await _menuItemDietaryRepository.GetByIdAsync(item.MenuItemDietaryId);
+                            if (temp != null)
+                            {
+                                await _menuItemDietaryRepository.DeleteAsync(temp);
+                            }
+                        }
+                    }
+                }
+            }
+
+            _logger.LogInformation("Entity successfully updated - MealmateAppService");
+        }
 
         public async Task<IPagedList<MenuItemModel>> Search(PageSearchArgs args)
         {

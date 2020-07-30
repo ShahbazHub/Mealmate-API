@@ -86,7 +86,9 @@ namespace Mealmate.Infrastructure.Repository
         public Task<IPagedList<MenuItem>> SearchAsync(int menuId, int isActive, PageSearchArgs args)
         {
             var query = Table.Include(p => p.MenuItemAllergens)
+                             .ThenInclude(u => u.Allergen)
                              .Include(p => p.MenuItemDietaries)
+                             .ThenInclude(t => t.Dietary)
                              .Include(p => p.MenuItemOptions)
                              .Include(p => p.Menu)
                              .Where(p => p.MenuId == menuId);

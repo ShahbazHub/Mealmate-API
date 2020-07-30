@@ -161,60 +161,99 @@ namespace Mealmate.Application.Services
 
             existingOptionItem.Name = model.Name;
             existingOptionItem.IsActive = model.IsActive;
-
-            foreach (var item in model.Allergens)
-            {
-                if (item.OptionItemAllergenId != 0)
-                {
-                    if (!item.IsActive)
-                    {
-                        var temp = await _optionItemAllergenRepository.GetByIdAsync(item.OptionItemAllergenId);
-
-                        await _optionItemAllergenRepository.DeleteAsync(temp);
-                    }
-                }
-                else
-                {
-                    if (item.IsActive)
-                    {
-                        var temp = new OptionItemAllergen
-                        {
-                            AllergenId = item.AllergenId,
-                            Created = DateTime.Now,
-                            IsActive = true
-                        };
-                        await _optionItemAllergenRepository.SaveAsync(temp);
-                    }
-                }
-            }
-
-            foreach (var item in model.Dietaries)
-            {
-                if (item.OptionItemDietaryId != 0)
-                {
-                    if (!item.IsActive)
-                    {
-                        var temp = await _optionItemDietaryRepository.GetByIdAsync(item.OptionItemDietaryId);
-
-                        await _optionItemDietaryRepository.DeleteAsync(temp);
-                    }
-                }
-                else
-                {
-                    if (item.IsActive)
-                    {
-                        var temp = new OptionItemDietary
-                        {
-                            DietaryId = item.DietaryId,
-                            Created = DateTime.Now,
-                            IsActive = true
-                        };
-                        await _optionItemDietaryRepository.SaveAsync(temp);
-                    }
-                }
-            }
-
             await _optionItemRepository.SaveAsync(existingOptionItem);
+
+            if (model.Allergens.Count == 0)
+            {
+                var allergens = await _optionItemAllergenRepository.GetAsync(p => p.OptionItemId == id);
+                foreach (var item in allergens)
+                {
+                    await _optionItemAllergenRepository.DeleteAsync(item);
+                }
+            }
+            else
+            {
+                foreach (var item in model.Allergens)
+                {
+                    if (item.OptionItemAllergenId != 0)
+                    {
+                        if (!item.IsActive)
+                        {
+                            var temp = await _optionItemAllergenRepository.GetByIdAsync(item.OptionItemAllergenId);
+
+                            await _optionItemAllergenRepository.DeleteAsync(temp);
+                        }
+                    }
+                    else
+                    {
+                        if (item.IsActive)
+                        {
+                            var temp = new OptionItemAllergen
+                            {
+                                OptionItemId = id,
+                                AllergenId = item.AllergenId,
+                                Created = DateTime.Now,
+                                IsActive = true
+                            };
+                            await _optionItemAllergenRepository.SaveAsync(temp);
+                        }
+                        else
+                        {
+                            var temp = await _optionItemAllergenRepository.GetByIdAsync(item.OptionItemAllergenId);
+                            if (temp != null)
+                            {
+                                await _optionItemAllergenRepository.DeleteAsync(temp);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (model.Dietaries.Count == 0)
+            {
+                var dietaries = await _optionItemDietaryRepository.GetAsync(p => p.OptionItemId == id);
+                foreach (var item in dietaries)
+                {
+                    await _optionItemDietaryRepository.DeleteAsync(item);
+                }
+            }
+            else
+            {
+                foreach (var item in model.Dietaries)
+                {
+                    if (item.OptionItemDietaryId != 0)
+                    {
+                        if (!item.IsActive)
+                        {
+                            var temp = await _optionItemDietaryRepository.GetByIdAsync(item.OptionItemDietaryId);
+
+                            await _optionItemDietaryRepository.DeleteAsync(temp);
+                        }
+                    }
+                    else
+                    {
+                        if (item.IsActive)
+                        {
+                            var temp = new OptionItemDietary
+                            {
+                                OptionItemId = id,
+                                DietaryId = item.DietaryId,
+                                Created = DateTime.Now,
+                                IsActive = true
+                            };
+                            await _optionItemDietaryRepository.SaveAsync(temp);
+                        }
+                        else
+                        {
+                            var temp = await _optionItemDietaryRepository.GetByIdAsync(item.OptionItemDietaryId);
+                            if (temp != null)
+                            {
+                                await _optionItemDietaryRepository.DeleteAsync(temp);
+                            }
+                        }
+                    }
+                }
+            }
 
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }

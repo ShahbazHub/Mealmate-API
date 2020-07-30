@@ -22,15 +22,59 @@ namespace Mealmate.Api.Controllers
     public class MenuItemAllergenController : ControllerBase
     {
         private readonly IMenuItemAllergenService _menuItemAllergenService;
+        private readonly IAllergenService _allergenService;
 
         public MenuItemAllergenController(
-            IMenuItemAllergenService menuItemAllergenService
+            IMenuItemAllergenService menuItemAllergenService,
+            IAllergenService allergenService
             )
         {
             _menuItemAllergenService = menuItemAllergenService ?? throw new ArgumentNullException(nameof(menuItemAllergenService));
+            _allergenService = allergenService ?? throw new ArgumentNullException(nameof(allergenService));
         }
 
         #region Read
+        [Route("{menuItemId}")]
+        [HttpGet()]
+        [ProducesResponseType(typeof(IEnumerable<MenuItemDetailCreateAllergenModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<MenuItemDetailCreateAllergenModel>>> List(int menuItemId)
+        {
+            try
+            {
+                List<MenuItemDetailCreateAllergenModel> model = new List<MenuItemDetailCreateAllergenModel>();
+
+                var Options = await _menuItemAllergenService.Get(menuItemId);
+
+                var temp = await _allergenService.Get();
+
+                foreach (var item in temp)
+                {
+                    model.Add(new MenuItemDetailCreateAllergenModel
+                    {
+                        MenuItemAllergenId = 0,
+                        AllergenId = item.Id,
+                        IsActive = false
+                    });
+                }
+
+                foreach (var dietary in model)
+                {
+                    foreach (var item in Options)
+                    {
+                        if (dietary.AllergenId == item.AllergenId)
+                        {
+                            dietary.MenuItemAllergenId = item.Id;
+                            dietary.IsActive = true;
+                        }
+                    }
+                }
+                return Ok(model);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
         [Route("{menuItemId}/{isActive}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemAllergenModel>), (int)HttpStatusCode.OK)]

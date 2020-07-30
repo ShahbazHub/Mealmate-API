@@ -49,6 +49,31 @@ namespace Mealmate.Application.Services
             return newtablemodel;
         }
 
+        public async Task<List<TableModel>> Create(TableBulkCreateModel model)
+        {
+            List<TableModel> temp = new List<TableModel>();
+
+            for (int i = model.From; i <= model.To; i++)
+            {
+                var newtable = new Table
+                {
+                    Name = model.Name + " " + i,
+                    IsActive = model.IsActive,
+                    Created = DateTime.Now,
+                    LocationId = model.LocationId
+                };
+
+                newtable = await _tableRepository.SaveAsync(newtable);
+
+                _logger.LogInformation("entity successfully added - mealmateappservice");
+
+                var newtablemodel = _mapper.Map<TableModel>(newtable);
+
+                temp.Add(newtablemodel);
+            }
+            return temp;
+        }
+
         public async Task Delete(int id)
         {
             var existingTable = await _tableRepository.GetByIdAsync(id);

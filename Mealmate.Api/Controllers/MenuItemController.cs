@@ -98,6 +98,22 @@ namespace Mealmate.Api.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpPost("bulk")]
+        [ProducesResponseType(typeof(MenuItemModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<MenuItemModel>> Create([FromBody] MenuItemDetailCreateModel request)
+        {
+            try
+            {
+                var result = await _menuItemService.Create(request);
+                return Created($"api/menuitem/{result.Id}", result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
         #endregion
 
         #region Update
@@ -115,6 +131,28 @@ namespace Mealmate.Api.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        [Route("bulk/{id}")]
+        [HttpPost()]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult> Update(int id, MenuItemDetailUpdateModel model)
+        {
+            //TODO: Add you code here
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _menuItemService.Update(id, model);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok();
         }
         #endregion
 

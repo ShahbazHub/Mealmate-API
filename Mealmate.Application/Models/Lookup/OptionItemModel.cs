@@ -14,6 +14,8 @@ namespace Mealmate.Application.Models
         public bool IsActive { get; set; }
 
         public ICollection<MenuItemOptionModel> MenuItemOptions { get; set; }
+        public ICollection<OptionItemAllergenModel> OptionItemAllergens { get; set; }
+        public ICollection<OptionItemDietaryModel> OptionItemDietaries{ get; set; }
 
     }
 }

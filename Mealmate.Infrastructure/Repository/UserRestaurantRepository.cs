@@ -132,5 +132,58 @@ namespace Mealmate.Infrastructure.Repository
 
             return await query.ToListAsync();
         }
+
+        public Task<IPagedList<UserRestaurant>> ListAsync(int restaurantId, PageSearchArgs args)
+        {
+            var query = Table.Include(p => p.Restaurant)
+                             .Include(p => p.User)
+                              .Where(p => p.RestaurantId == restaurantId);
+
+            var orderByList = new List<Tuple<SortingOption, Expression<Func<UserRestaurant, object>>>>();
+
+            if (args.SortingOptions != null)
+            {
+                foreach (var sortingOption in args.SortingOptions)
+                {
+                    switch (sortingOption.Field)
+                    {
+                        case "id":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<UserRestaurant, object>>>(sortingOption, p => p.Id));
+                            break;
+                        case "name":
+                            orderByList.Add(new Tuple<SortingOption, Expression<Func<UserRestaurant, object>>>(sortingOption, p => p.User.FirstName));
+                            break;
+                    }
+                }
+            }
+
+            if (orderByList.Count == 0)
+            {
+                orderByList.Add(new Tuple<SortingOption, Expression<Func<UserRestaurant, object>>>(new SortingOption { Direction = SortingOption.SortingDirection.ASC }, p => p.Id));
+            }
+
+            //TODO: FilteringOption.Operator will be handled
+            var filterList = new List<Tuple<FilteringOption, Expression<Func<UserRestaurant, bool>>>>();
+
+            if (args.FilteringOptions != null)
+            {
+                foreach (var filteringOption in args.FilteringOptions)
+                {
+                    switch (filteringOption.Field)
+                    {
+                        case "id":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<UserRestaurant, bool>>>(filteringOption, p => p.Id == (int)filteringOption.Value));
+                            break;
+                        case "name":
+                            filterList.Add(new Tuple<FilteringOption, Expression<Func<UserRestaurant, bool>>>(filteringOption, p => p.User.FirstName.Contains((string)filteringOption.Value)));
+                            break;
+                    }
+                }
+            }
+
+            var pagedList = new PagedList<UserRestaurant>(query, new PagingArgs { PageIndex = args.PageIndex, PageSize = args.PageSize, PagingStrategy = args.PagingStrategy }, orderByList, filterList);
+
+            return Task.FromResult<IPagedList<UserRestaurant>>(pagedList);
+        }
     }
 }
