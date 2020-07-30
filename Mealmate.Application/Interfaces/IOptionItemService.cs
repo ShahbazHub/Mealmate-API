@@ -10,7 +10,9 @@ namespace Mealmate.Application.Interfaces
         Task<IEnumerable<OptionItemModel>> Get();
         Task<OptionItemModel> GetById(int id);
         Task<OptionItemModel> Create(OptionItemCreateModel model);
+        Task<OptionItemModel> Create(OptionItemDetailCreateModel model);
         Task Update(int id, OptionItemUpdateModel model);
+        Task Update(int id, OptionItemDetailUpdateModel model);
         Task Delete(int id);
 
         Task<IPagedList<OptionItemModel>> Search(PageSearchArgs args);

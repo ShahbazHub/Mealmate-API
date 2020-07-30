@@ -84,6 +84,24 @@ namespace Mealmate.Api.Controllers
             }
 
         }
+
+        [Route("bulk")]
+        [HttpPost()]
+        [ProducesResponseType(typeof(TableModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<TableModel>> Create(TableBulkCreateModel request)
+        {
+            try
+            {
+                var result = await _tableService.Create(request);
+                return Ok(result);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest();
+            }
+
+        }
         #endregion
 
         #region Update

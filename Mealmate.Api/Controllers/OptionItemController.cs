@@ -81,6 +81,22 @@ namespace Mealmate.Api.Controllers
 
             return BadRequest(ModelState);
         }
+        [HttpPost("bulk")]
+        [ProducesResponseType(typeof(IEnumerable<OptionItemModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult> Create([FromBody] OptionItemDetailCreateModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _optionItemService.Create(model);
+                if (result != null)
+                {
+                    return Created($"api/optionItems/{result.Id}", result);
+                }
+            }
+
+            return BadRequest(ModelState);
+        }
         #endregion
 
         #region Update
@@ -88,6 +104,28 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(int id, OptionItemUpdateModel model)
+        {
+            //TODO: Add you code here
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _optionItemService.Update(id, model);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return Ok();
+        }
+
+        [Route("bulk/{id}")]
+        [HttpPost()]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult> Update(int id, OptionItemDetailUpdateModel model)
         {
             //TODO: Add you code here
             try

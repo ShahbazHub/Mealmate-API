@@ -122,5 +122,38 @@ namespace Mealmate.Application.Services
             return RestaurantModelPagedList;
         }
 
+        public async Task<IPagedList<UserModel>> List(int restaurantId, PageSearchArgs args)
+        {
+            List<UserModel> temp = new List<UserModel>();
+
+            var TablePagedList = await _UserRestaurantRepository.ListAsync(restaurantId, args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var RestaurantModels = _mapper.Map<List<UserRestaurantModel>>(TablePagedList.Items);
+
+            foreach (var item in RestaurantModels)
+            {
+                temp.Add(new UserModel
+                {
+                    Created = item.Owner.Created,
+                    Email = item.Owner.Email,
+                    FirstName = item.Owner.FirstName,
+                    LastName = item.Owner.LastName,
+                    Id = item.Owner.Id,
+                    PhoneNumber = item.Owner.PhoneNumber,
+                    RestaurantId = item.RestaurantId,
+                });
+            }
+
+            var RestaurantModelPagedList = new PagedList<UserModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                temp);
+
+            return RestaurantModelPagedList;
+        }
+
     }
 }

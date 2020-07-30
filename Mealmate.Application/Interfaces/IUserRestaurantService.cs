@@ -15,5 +15,6 @@ namespace Mealmate.Application.Interfaces
 
         Task<IPagedList<UserRestaurantModel>> Search(PageSearchArgs args);
         Task<IPagedList<UserRestaurantModel>> Search(int ownerId, PageSearchArgs args);
+        Task<IPagedList<UserModel>> List(int restaurantId, PageSearchArgs args);
     }
 }

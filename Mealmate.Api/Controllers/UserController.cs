@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -25,15 +25,15 @@ namespace Mealmate.Api.Controllers
         private readonly IUserService _userService;
         //private RoleManager<Role> _roleManager;
         //private UserManager<User> _userManager;
-        //private IUserRestaurantService _userRestaurantService;
+        private readonly IUserRestaurantService _userRestaurantService;
         //private MealmateSettings _mealmateSettings;
         //private IEmailService _emailService;
 
         public UserController(
-                IUserService userService
+                IUserService userService,
                 //UserManager<User> userManager,
                 //RoleManager<Role> roleManager,
-                //IUserRestaurantService userRestaurantService,
+                IUserRestaurantService userRestaurantService
                 //IOptions<MealmateSettings> options,
                 //IEmailService emailService
             )
@@ -41,7 +41,7 @@ namespace Mealmate.Api.Controllers
             _userService = userService;
             //_userManager = userManager;
             //_roleManager = roleManager;
-            //_userRestaurantService = userRestaurantService;
+            _userRestaurantService = userRestaurantService;
             //_mealmateSettings = options.Value;
             //_emailService = emailService;
 
@@ -55,7 +55,7 @@ namespace Mealmate.Api.Controllers
         {
             var user = this.User;
 
-            var result = await _userService.Get(user);
+            var result = await _userService.Get();
             return Ok(result);
         }
 
@@ -69,6 +69,16 @@ namespace Mealmate.Api.Controllers
                 return NotFound($"User with id {id} no more exists");
             }
             return Ok(result);
+        }
+
+        [Route("restaurant/{id}")]
+        [HttpGet()]
+        [ProducesResponseType(typeof(IEnumerable<UserModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<UserModel>>> List(int id, [FromQuery] PageSearchArgs request)
+        {
+            var result = await _userRestaurantService.List(id, request);
+            JToken _jtoken = TokenService.CreateJToken(result, request.Props);
+            return Ok(_jtoken);
         }
         #endregion
 
