@@ -22,15 +22,59 @@ namespace Mealmate.Api.Controllers
     public class OptionItemAllergenController : ControllerBase
     {
         private readonly IOptionItemAllergenService _optionItemAllergenService;
+        private readonly IAllergenService _allergenService;
 
         public OptionItemAllergenController(
-            IOptionItemAllergenService optionItemAllergenService
+            IOptionItemAllergenService optionItemAllergenService,
+            IAllergenService allergenService
             )
         {
             _optionItemAllergenService = optionItemAllergenService ?? throw new ArgumentNullException(nameof(optionItemAllergenService));
+            _allergenService = allergenService ?? throw new ArgumentNullException(nameof(allergenService));
         }
 
         #region Read
+        [Route("{optionItemId}")]
+        [HttpGet()]
+        [ProducesResponseType(typeof(IEnumerable<OptionItemDetailCreateAllergenModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<OptionItemDetailCreateAllergenModel>>> List(int optionItemId)
+        {
+            try
+            {
+                List<OptionItemDetailCreateAllergenModel> model = new List<OptionItemDetailCreateAllergenModel>();
+
+                var Options = await _optionItemAllergenService.Get(optionItemId);
+
+                var temp = await _allergenService.Get();
+
+                foreach (var item in temp)
+                {
+                    model.Add(new OptionItemDetailCreateAllergenModel
+                    {
+                        OptionItemAllergenId = 0,
+                        AllergenId = item.Id,
+                        IsActive = false
+                    });
+                }
+
+                foreach (var dietary in model)
+                {
+                    foreach (var item in Options)
+                    {
+                        if (dietary.AllergenId == item.AllergenId)
+                        {
+                            dietary.OptionItemAllergenId = item.Id;
+                            dietary.IsActive = true;
+                        }
+                    }
+                }
+                return Ok(model);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
         [Route("{optionItemId}/{isActive}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<OptionItemAllergenModel>), (int)HttpStatusCode.OK)]

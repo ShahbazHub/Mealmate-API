@@ -22,15 +22,59 @@ namespace Mealmate.Api.Controllers
     public class OptionItemDietaryController : ControllerBase
     {
         private readonly IOptionItemDietaryService _optionItemDietaryService;
+        private readonly IDietaryService _dietaryService;
 
         public OptionItemDietaryController(
-            IOptionItemDietaryService optionItemDietaryService
+            IOptionItemDietaryService optionItemDietaryService,
+            IDietaryService dietaryService
             )
         {
+            _dietaryService = dietaryService ?? throw new ArgumentNullException(nameof(dietaryService));
             _optionItemDietaryService = optionItemDietaryService ?? throw new ArgumentNullException(nameof(optionItemDietaryService));
         }
 
         #region Read
+        [Route("{optionItemId}")]
+        [HttpGet()]
+        [ProducesResponseType(typeof(IEnumerable<OptionItemDetailCreateDietaryModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<OptionItemDetailCreateDietaryModel>>> List(int optionItemId)
+        {
+            try
+            {
+                List<OptionItemDetailCreateDietaryModel> model = new List<OptionItemDetailCreateDietaryModel>();
+
+                var OptionItemDietarys = await _optionItemDietaryService.Get(optionItemId);
+
+                var temp = await _dietaryService.Get();
+
+                foreach (var item in temp)
+                {
+                    model.Add(new OptionItemDetailCreateDietaryModel
+                    {
+                        OptionItemDietaryId = 0,
+                        DietaryId = item.Id,
+                        IsActive = false
+                    });
+                }
+
+                foreach (var dietary in model)
+                {
+                    foreach (var item in OptionItemDietarys)
+                    {
+                        if (dietary.DietaryId == item.DietaryId)
+                        {
+                            dietary.OptionItemDietaryId = item.Id;
+                            dietary.IsActive = true;
+                        }
+                    }
+                }
+                return Ok(model);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
         [Route("{optionItemId}/{isActive}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<OptionItemDietaryModel>), (int)HttpStatusCode.OK)]
