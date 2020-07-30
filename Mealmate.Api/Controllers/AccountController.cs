@@ -36,9 +36,11 @@ namespace Mealmate.Api.Controllers
         private readonly IRestaurantService _restaurantService;
         private readonly IUserRestaurantService _userRestaurantService;
         private readonly IEmailService _emailService;
-        private RoleManager<Role> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
+        private readonly IUserAllergenService _userAllergenService;
+        private readonly IUserDietaryService _userDietaryService;
         private readonly SignInManager<User> _signInManager;
-        private UserManager<User> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
         public AccountController(SignInManager<User> signInManager,
@@ -48,7 +50,9 @@ namespace Mealmate.Api.Controllers
           IMapper mapper,
           IRestaurantService restaurantService,
           IUserRestaurantService userRestaurantService,
-          IEmailService emailService)
+          IEmailService emailService,
+          IUserAllergenService userAllergenService,
+          IUserDietaryService userDietaryService)
         {
             _mapper = mapper;
             _signInManager = signInManager;
@@ -58,6 +62,8 @@ namespace Mealmate.Api.Controllers
             _userRestaurantService = userRestaurantService;
             _emailService = emailService;
             _roleManager = roleManager;
+            _userAllergenService = userAllergenService;
+            _userDietaryService = userDietaryService;
         }
 
         #region Create JWT
@@ -241,6 +247,77 @@ namespace Mealmate.Api.Controllers
 
                     var owner = _mapper.Map<UserModel>(user);
                     owner.Restaurants = restaurants;
+
+                    return Created($"/api/users/{user.Id}", owner);
+                }
+                else
+                {
+                    return BadRequest($"Error registering new user");
+                }
+            }
+            return BadRequest(ModelState);
+        }
+        #endregion
+
+        #region Register
+        [HttpPost("mobileregister")]
+        public async Task<ActionResult> MobileRegister([FromBody] MobileRegisterRequest model)
+        {
+            //TODO: Add you code here
+
+            if (ModelState.IsValid)
+            {
+                var user = new User
+                {
+                    UserName = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    bool roleExists = await _roleManager.RoleExistsAsync(ApplicationRoles.Client);
+                    if (!roleExists)
+                    {
+                        //Create Role
+                        await _roleManager.CreateAsync(new Role(ApplicationRoles.Client));
+                    }
+                    var userIsInRole = await _userManager.IsInRoleAsync(user, ApplicationRoles.Client);
+                    if (!userIsInRole)
+                    {
+                        await _userManager.AddToRoleAsync(user, ApplicationRoles.Client);
+                    }
+
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    string siteURL = _mealmateSettings.ClientAppUrl;
+                    var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
+                    //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                    var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                    await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
+
+
+                    if (model.UserAllergens.Count > 0)
+                    {
+                        foreach (var userAllergen in model.UserAllergens)
+                        {
+                            userAllergen.UserId = user.Id;
+                            await _userAllergenService.Create(userAllergen);
+                        }
+                    }
+
+                    if (model.UserDietaries.Count > 0)
+                    {
+                        foreach (var userDietary in model.UserDietaries)
+                        {
+                            userDietary.UserId = user.Id;
+                            await _userDietaryService.Create(userDietary);
+                        }
+                    }
+                    var owner = _mapper.Map<UserModel>(user);
 
                     return Created($"/api/users/{user.Id}", owner);
                 }

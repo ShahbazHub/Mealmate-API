@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <Compile Include="Requests\ChangePasswordRequest.cs" />
+    <Compile Include="Requests\MobileRegisterRequest.cs" />
     <Compile Include="Requests\ResetPasswordRequest.cs" />
     <Compile Include="Requests\LoginRequest.cs" />
     <Compile Include="Requests\RegisterRequest.cs" />

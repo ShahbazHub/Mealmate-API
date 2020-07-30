@@ -13,6 +13,6 @@ namespace Mealmate.Application.Models
         public int UserId { get; set; }
 
         [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

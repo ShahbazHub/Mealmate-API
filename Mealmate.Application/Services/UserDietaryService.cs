@@ -35,6 +35,7 @@ namespace Mealmate.Application.Services
         {
             var newUser = new UserDietary
             {
+                UserId = model.UserId,
                 Created = DateTime.Now,
                 DietaryId = model.DietaryId,
                 IsActive = model.IsActive

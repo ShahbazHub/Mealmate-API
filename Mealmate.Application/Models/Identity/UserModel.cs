@@ -13,7 +13,6 @@ namespace Mealmate.Application.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string Mobile { get; set; }
         public DateTimeOffset Created { get; set; }
 
         public IEnumerable<RestaurantModel> Restaurants { get; set; }

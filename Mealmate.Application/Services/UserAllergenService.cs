@@ -37,7 +37,8 @@ namespace Mealmate.Application.Services
             {
                 AllergenId = model.AllergenId,
                 Created = DateTime.Now,
-                UserId = model.UserId
+                UserId = model.UserId,
+                IsActive = model.IsActive
             };
 
             newUser = await _UserAllergenRepository.SaveAsync(newUser);
