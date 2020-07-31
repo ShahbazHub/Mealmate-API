@@ -11,6 +11,9 @@ namespace Mealmate.Application.Models
         public int OrderItemDetailId { get; set; }
 
         [Required]
+        public int MenuItemOptionId { get; set; }
+
+        [Required]
         public int Quantity { get; set; }
 
         [Required]

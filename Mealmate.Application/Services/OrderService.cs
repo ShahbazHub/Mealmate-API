@@ -169,35 +169,71 @@ namespace Mealmate.Application.Services
                             // Update order items
                             foreach (var orderItem in model.OrderItems)
                             {
-                                var orderItemEntity = await _context.OrderItems.FirstOrDefaultAsync(p => p.Id == orderItem.OrderItemId);
-                                if (orderItemEntity != null)
+                                // inserting new
+                                if (orderItem.OrderItemId == 0)
                                 {
-                                    orderItemEntity.Price = orderItem.Price;
-                                    orderItemEntity.Quantity = orderItem.Quantity;
+                                    var orderItemEntity = new OrderItem
+                                    {
+                                        Created = DateTime.Now,
+                                        MenuItemId = orderItem.MenuItemId,
+                                        OrderId = id,
+                                        Price = orderItem.Price,
+                                        Quantity = orderItem.Quantity
+                                    };
 
-                                    // Saving order item to database 
-                                    _context.OrderItems.Update(orderItemEntity);
+
+                                    await _context.OrderItems.AddAsync(orderItemEntity);
                                     if (await _context.SaveChangesAsync() > 0)
                                     {
                                         if (orderItem.OrderItemDetails.Count > 0)
                                         {
                                             foreach (var orderItemDetail in orderItem.OrderItemDetails)
                                             {
-                                                var orderItemDetailEntity = await _context.OrderItemDetails.FirstOrDefaultAsync(p => p.Id == orderItemDetail.OrderItemDetailId);
-                                                if (orderItemDetailEntity != null)
+                                                var orderItemDetailEntity = new OrderItemDetail
                                                 {
-                                                    orderItemDetailEntity.Price = orderItemDetail.Price;
-                                                    orderItemDetailEntity.Quantity = orderItemDetail.Quantity;
+                                                    OrderItemId = orderItemEntity.Id,  // Primary key of order item saved
+                                                    Created = DateTime.Now,
+                                                    MenuItemOptionId = orderItemDetail.MenuItemOptionId,
+                                                    Price = orderItemDetail.Price,
+                                                    Quantity = orderItemDetail.Quantity
+                                                };
 
-                                                    // Saving order item detail to database 
+                                                await _context.OrderItems.AddAsync(orderItemEntity);
+                                                await _context.SaveChangesAsync();
+                                            }
+                                        }
+                                    }
+                                }
+                                else  // update existing
+                                {
+                                    var orderItemEntity = await _context.OrderItems.FirstOrDefaultAsync(p => p.Id == orderItem.OrderItemId);
+                                    if (orderItemEntity != null)
+                                    {
+                                        orderItemEntity.Quantity = orderItem.Quantity;
 
-                                                    _context.OrderItemDetails.Update(orderItemDetailEntity);
-                                                    await _context.SaveChangesAsync();
+                                        // Saving order item to database 
+                                        _context.OrderItems.Update(orderItemEntity);
+                                        if (await _context.SaveChangesAsync() > 0)
+                                        {
+                                            if (orderItem.OrderItemDetails.Count > 0)
+                                            {
+                                                foreach (var orderItemDetail in orderItem.OrderItemDetails)
+                                                {
+                                                    var orderItemDetailEntity = await _context.OrderItemDetails.FirstOrDefaultAsync(p => p.Id == orderItemDetail.OrderItemDetailId);
+                                                    if (orderItemDetailEntity != null)
+                                                    {
+                                                        orderItemDetailEntity.Price = orderItemDetail.Price;
+                                                        orderItemDetailEntity.Quantity = orderItemDetail.Quantity;
+
+                                                        // Saving order item detail to database 
+
+                                                        _context.OrderItemDetails.Update(orderItemDetailEntity);
+                                                        await _context.SaveChangesAsync();
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-
                                 }
                             }
                         }
@@ -220,13 +256,33 @@ namespace Mealmate.Application.Services
         #region Delete
         public async Task Delete(int id)
         {
-            var existingTable = await _orderRepository.GetByIdAsync(id);
-            if (existingTable == null)
+            try
             {
-                throw new ApplicationException("Order with this id is not exists");
-            }
+                var order = await _orderRepository.GetByIdAsync(id);
+                if (order == null)
+                {
+                    throw new ApplicationException("Order with this id is not exists");
+                }
 
-            await _orderRepository.DeleteAsync(existingTable);
+                var orderItems = await _orderItemRepository.GetAsync(p => p.OrderId == id);
+                foreach (var orderItem in orderItems)
+                {
+                    var orderItemDetails = await _orderItemDetailRepository.GetAsync(p => p.OrderItemId == orderItem.Id);
+                    foreach (var orderItemDetail in orderItemDetails)
+                    {
+                        await _orderItemDetailRepository.DeleteAsync(orderItemDetail);
+                    }
+
+                    await _orderItemRepository.DeleteAsync(orderItem);
+                }
+
+                await _orderRepository.DeleteAsync(order);
+
+            }
+            catch (Exception)
+            {
+                throw new Exception("Error while deleting");
+            }
 
             _logger.LogInformation("Entity successfully deleted - MealmateAppService");
         }

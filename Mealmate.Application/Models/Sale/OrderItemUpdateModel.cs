@@ -9,7 +9,11 @@ namespace Mealmate.Application.Models
     public class OrderItemUpdateModel
     {
 
+        // For usage in order bulk update
         public int OrderItemId { get; set; }
+
+        [Required]
+        public int MenuItemId { get; set; }
 
         [Required]
         public decimal Price { get; set; }
