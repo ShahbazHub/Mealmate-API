@@ -56,7 +56,7 @@ namespace Mealmate.Api.Controllers
 
         #region Create
         [HttpPost()]
-        public async Task<ActionResult> Create([FromBody] OrderItemModel model)
+        public async Task<ActionResult> Create([FromBody] OrderItemCreateModel model)
         {
             if (ModelState.IsValid)
             {
@@ -72,17 +72,17 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut()]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(OrderItemModel model)
+        public async Task<ActionResult> Update(int id, OrderItemUpdateModel model)
         {
             //TODO: Add you code here
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _orderitemService.Update(model);
+                    await _orderitemService.Update(id, model);
                 }
             }
             catch (Exception ex)
