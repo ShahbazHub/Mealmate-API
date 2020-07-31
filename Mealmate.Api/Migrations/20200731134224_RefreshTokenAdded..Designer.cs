@@ -4,14 +4,16 @@ using Mealmate.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    partial class MealmateContextModelSnapshot : ModelSnapshot
+    [Migration("20200731134224_RefreshTokenAdded.")]
+    partial class RefreshTokenAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -608,13 +610,16 @@ namespace Mealmate.Api.Migrations
                     b.Property<bool>("Used")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UserId")
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("PK_RefreshToken");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("RefreshToken","Identity");
                 });
@@ -1204,9 +1209,8 @@ namespace Mealmate.Api.Migrations
                 {
                     b.HasOne("Mealmate.Core.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.RoleClaim", b =>
