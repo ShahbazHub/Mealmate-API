@@ -51,9 +51,19 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<AllergenModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<AllergenModel>>> Get(int id)
         {
-            var temp = await _allergenService.GetById(id);
-
-            return Ok(temp);
+            try
+            {
+                var temp = await _allergenService.GetById(id);
+                if (temp == null)
+                {
+                    return NotFound($"Resource with id {id} no more exists");
+                }
+                return Ok(temp);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error while processing request");
+            }
         }
         #endregion
 

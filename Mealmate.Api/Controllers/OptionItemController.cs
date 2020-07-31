@@ -48,18 +48,21 @@ namespace Mealmate.Api.Controllers
 
         [Route("single/{optionItemId}")]
         [HttpGet()]
-        [ProducesResponseType(typeof(IEnumerable<OptionItemModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OptionItemModel>>> Get(int optionItemId)
+        [ProducesResponseType(typeof(OptionItemModel), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<OptionItemModel>> Get(int optionItemId)
         {
             try
             {
                 var temp = await _optionItemService.GetById(optionItemId);
-
+                if (temp == null)
+                {
+                    return NotFound($"Resource with id {optionItemId} no more exists");
+                }
                 return Ok(temp);
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest("Error while processing your request");
             }
         }
         #endregion

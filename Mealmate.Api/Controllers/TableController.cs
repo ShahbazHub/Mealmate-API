@@ -57,12 +57,17 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
-                var Tables = await _tableService.GetById(tableId);
-                return Ok(Tables);
+                var table = await _tableService.GetById(tableId);
+                if (table == null)
+                {
+                    return NotFound($"Resource with id {tableId} no more exists");
+                }
+                return Ok(table);
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest("Error while processing request");
+
             }
         }
         #endregion
@@ -139,7 +144,5 @@ namespace Mealmate.Api.Controllers
             }
         }
         #endregion
-
-
     }
 }

@@ -56,11 +56,15 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var Menu = await _menuService.GetById(menuId);
+                if (Menu == null)
+                {
+                    return NotFound($"Resource with id {menuId} no more exists");
+                }
                 return Ok(Menu);
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest($"Error while processing request");
             }
         }
         #endregion

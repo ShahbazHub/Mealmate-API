@@ -48,9 +48,20 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<OrderModel>>> Get(int id)
         {
-            var temp = await _orderService.GetById(id);
+            try
+            {
+                var temp = await _orderService.GetById(id);
+                if (temp == null)
+                {
+                    return NotFound($"Resource with id {id} no more exists");
+                }
 
-            return Ok(temp);
+                return Ok(temp);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error while processing request");
+            }
         }
         #endregion
 

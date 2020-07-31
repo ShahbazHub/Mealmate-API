@@ -71,7 +71,7 @@ namespace Mealmate.Application.Services
 
         public async Task<MenuModel> GetById(int id)
         {
-            var result = await _menuRepository.GetAsync(x => x.Id == id);
+            var result = await _menuRepository.GetByIdAsync(id);
             return _mapper.Map<MenuModel>(result);
         }
 

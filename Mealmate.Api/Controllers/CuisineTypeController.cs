@@ -49,9 +49,20 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<CuisineTypeModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<CuisineTypeModel>>> Get(int id)
         {
-            var temp = await _cuisineTypeService.GetById(id);
+            try
+            {
+                var temp = await _cuisineTypeService.GetById(id);
+                if (temp == null)
+                {
+                    return NotFound($"Resource with id {id} no more exists");
+                }
 
-            return Ok(temp);
+                return Ok(temp);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error while processing request");
+            }
         }
         #endregion
 

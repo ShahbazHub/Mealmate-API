@@ -126,13 +126,7 @@ namespace Mealmate.Application.Services
 
         public async Task<OptionItemModel> GetById(int id)
         {
-            var model = await _optionItemRepository.GetByIdAsync(id);
-            if (model == null)
-            {
-                throw new Exception("No data found");
-            }
-
-            return _mapper.Map<OptionItemModel>(model);
+            return _mapper.Map<OptionItemModel>(await _optionItemRepository.GetByIdAsync(id));
         }
 
         public async Task Update(int id, OptionItemUpdateModel model)

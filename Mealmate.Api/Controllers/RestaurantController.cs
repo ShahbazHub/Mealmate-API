@@ -79,11 +79,15 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var temp = await _restaurantService.GetById(restaurantId);
+                if (temp == null)
+                {
+                    return NotFound($"Resource with id {restaurantId} no more exists");
+                }
                 return Ok(temp);
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest("Error while processing your request");
             }
 
         }

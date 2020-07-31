@@ -56,11 +56,15 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var Location = await _locationService.GetById(locationId);
+                if (Location == null)
+                {
+                    return NotFound($"Resource with id {locationId} no more exists");
+                }
                 return Ok(Location);
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest("Error while processing request");
             }
         }
         #endregion

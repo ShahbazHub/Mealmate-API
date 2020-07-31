@@ -55,17 +55,16 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var model = await _branchService.GetById(branchId);
-
                 if (model == null)
                 {
-                    return NotFound();
+                    return NotFound($"Resource with id {branchId} no more exists");
                 }
 
                 return Ok(model);
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest("Error processing your request");
             }
         }
         #endregion
