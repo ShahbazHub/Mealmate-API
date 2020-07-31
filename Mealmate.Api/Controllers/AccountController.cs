@@ -7,6 +7,7 @@ using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Configuration;
 using Mealmate.Core.Entities;
+using Mealmate.Infrastructure.Data;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Policy;
 using System.Text;
@@ -31,6 +33,7 @@ namespace Mealmate.Api.Controllers
     /// </summary>
     [Route("api/accounts")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
     {
         private readonly MealmateSettings _mealmateSettings;
@@ -45,6 +48,8 @@ namespace Mealmate.Api.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
+        private readonly TokenValidationParameters _tokenValidationParameters;
+        private readonly MealmateContext _mealmateContext;
 
         public AccountController(SignInManager<User> signInManager,
           UserManager<User> userManager,
@@ -57,7 +62,9 @@ namespace Mealmate.Api.Controllers
           IUserAllergenService userAllergenService,
           IUserDietaryService userDietaryService,
           IFacebookAuthService facebookAuthService,
-          IGoogleAuthService googleAuthService)
+          IGoogleAuthService googleAuthService,
+          TokenValidationParameters tokenValidationParameters,
+          MealmateContext mealmateContext)
         {
             _mapper = mapper;
             _signInManager = signInManager;
@@ -71,15 +78,21 @@ namespace Mealmate.Api.Controllers
             _userDietaryService = userDietaryService;
             _facebookAuthService = facebookAuthService;
             _googleAuthService = googleAuthService;
+            _tokenValidationParameters = tokenValidationParameters;
+            _mealmateContext = mealmateContext;
         }
 
         #region Create JWT
-        private async Task<string> GenerateJwtToken(User user)
+        private async Task<AuthenticationResult> GenerateJwtToken(User user)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("id", user.Id.ToString())
             };
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -89,15 +102,14 @@ namespace Mealmate.Api.Controllers
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(_mealmateSettings.Tokens.Key));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_mealmateSettings.Tokens.Key));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = creds,
                 Issuer = _mealmateSettings.Tokens.Issuer,
                 Audience = _mealmateSettings.Tokens.Audience
@@ -106,10 +118,54 @@ namespace Mealmate.Api.Controllers
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
+            var refreshToken = new RefreshToken
+            {
+                JwtId = token.Id,
+                UserId = user.Id,
+                CreationDate = DateTime.UtcNow,
+                ExpiryDate = DateTime.UtcNow.AddMonths(6)
+            };
 
-            return tokenHandler.WriteToken(token);
+            await _mealmateContext.RefreshTokens.AddAsync(refreshToken);
+            await _mealmateContext.SaveChangesAsync();
+
+            return new AuthenticationResult
+            {
+                Success = true,
+                Token = tokenHandler.WriteToken(token),
+                RefreshToken = refreshToken.Id
+            };
+
+        }
+        private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
+        {
+            return (validatedToken is JwtSecurityToken jwtSecurityToken) &&
+                   jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512,StringComparison.InvariantCultureIgnoreCase);
         }
         #endregion
+        private ClaimsPrincipal GetPrincipalFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                var tokenValidationParameters = _tokenValidationParameters.Clone();
+                tokenValidationParameters.ValidateLifetime = false;
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var validatedToken);
+                if (!IsJwtWithValidSecurityAlgorithm(validatedToken))
+                {
+                    return null;
+                }
+
+                return principal;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+       
 
         #region Login
         /// <summary>
@@ -133,9 +189,11 @@ namespace Mealmate.Api.Controllers
                                            u => u.Email.ToUpper() == request.Email.ToUpper());
 
                     var userToReturn = _mapper.Map<UserModel>(appUser);
+                    var authResponse = await GenerateJwtToken(appUser);
                     return Ok(new
                     {
-                        token = GenerateJwtToken(appUser).Result,
+                        token = authResponse.Token,
+                        refreshToken = authResponse.RefreshToken,
                         user = userToReturn,
                     });
                 }
@@ -155,7 +213,7 @@ namespace Mealmate.Api.Controllers
         {
             var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(request.AccessToken);
 
-            if (validatedTokenResult.Data.IsValid)
+            if (!validatedTokenResult.Data.IsValid)
             {
                 return BadRequest("your access token is invalid");
             }
@@ -179,19 +237,24 @@ namespace Mealmate.Api.Controllers
                 {
                     return BadRequest("something went wrong");
                 }
+
+                var authResponse1 = await GenerateJwtToken(newUser);
                 var newUserToReturn = _mapper.Map<UserModel>(newUser);
+
                 return Ok(new
                 {
-                    token = GenerateJwtToken(newUser).Result,
+                    token = authResponse1.Token,
+                    refreshToken = authResponse1.RefreshToken,
                     user = newUserToReturn
                 });
 
             }
-
+            var authResponse = await GenerateJwtToken(user);
             var userToReturn = _mapper.Map<UserModel>(user);
             return Ok(new
             {
-                token = GenerateJwtToken(user).Result,
+                token = authResponse.Token,
+                refreshToken = authResponse.RefreshToken,
                 user = userToReturn
             });
         }
@@ -228,24 +291,92 @@ namespace Mealmate.Api.Controllers
                 {
                     return BadRequest("something went wrong");
                 }
+                var authResponse1 = await GenerateJwtToken(newUser);
                 var newUserToReturn = _mapper.Map<UserModel>(newUser);
+
                 return Ok(new
                 {
-                    token = GenerateJwtToken(newUser).Result,
+                    token = authResponse1.Token,
+                    refreshToken = authResponse1.RefreshToken,
                     user = newUserToReturn
-                });
+                }) ;
 
             }
-
+            var authResponse = await GenerateJwtToken(user);
             var userToReturn = _mapper.Map<UserModel>(user);
             return Ok(new
             {
-                token = GenerateJwtToken(user).Result,
+                token = authResponse.Token,
+                refreshToken = authResponse.RefreshToken,
                 user = userToReturn
             });
         }
 
         #endregion
+        [AllowAnonymous]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
+        {
+            var validatedToken = GetPrincipalFromToken(request.Token);
+
+            if (validatedToken == null)
+            {
+                return BadRequest( new[] { "Invalid Token" } );
+            }
+
+            var expiryDateUnix =
+                long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+            var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                .AddSeconds(expiryDateUnix);
+
+            if (expiryDateTimeUtc > DateTime.UtcNow)
+            {
+                return BadRequest(new[] { "This token hasn't expired yet" });
+            }
+
+            var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+
+            var storedRefreshToken = await _mealmateContext.RefreshTokens.SingleOrDefaultAsync(x => x.Id == request.RefreshToken);
+
+            if (storedRefreshToken == null)
+            {
+                return BadRequest(new[] { "This refresh token does not exist" });
+            }
+
+            if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
+            {
+                return BadRequest(new[] { "This refresh token has expired" });
+            }
+
+            if (storedRefreshToken.Invalidated)
+            {
+                return BadRequest(new[] { "This refresh token has been invalidated" });
+            }
+
+            if (storedRefreshToken.Used)
+            {
+                return BadRequest(new[] { "This refresh token has been used" });
+            }
+
+            if (storedRefreshToken.JwtId != jti)
+            {
+                return BadRequest(new[] { "This refresh token does not match this JWT" });
+            }
+
+            storedRefreshToken.Used = true;
+            _mealmateContext.RefreshTokens.Update(storedRefreshToken);
+            await _mealmateContext.SaveChangesAsync();
+
+            var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
+            var authResponse = await GenerateJwtToken(user);
+
+            return Ok(new
+            {
+                token = authResponse.Token,
+                refreshToken = authResponse.RefreshToken
+            });
+        }
 
         #region Change Password
         [HttpPost("changepassword")]
@@ -280,6 +411,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Register
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterRequest model)
         {
@@ -363,7 +495,8 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        #region Register
+        #region Register Mobile
+        [AllowAnonymous]
         [HttpPost("mobileregister")]
         public async Task<ActionResult> MobileRegister([FromBody] MobileRegisterRequest model)
         {

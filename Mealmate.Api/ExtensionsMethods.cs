@@ -204,21 +204,24 @@ namespace Mealmate.Api
 
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, MealmateSettings MealmateSettings)
         {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                ValidIssuer = MealmateSettings.Tokens.Issuer,
+                ValidAudience = MealmateSettings.Tokens.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(MealmateSettings.Tokens.Key))
+            };
             services
+                .AddSingleton(tokenValidationParameters)
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
               {
-                  options.TokenValidationParameters = new TokenValidationParameters
-                  {
-                      ValidateIssuer = true,
-                      ValidateAudience = true,
-                      ValidateLifetime = true,
-                      ValidateIssuerSigningKey = true,
-
-                      ValidIssuer = MealmateSettings.Tokens.Issuer,
-                      ValidAudience = MealmateSettings.Tokens.Audience,
-                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(MealmateSettings.Tokens.Key))
-                  };
+                  options.SaveToken = true;
+                  options.TokenValidationParameters = tokenValidationParameters;
               });
 
             return services;

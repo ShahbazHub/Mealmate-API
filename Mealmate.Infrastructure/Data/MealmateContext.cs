@@ -25,6 +25,9 @@ namespace Mealmate.Infrastructure.Data
         private IDbContextTransaction _currentTransaction;
         public IDbContextTransaction GetCurrentTransaction => _currentTransaction;
 
+        // For Referesh Token...
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
         // User items
         public DbSet<UserRestaurant> UserRestaurants { get; set; }
         public DbSet<UserAllergen> UserAllergens { get; set; }
@@ -94,6 +97,7 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new UserClaimConfiguration());
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
 
             modelBuilder.ApplyConfiguration(new UserRestaurantConfiguration());
 
