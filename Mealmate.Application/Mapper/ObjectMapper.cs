@@ -32,6 +32,7 @@ namespace Mealmate.Application.Mapper
             CreateMap<Table, TableModel>().ReverseMap();
 
             // Lookup
+            CreateMap<OrderState, OrderStateModel>().ReverseMap();
             CreateMap<Allergen, AllergenModel>().ReverseMap();
             CreateMap<Dietary, DietaryModel>().ReverseMap();
             CreateMap<CuisineType, CuisineTypeModel>().ReverseMap();

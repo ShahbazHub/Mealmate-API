@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Mealmate.Core.Entities.Base;
+using Mealmate.Core.Entities.Lookup;
 
 namespace Mealmate.Core.Entities
 {
@@ -16,6 +17,9 @@ namespace Mealmate.Core.Entities
         public DateTimeOffset OrderDate { get; set; }
 
         public ICollection<OrderItem> OrderItems { get; set; }
+
+        public int OrderStateId { get; set; }
+        public virtual OrderState OrderState { get; set; }
 
         public Order()
         {
