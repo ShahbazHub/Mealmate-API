@@ -32,6 +32,7 @@ using Mealmate.Api.Helpers;
 using Autofac.Core;
 using Newtonsoft.Json.Converters;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Mealmate.Api
 {
@@ -218,12 +219,7 @@ namespace Mealmate.Api
                       ValidAudience = MealmateSettings.Tokens.Audience,
                       IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(MealmateSettings.Tokens.Key))
                   };
-              })
-                .AddGoogle(googleConfig =>
-                {
-                    googleConfig.ClientId = MealmateSettings.ClientId;
-                    googleConfig.ClientSecret = MealmateSettings.ClientSecret;
-                });
+              });
 
             return services;
         }
