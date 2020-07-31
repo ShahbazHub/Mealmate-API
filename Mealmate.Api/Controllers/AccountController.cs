@@ -213,7 +213,7 @@ namespace Mealmate.Api.Controllers
         {
             var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(request.AccessToken);
 
-            if (validatedTokenResult.Data.IsValid)
+            if (!validatedTokenResult.Data.IsValid)
             {
                 return BadRequest("your access token is invalid");
             }
