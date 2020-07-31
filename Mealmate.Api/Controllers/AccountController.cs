@@ -140,7 +140,7 @@ namespace Mealmate.Api.Controllers
         private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
         {
             return (validatedToken is JwtSecurityToken jwtSecurityToken) &&
-                   jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512,StringComparison.InvariantCultureIgnoreCase);
+                   jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase);
         }
         #endregion
         private ClaimsPrincipal GetPrincipalFromToken(string token)
@@ -165,7 +165,7 @@ namespace Mealmate.Api.Controllers
             }
         }
 
-       
+
 
         #region Login
         /// <summary>
@@ -299,7 +299,7 @@ namespace Mealmate.Api.Controllers
                     token = authResponse1.Token,
                     refreshToken = authResponse1.RefreshToken,
                     user = newUserToReturn
-                }) ;
+                });
 
             }
             var authResponse = await GenerateJwtToken(user);
@@ -313,6 +313,8 @@ namespace Mealmate.Api.Controllers
         }
 
         #endregion
+
+        #region Refresh Token
         [AllowAnonymous]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
@@ -321,7 +323,7 @@ namespace Mealmate.Api.Controllers
 
             if (validatedToken == null)
             {
-                return BadRequest( new[] { "Invalid Token" } );
+                return BadRequest(new[] { "Invalid Token" });
             }
 
             var expiryDateUnix =
@@ -377,6 +379,7 @@ namespace Mealmate.Api.Controllers
                 refreshToken = authResponse.RefreshToken
             });
         }
+        #endregion
 
         #region Change Password
         [HttpPost("changepassword")]
@@ -567,7 +570,7 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        #region ResetPassword
+        #region Reset Password
         [AllowAnonymous]
         [HttpGet("resetpassword")]
         public async Task<ActionResult> ResetPassword(string email)
