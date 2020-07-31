@@ -8,6 +8,10 @@ namespace Mealmate.Application.Models
 {
     public class OrderItemDetailUpdateModel
     {
+
+        // to be used for bulk updation
+        // order
+        // order item
         public int OrderItemDetailId { get; set; }
 
         [Required]

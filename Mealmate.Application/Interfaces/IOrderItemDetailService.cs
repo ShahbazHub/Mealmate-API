@@ -10,7 +10,7 @@ namespace Mealmate.Application.Interfaces
         Task<IEnumerable<OrderItemDetailModel>> Get(int restaurantId);
         Task<OrderItemDetailModel> GetById(int id);
         Task<OrderItemDetailModel> Create(OrderItemDetailModel model);
-        Task Update(OrderItemDetailModel model);
+        Task Update(int id, OrderItemDetailUpdateModel model);
         Task Delete(int id);
         Task<IPagedList<OrderItemDetailModel>> Search(PageSearchArgs args);
 

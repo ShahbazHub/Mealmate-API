@@ -27,7 +27,7 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet("{orderId}")]
+        [HttpGet("{orderItemId}")]
         [ProducesResponseType(typeof(IEnumerable<OrderItemDetailModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<OrderItemDetailModel>>> Get(int orderItemId, string props)
         {
@@ -72,17 +72,17 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut()]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(OrderItemDetailModel model)
+        public async Task<ActionResult> Update(int id, OrderItemDetailUpdateModel model)
         {
             //TODO: Add you code here
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _orderItemDetailService.Update(model);
+                    await _orderItemDetailService.Update(id, model);
                 }
             }
             catch (Exception ex)

@@ -32,6 +32,7 @@ namespace Mealmate.Application.Services
             _mapper = mapper;
         }
 
+        #region Create
         public async Task<OrderItemDetailModel> Create(OrderItemDetailModel model)
         {
             var existingTable = await _orderitemdetailRepository.GetByIdAsync(model.Id);
@@ -48,20 +49,9 @@ namespace Mealmate.Application.Services
             var new_dietarymodel = _mapper.Map<OrderItemDetailModel>(new_dietary);
             return new_dietarymodel;
         }
+        #endregion
 
-        public async Task Delete(int id)
-        {
-            var existingTable = await _orderitemdetailRepository.GetByIdAsync(id);
-            if (existingTable == null)
-            {
-                throw new ApplicationException("OrderItemDetail with this id is not exists");
-            }
-
-            await _orderitemdetailRepository.DeleteAsync(existingTable);
-
-            _logger.LogInformation("Entity successfully deleted - MealmateAppService");
-        }
-
+        #region Read
         public async Task<IEnumerable<OrderItemDetailModel>> Get(int orderItemlId)
         {
             var result = await _orderitemdetailRepository.GetAsync(p => p.OrderItemId == orderItemlId);
@@ -71,21 +61,6 @@ namespace Mealmate.Application.Services
         public async Task<OrderItemDetailModel> GetById(int id)
         {
             return _mapper.Map<OrderItemDetailModel>(await _orderitemdetailRepository.GetByIdAsync(id));
-        }
-
-        public async Task Update(OrderItemDetailModel model)
-        {
-            var existingTable = await _orderitemdetailRepository.GetByIdAsync(model.Id);
-            if (existingTable == null)
-            {
-                throw new ApplicationException("OrderItemDetail with this id is not exists");
-            }
-
-            existingTable = _mapper.Map<OrderItemDetail>(model);
-
-            await _orderitemdetailRepository.SaveAsync(existingTable);
-
-            _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
         public async Task<IPagedList<OrderItemDetailModel>> Search(PageSearchArgs args)
@@ -104,7 +79,38 @@ namespace Mealmate.Application.Services
 
             return OrderItemDetailModelPagedList;
         }
+        #endregion
 
+        #region Update
+        public async Task Update(int id, OrderItemDetailUpdateModel model)
+        {
+            var orderItemDetail = await _orderitemdetailRepository.GetByIdAsync(id);
+            if (orderItemDetail == null)
+            {
+                throw new ApplicationException("OrderItemDetail with this id is not exists");
+            }
 
+            orderItemDetail.Quantity = model.Quantity;
+
+            await _orderitemdetailRepository.SaveAsync(orderItemDetail);
+
+            _logger.LogInformation("Entity successfully updated - MealmateAppService");
+        }
+        #endregion
+
+        #region Delete
+        public async Task Delete(int id)
+        {
+            var existingTable = await _orderitemdetailRepository.GetByIdAsync(id);
+            if (existingTable == null)
+            {
+                throw new ApplicationException("OrderItemDetail with this id is not exists");
+            }
+
+            await _orderitemdetailRepository.DeleteAsync(existingTable);
+
+            _logger.LogInformation("Entity successfully deleted - MealmateAppService");
+        }
+        #endregion
     }
 }
