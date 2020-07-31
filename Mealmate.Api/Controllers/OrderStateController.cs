@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Mealmate.Api.Helpers;
@@ -30,6 +31,25 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         [AllowAnonymous]
+        [HttpGet("list")]
+        [ProducesResponseType(typeof(IEnumerable<OrderStateModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<OrderStateModel>>> Get()
+        {
+            try
+            {
+                var result = await _orderStateService.Get();
+                if (result != null)
+                {
+                    result = result.Where(p => p.IsActive == true);
+                }
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet("list/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<OrderStateModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<OrderStateModel>>> Get(

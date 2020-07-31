@@ -9,8 +9,8 @@ namespace Mealmate.Application.Interfaces
     {
         Task<IEnumerable<OrderItemModel>> Get(int orderId);
         Task<OrderItemModel> GetById(int id);
-        Task<OrderItemModel> Create(OrderItemModel model);
-        Task Update(OrderItemModel model);
+        Task<OrderItemModel> Create(OrderItemCreateModel model);
+        Task Update(int id, OrderItemUpdateModel model);
         Task Delete(int id);
         Task<IPagedList<OrderItemModel>> Search(PageSearchArgs args);
 

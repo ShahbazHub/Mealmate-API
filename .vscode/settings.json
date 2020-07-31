@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "askForPassword": true,
+            "connectString": "Server=TAJ\\LEARNING17;Initial Catalog=MealmateDb;User Id=sa;Password=tsdDB2k19-19;",
+            "driver": "MSSQL",
+            "group": "Mealmate",
+            "mssqlOptions": {
+                "appName": "SQLTools",
+                "encrypt": true,
+                "useUTC": true
+            },
+            "name": "Mealmate",
+            "port": 1433,
+            "previewLimit": 50,
+            "server": "localhost"
+        }
+    ]
+}
