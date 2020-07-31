@@ -72,7 +72,7 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
-        [HttpPut()]
+        [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(int id, OrderUpdateModel model)
