@@ -1,11 +1,14 @@
 using System;
 using System.IO;
 
+using Autofac.Core;
+
 using FirebaseAdmin;
 
 using Google.Apis.Auth.OAuth2;
 
 using Mealmate.Api.Application.Middlewares;
+using Mealmate.Api.Installers;
 using Mealmate.Core.Configuration;
 
 using Microsoft.AspNetCore.Builder;
@@ -43,14 +46,17 @@ namespace Mealmate.Api
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.InstallServicesInAssembly(_config);
             return services
                 .AddCustomMvc()
+                
                 .AddCustomDbContext(_mealMateSettings)
                 .AddCustomIdentity()
                 .AddCustomSwagger()
                 .AddCustomConfiguration(_config)
                 .AddCustomAuthentication(_mealMateSettings)
                 .AddCustomIntegrations(_env);
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

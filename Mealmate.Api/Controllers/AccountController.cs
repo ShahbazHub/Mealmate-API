@@ -2,6 +2,7 @@
 
 using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
+using Mealmate.Api.Services;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
 using Mealmate.Core.Configuration;
@@ -39,6 +40,8 @@ namespace Mealmate.Api.Controllers
         private readonly RoleManager<Role> _roleManager;
         private readonly IUserAllergenService _userAllergenService;
         private readonly IUserDietaryService _userDietaryService;
+        private readonly IFacebookAuthService _facebookAuthService;
+        private readonly IGoogleAuthService _googleAuthService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
@@ -52,7 +55,9 @@ namespace Mealmate.Api.Controllers
           IUserRestaurantService userRestaurantService,
           IEmailService emailService,
           IUserAllergenService userAllergenService,
-          IUserDietaryService userDietaryService)
+          IUserDietaryService userDietaryService,
+          IFacebookAuthService facebookAuthService,
+          IGoogleAuthService googleAuthService)
         {
             _mapper = mapper;
             _signInManager = signInManager;
@@ -64,6 +69,8 @@ namespace Mealmate.Api.Controllers
             _roleManager = roleManager;
             _userAllergenService = userAllergenService;
             _userDietaryService = userDietaryService;
+            _facebookAuthService = facebookAuthService;
+            _googleAuthService = googleAuthService;
         }
 
         #region Create JWT
@@ -141,6 +148,103 @@ namespace Mealmate.Api.Controllers
             return Unauthorized("UserName of Password is incorrect");
 
         }
+
+        [AllowAnonymous]
+        [HttpPost("signin-facebook")]
+        public async Task<IActionResult> LoginWithFacebook([FromBody] FacebookLoginRequest request)
+        {
+            var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(request.AccessToken);
+
+            if (validatedTokenResult.Data.IsValid)
+            {
+                return BadRequest("your access token is invalid");
+            }
+
+            var userInfo = await _facebookAuthService.GetUserInfoAsync(request.AccessToken);
+
+            var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+            if (user == null)
+            {
+                var newUser = new User
+                {
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    FirstName = userInfo.FirstName,
+                    LastName = userInfo.LastName
+                };
+
+                var createdResult = await _userManager.CreateAsync(newUser);
+                if (!createdResult.Succeeded)
+                {
+                    return BadRequest("something went wrong");
+                }
+                var newUserToReturn = _mapper.Map<UserModel>(newUser);
+                return Ok(new
+                {
+                    token = GenerateJwtToken(newUser).Result,
+                    user = newUserToReturn
+                });
+
+            }
+
+            var userToReturn = _mapper.Map<UserModel>(user);
+            return Ok(new
+            {
+                token = GenerateJwtToken(user).Result,
+                user = userToReturn
+            });
+        }
+
+
+
+        [AllowAnonymous]
+        [HttpPost("signin-google")]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginRequest request)
+        {
+            var validatedTokenResult = await _googleAuthService.ValidateAccessTokenAsync(request.AccessToken);
+
+            if (validatedTokenResult == null)
+            {
+                return BadRequest("your access token is invalid");
+            }
+
+            var userInfo = await _googleAuthService.GetUserInfoAsync(request.IdToken);
+
+            var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+            if (user == null)
+            {
+                var newUser = new User
+                {
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    FirstName = userInfo.Name,
+                    LastName = userInfo.FamilyName
+                };
+
+                var createdResult = await _userManager.CreateAsync(newUser);
+                if (!createdResult.Succeeded)
+                {
+                    return BadRequest("something went wrong");
+                }
+                var newUserToReturn = _mapper.Map<UserModel>(newUser);
+                return Ok(new
+                {
+                    token = GenerateJwtToken(newUser).Result,
+                    user = newUserToReturn
+                });
+
+            }
+
+            var userToReturn = _mapper.Map<UserModel>(user);
+            return Ok(new
+            {
+                token = GenerateJwtToken(user).Result,
+                user = userToReturn
+            });
+        }
+
         #endregion
 
         #region Change Password

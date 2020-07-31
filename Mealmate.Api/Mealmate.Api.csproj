@@ -37,19 +37,19 @@
 
   <ItemGroup>
     <Compile Include="Requests\ChangePasswordRequest.cs" />
+    <Compile Include="Requests\GoogleLoginRequest.cs" />
     <Compile Include="Requests\MobileRegisterRequest.cs" />
     <Compile Include="Requests\ResetPasswordRequest.cs" />
     <Compile Include="Requests\LoginRequest.cs" />
     <Compile Include="Requests\RegisterRequest.cs" />
     <Compile Include="Requests\SearchPageRequest.cs" />
     <Compile Include="Requests\MenuFilterRequest.cs" />
+    <Compile Include="Requests\FacebookLoginRequest.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="1.14.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="3.1.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5">
