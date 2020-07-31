@@ -14,24 +14,28 @@ using Mealmate.Core.Repositories;
 using Mealmate.Core.Specifications;
 using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Paging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mealmate.Application.Services
 {
     public class OrderItemService : IOrderItemService
     {
         private readonly IOrderItemRepository _orderitemRepository;
+        private readonly IOrderItemDetailRepository _orderItemDetailRepository;
         private readonly IAppLogger<OrderItemService> _logger;
         private readonly MealmateContext _context;
         private readonly IMapper _mapper;
 
         public OrderItemService(
             IOrderItemRepository orderitemRepository,
+            IOrderItemDetailRepository orderItemDetailRepository,
             IAppLogger<OrderItemService> logger,
             IMapper mapper,
             MealmateContext context)
         {
             _context = context;
-            _orderitemRepository = orderitemRepository ?? throw new ArgumentNullException(nameof(_orderitemRepository));
+            _orderItemDetailRepository = orderItemDetailRepository ?? throw new ArgumentNullException(nameof(orderItemDetailRepository));
+            _orderitemRepository = orderitemRepository ?? throw new ArgumentNullException(nameof(orderitemRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
         }
@@ -57,7 +61,23 @@ namespace Mealmate.Application.Services
                     await _context.OrderItems.AddAsync(orderItemEntity);
                     if (await _context.SaveChangesAsync() > 0)
                     {
+                        if (model.OrderItemDetails.Count > 0)
+                        {
+                            foreach (var orderItemDetail in model.OrderItemDetails)
+                            {
+                                var orderItemDetailEntity = new OrderItemDetail
+                                {
+                                    Created = DateTime.Now,
+                                    MenuItemOptionId = orderItemDetail.MenuItemOptionId,
+                                    OrderItemId = orderItemEntity.Id, // from primary key of order item
+                                    Price = orderItemDetail.Price,
+                                    Quantity = orderItemDetail.Quantity
+                                };
 
+                                await _context.OrderItemDetails.AddAsync(orderItemDetailEntity);
+                                await _context.SaveChangesAsync();
+                            }
+                        }
                     }
 
                     // Commit transaction if all commands succeed, transaction will auto-rollback
@@ -110,30 +130,93 @@ namespace Mealmate.Application.Services
         #region Update
         public async Task Update(int id, OrderItemUpdateModel model)
         {
-            var existingTable = await _orderitemRepository.GetByIdAsync(id);
-            if (existingTable == null)
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                throw new ApplicationException("OrderItem with this id is not exists");
+                try
+                {
+                    var orderItemEntity = await _context.OrderItems.FirstOrDefaultAsync(p => p.Id == id);
+                    if (orderItemEntity == null)
+                    {
+                        throw new ApplicationException("OrderItem with this id is not exists");
+                    }
+
+                    orderItemEntity.Quantity = model.Quantity;
+                    _context.OrderItems.Update(orderItemEntity);
+                    if (await _context.SaveChangesAsync() > 0)
+                    {
+                        if (model.OrderItemDetails.Count > 0)
+                        {
+                            foreach (var orderItemDetail in model.OrderItemDetails)
+                            {
+                                // for insertions
+                                if (orderItemDetail.OrderItemDetailId == 0)
+                                {
+                                    var orderItemDetailEntity = new OrderItemDetail
+                                    {
+                                        Created = DateTime.Now,
+                                        MenuItemOptionId = orderItemDetail.MenuItemOptionId,
+                                        OrderItemId = orderItemEntity.Id,
+                                        Price = orderItemDetail.Price,
+                                        Quantity = orderItemDetail.Quantity
+                                    };
+
+                                    await _context.OrderItemDetails.AddAsync(orderItemDetailEntity);
+                                    await _context.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    var orderItemDetailEntity = await _context.OrderItemDetails.FirstOrDefaultAsync(p => p.Id == orderItemDetail.OrderItemDetailId);
+                                    if (orderItemDetailEntity != null)
+                                    {
+                                        orderItemDetailEntity.Quantity = orderItemDetail.Quantity;
+
+                                        _context.OrderItemDetails.Update(orderItemDetailEntity);
+                                        await _context.SaveChangesAsync();
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Commit transaction if all commands succeed, transaction will auto-rollback
+                    // when disposed if either commands fails
+                    transaction.Commit();
+
+                    _logger.LogInformation("Entity successfully updated - MealmateAppService");
+                }
+                catch (System.Exception)
+                {
+                    throw new Exception("Error while processing");
+                }
             }
-
-            existingTable = _mapper.Map<OrderItem>(model);
-
-            await _orderitemRepository.SaveAsync(existingTable);
-
-            _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
         #endregion
 
         #region Delete
         public async Task Delete(int id)
         {
-            var existingTable = await _orderitemRepository.GetByIdAsync(id);
-            if (existingTable == null)
+            try
             {
-                throw new ApplicationException("OrderItem with this id is not exists");
-            }
+                var orderItem = await _orderitemRepository.GetByIdAsync(id);
+                if (orderItem == null)
+                {
+                    throw new ApplicationException("OrderItem with this id is not exists");
+                }
 
-            await _orderitemRepository.DeleteAsync(existingTable);
+
+                var orderItemDetails = await _orderItemDetailRepository.GetAsync(p => p.OrderItemId == id);
+                foreach (var item in orderItemDetails)
+                {
+                    await _orderItemDetailRepository.DeleteAsync(item);
+                }
+
+                await _orderitemRepository.DeleteAsync(orderItem);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Error processing request");
+            }
 
             _logger.LogInformation("Entity successfully deleted - MealmateAppService");
         }
