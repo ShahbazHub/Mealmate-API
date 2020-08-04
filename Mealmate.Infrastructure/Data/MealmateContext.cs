@@ -55,6 +55,7 @@ namespace Mealmate.Infrastructure.Data
         public DbSet<OptionItemAllergen> OptionItemAllergens { get; set; }
         public DbSet<OptionItemDietary> OptionItemDietaries { get; set; }
         public DbSet<RestroomRequestState> RestroomRequestStates { get; set; }
+        public DbSet<ContactRequestState> ContactRequestStates { get; set; }
 
         // Orders
         public DbSet<Order> Orders { get; set; }
@@ -64,6 +65,7 @@ namespace Mealmate.Infrastructure.Data
 
         // Request
         public DbSet<RestroomRequest> RestroomRequests { get; set; }
+        public DbSet<ContactRequest> ContactRequests { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -117,6 +119,7 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new MenuItemAllergenConfiguration());
             modelBuilder.ApplyConfiguration(new MenuItemDietaryConfiguration());
             modelBuilder.ApplyConfiguration(new RestroomRequestStateConfiguration());
+            modelBuilder.ApplyConfiguration(new ContactRequestStateConfiguration());
 
             // Orders
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
@@ -125,6 +128,7 @@ namespace Mealmate.Infrastructure.Data
 
             // Requests
             modelBuilder.ApplyConfiguration(new RestroomRequestConfiguration());
+            modelBuilder.ApplyConfiguration(new ContactRequestConfiguration());
 
             // Custom
             modelBuilder.RegisterCustomMappings(typeToRegisters);

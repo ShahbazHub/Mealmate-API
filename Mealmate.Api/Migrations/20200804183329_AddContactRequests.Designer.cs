@@ -4,14 +4,16 @@ using Mealmate.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    partial class MealmateContextModelSnapshot : ModelSnapshot
+    [Migration("20200804183329_AddContactRequests")]
+    partial class AddContactRequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,7 +76,9 @@ namespace Mealmate.Api.Migrations
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<DateTimeOffset?>("ResponseTime")
-                        .HasColumnType("DATETIMEOFFSET");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIMEOFFSET")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("TableId")
                         .HasColumnType("INT");
@@ -631,6 +635,10 @@ namespace Mealmate.Api.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<byte[]>("Code")
+                        .IsRequired()
+                        .HasColumnType("VARBINARY(MAX)");
+
                     b.Property<DateTimeOffset>("Created")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("DATETIMEOFFSET")
@@ -729,7 +737,9 @@ namespace Mealmate.Api.Migrations
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<DateTimeOffset?>("ResponseTime")
-                        .HasColumnType("DATETIMEOFFSET");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIMEOFFSET")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("RestroomRequestStateId")
                         .HasColumnType("int");

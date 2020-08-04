@@ -32,8 +32,7 @@ namespace Mealmate.Infrastructure.Configurations
                     .HasColumnType("NVARCHAR(500)");
 
             builder.Property(p => p.ResponseTime)
-                .HasColumnType("DATETIMEOFFSET")
-                .HasDefaultValueSql("GETDATE()");
+                .HasColumnType("DATETIMEOFFSET");
 
             builder.HasOne(p => p.ContactRequestState)
                 .WithMany(p => p.ContactRequests)

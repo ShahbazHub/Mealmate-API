@@ -70,7 +70,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(QRCodeModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<QRCodeModel>> Create(QRCodeModel request)
+        public async Task<ActionResult<QRCodeModel>> Create([FromBody] QRCodeCreateModel request)
         {
             var commandResult = await _qRCodeService.Create(request);
             return Ok(commandResult);

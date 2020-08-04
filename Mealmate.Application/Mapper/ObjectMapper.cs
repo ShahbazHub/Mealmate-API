@@ -33,6 +33,7 @@ namespace Mealmate.Application.Mapper
 
             // Lookup
             CreateMap<RestroomRequestState, RestroomRequestStateModel>().ReverseMap();
+            CreateMap<ContactRequestState, ContactRequestStateModel>().ReverseMap();
             CreateMap<OrderState, OrderStateModel>().ReverseMap();
             CreateMap<Allergen, AllergenModel>().ReverseMap();
             CreateMap<Dietary, DietaryModel>().ReverseMap();

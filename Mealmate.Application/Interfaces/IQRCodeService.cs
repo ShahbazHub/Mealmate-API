@@ -8,7 +8,7 @@ namespace Mealmate.Application.Interfaces
     {
         Task<IEnumerable<QRCodeModel>> Get(int tableId);
         Task<QRCodeModel> GetById(int id);
-        Task<QRCodeModel> Create(QRCodeModel model);
+        Task<QRCodeModel> Create(QRCodeCreateModel model);
         Task Update(QRCodeModel model);
         Task Delete(int id);
     }

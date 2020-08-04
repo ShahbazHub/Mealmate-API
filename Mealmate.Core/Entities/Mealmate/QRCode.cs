@@ -5,8 +5,6 @@ namespace Mealmate.Core.Entities
 {
     public class QRCode : Entity
     {
-        //public int QRCodeId { get; set; }
-        public byte[] Code { get; set; }
         public DateTimeOffset Created { get; set; }
 
         public int TableId { get; set; }

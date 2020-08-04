@@ -7,12 +7,15 @@ using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
 using Mealmate.Application.Models;
+using Mealmate.Core.Entities;
 using Mealmate.Core.Entities.Lookup;
 using Mealmate.Core.Paging;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
 namespace Mealmate.Api.Controllers
@@ -23,9 +26,16 @@ namespace Mealmate.Api.Controllers
     public class ContactRequestController : ControllerBase
     {
         private readonly IContactRequestService _contactRequestService;
+        private readonly UserManager<User> _userManager;
+        private readonly ITableService _tableService;
 
-        public ContactRequestController(IContactRequestService contactRequestService)
+        public ContactRequestController(
+            UserManager<User> userManager,
+            IContactRequestService contactRequestService,
+            ITableService tableService)
         {
+            _userManager = userManager;
+            _tableService = tableService ?? throw new ArgumentNullException(nameof(tableService));
             _contactRequestService = contactRequestService ?? throw new ArgumentNullException(nameof(contactRequestService));
         }
 
@@ -91,6 +101,18 @@ namespace Mealmate.Api.Controllers
         {
             if (ModelState.IsValid)
             {
+                var customer = await _userManager.Users.FirstOrDefaultAsync(p => p.Id == model.CustomerId);
+                if (customer == null)
+                {
+                    return NotFound($"User does't exist");
+                }
+
+                var table = await _tableService.GetById(model.TableId);
+                if (table == null)
+                {
+                    return NotFound($"Table doesn't exists");
+                }
+
                 var result = await _contactRequestService.Create(model);
                 if (result != null)
                 {

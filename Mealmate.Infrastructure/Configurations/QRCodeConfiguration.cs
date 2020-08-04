@@ -19,10 +19,6 @@ namespace Mealmate.Infrastructure.Configurations
                 .HasColumnType("INT")
                 .IsRequired();
 
-            builder.Property(p => p.Code)
-                .HasColumnType("VARBINARY(MAX)")
-                .IsRequired();
-
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()

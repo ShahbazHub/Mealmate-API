@@ -97,6 +97,7 @@ namespace Mealmate.Application.Services
             }
 
             existingTable.Remarks = model.Remarks;
+            existingTable.ResponseTime = DateTime.Now;
             existingTable.RestroomRequestStateId = model.RestroomRequestStateId;
 
             await _restroomRequestRepository.SaveAsync(existingTable);

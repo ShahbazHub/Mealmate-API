@@ -42,7 +42,8 @@ namespace Mealmate.Application.Services
                 CustomerId = model.CustomerId,
                 TableId = model.TableId,
                 RequestTime = DateTime.Now,
-                ContactRequestStateId = 1
+                ContactRequestStateId = 1,
+                ResponseTime = null
             };
 
             new_dietary = await _contactRequestRepository.SaveAsync(new_dietary);
@@ -97,6 +98,7 @@ namespace Mealmate.Application.Services
             }
 
             existingTable.Remarks = model.Remarks;
+            existingTable.ResponseTime = DateTime.Now;
             existingTable.ContactRequestStateId = model.ContactRequestStateId;
 
             await _contactRequestRepository.SaveAsync(existingTable);
