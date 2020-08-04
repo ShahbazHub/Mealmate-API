@@ -604,5 +604,14 @@ namespace Mealmate.Api.Controllers
         }
 
         #endregion
+
+        #region OTP
+        [HttpPost()]
+        public ActionResult SendOTP()
+        {
+            return Ok();
+        }
+        #endregion
+
     }
 }
