@@ -17,6 +17,7 @@ namespace Mealmate.Core.Entities
         public virtual ICollection<QRCode> QRCodes { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<RestroomRequest> RestroomRequests { get; set; }
+        public virtual ICollection<ContactRequest> ContactRequests { get; set; }
 
 
         public Table()
@@ -24,6 +25,7 @@ namespace Mealmate.Core.Entities
             QRCodes = new HashSet<QRCode>();
             Orders = new HashSet<Order>();
             RestroomRequests = new HashSet<RestroomRequest>();
+            ContactRequests = new HashSet<ContactRequest>();
         }
     }
 }

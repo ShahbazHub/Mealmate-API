@@ -33,6 +33,7 @@ namespace Mealmate.Infrastructure.IoC
 
             // Lookups
             builder.RegisterType<RestroomRequestStateRepository>().As<IRestroomRequestStateRepository>().InstancePerDependency();
+            builder.RegisterType<ContactRequestStateRepository>().As<IContactRequestStateRepository>().InstancePerDependency();
             builder.RegisterType<AllergenRepository>().As<IAllergenRepository>().InstancePerDependency();
             builder.RegisterType<DietaryRepository>().As<IDietaryRepository>().InstancePerDependency();
             builder.RegisterType<CuisineTypeRepository>().As<ICuisineTypeRepository>().InstancePerDependency();
@@ -56,6 +57,7 @@ namespace Mealmate.Infrastructure.IoC
 
             // Requests
             builder.RegisterType<RestroomRequestRepository>().As<IRestroomRequestRepository>().InstancePerDependency();
+            builder.RegisterType<ContactRequestRepository>().As<IContactRequestRepository>().InstancePerDependency();
 
 
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();

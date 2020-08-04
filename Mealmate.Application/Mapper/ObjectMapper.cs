@@ -43,6 +43,7 @@ namespace Mealmate.Application.Mapper
             CreateMap<OptionItemDietary, OptionItemDietaryModel>().ReverseMap();
 
             CreateMap<RestroomRequestState, RestroomRequestModel>().ReverseMap();
+            CreateMap<ContactRequestState, ContactRequestModel>().ReverseMap();
 
             // Sale
             CreateMap<Order, OrderModel>().ReverseMap();
@@ -51,6 +52,7 @@ namespace Mealmate.Application.Mapper
 
             // Requests
             CreateMap<RestroomRequest, RestroomRequestModel>().ReverseMap();
+            CreateMap<ContactRequest, ContactRequestModel>().ReverseMap();
 
 
         }
