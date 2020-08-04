@@ -27,7 +27,7 @@ namespace Mealmate.Application.Services
             IAppLogger<OrderStateService> logger,
             IMapper mapper)
         {
-            _orderStateRepository = orderStateRepository ?? throw new ArgumentNullException(nameof(_orderStateRepository));
+            _orderStateRepository = orderStateRepository ?? throw new ArgumentNullException(nameof(orderStateRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
         }

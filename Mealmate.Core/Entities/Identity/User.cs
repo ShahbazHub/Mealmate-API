@@ -19,6 +19,7 @@ namespace Mealmate.Core.Entities
         public virtual ICollection<UserDietary> UserDietaries { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<UserOtp> UserOtps { get; set; }
+        public virtual ICollection<RestroomRequest> RestroomRequests { get; set; }
 
 
         public User()
@@ -33,6 +34,7 @@ namespace Mealmate.Core.Entities
             UserDietaries = new HashSet<UserDietary>();
             Orders = new HashSet<Order>();
             UserOtps = new HashSet<UserOtp>();
+            RestroomRequests = new HashSet<RestroomRequest>();
         }
     }
 }

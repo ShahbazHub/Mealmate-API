@@ -29,7 +29,7 @@ namespace Mealmate.Application.IoC
                 .InstancePerLifetimeScope();
 
             // services
-            
+
             builder.RegisterType<UserAllergenService>().As<IUserAllergenService>().InstancePerLifetimeScope();
             builder.RegisterType<UserDietaryService>().As<IUserDietaryService>().InstancePerLifetimeScope();
             builder.RegisterType<UserRestaurantService>().As<IUserRestaurantService>().InstancePerLifetimeScope();
@@ -64,6 +64,9 @@ namespace Mealmate.Application.IoC
             builder.RegisterType<OrderService>().As<IOrderService>().InstancePerLifetimeScope();
             builder.RegisterType<OrderItemService>().As<IOrderItemService>().InstancePerLifetimeScope();
             builder.RegisterType<OrderItemDetailService>().As<IOrderItemDetailService>().InstancePerLifetimeScope();
+
+            builder.RegisterType<RestroomRequestService>().As<IRestroomRequestService>().InstancePerLifetimeScope();
+            builder.RegisterType<RestroomRequestStateService>().As<IRestroomRequestStateService>().InstancePerLifetimeScope();
 
             builder.RegisterType<MealMateMapper>().As<Profile>();
 
