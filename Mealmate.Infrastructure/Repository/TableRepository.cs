@@ -25,7 +25,8 @@ namespace Mealmate.Infrastructure.Repository
 
         public Task<IPagedList<Table>> SearchAsync(PageSearchArgs args)
         {
-            var query = Table.Include(p => p.Orders);
+            var query = Table.Include(p => p.Orders)
+                            .Include(p => p.QRCodes);
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<Table, object>>>>();
 
@@ -76,7 +77,10 @@ namespace Mealmate.Infrastructure.Repository
 
         public Task<IPagedList<Table>> SearchAsync(int locationId, int isActive, PageSearchArgs args)
         {
-            var query = Table.Include(p => p.Orders).Where(p => p.LocationId == locationId);
+            var query = Table.Include(p => p.Orders)
+                            .Include(p => p.QRCodes)
+                            .Where(p => p.LocationId == locationId);
+
             if (isActive == 1 || isActive == 0)
             {
                 var status = isActive == 1 ? true : false;

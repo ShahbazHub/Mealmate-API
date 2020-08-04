@@ -1,6 +1,7 @@
 ﻿using Mealmate.Application.Models.Base;
 
 using System;
+using System.Collections.Generic;
 
 namespace Mealmate.Application.Models
 {
@@ -13,6 +14,6 @@ namespace Mealmate.Application.Models
         public int LocationId { get; set; }
         //public LocationModel Location { get; set; }
 
-        //public QRCodeModel QRCode { get; set; }
+        public ICollection<QRCodeModel> QRCodes { get; set; }
     }
 }
