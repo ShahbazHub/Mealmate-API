@@ -32,6 +32,7 @@ namespace Mealmate.Infrastructure.Data
         public DbSet<UserRestaurant> UserRestaurants { get; set; }
         public DbSet<UserAllergen> UserAllergens { get; set; }
         public DbSet<UserDietary> UserDietaries { get; set; }
+        public DbSet<UserOtp> UserOtps { get; set; }
 
         // Restaurant
         public DbSet<Restaurant> Restaurants { get; set; }
@@ -100,6 +101,7 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
 
             modelBuilder.ApplyConfiguration(new UserRestaurantConfiguration());
+            modelBuilder.ApplyConfiguration(new UserOtpConfiguration());
 
             // Lookups
             modelBuilder.ApplyConfiguration(new OrderStateConfiguration());

@@ -46,6 +46,9 @@ namespace Mealmate.Api
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+
+            services.AddSingleton(_config);
+
             services.InstallServicesInAssembly(_config);
             return services
                 .AddCustomMvc()

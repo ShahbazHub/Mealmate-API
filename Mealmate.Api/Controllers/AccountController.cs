@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,6 +26,8 @@ using System.Security.Claims;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace Mealmate.Api.Controllers
 {
@@ -47,6 +50,7 @@ namespace Mealmate.Api.Controllers
         private readonly IGoogleAuthService _googleAuthService;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly IConfigurationRoot _config;
         private readonly IMapper _mapper;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly MealmateContext _mealmateContext;
@@ -64,8 +68,10 @@ namespace Mealmate.Api.Controllers
           IFacebookAuthService facebookAuthService,
           IGoogleAuthService googleAuthService,
           TokenValidationParameters tokenValidationParameters,
-          MealmateContext mealmateContext)
+          MealmateContext mealmateContext,
+          IConfigurationRoot config)
         {
+            _config = config;
             _mapper = mapper;
             _signInManager = signInManager;
             _userManager = userManager;
@@ -143,6 +149,8 @@ namespace Mealmate.Api.Controllers
                    jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha512, StringComparison.InvariantCultureIgnoreCase);
         }
         #endregion
+
+        #region Get Principal 
         private ClaimsPrincipal GetPrincipalFromToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -164,8 +172,7 @@ namespace Mealmate.Api.Controllers
                 return null;
             }
         }
-
-
+        #endregion
 
         #region Login
         /// <summary>
@@ -605,11 +612,139 @@ namespace Mealmate.Api.Controllers
 
         #endregion
 
-        #region OTP
+        #region Generate OTP
         [HttpPost()]
-        public ActionResult SendOTP()
+        [Route("generateOTP")]
+        public async Task<ActionResult> GenerateOTP([FromBody] OTPGenerateModel model)
         {
-            return Ok();
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return NotFound($"User with email {model.Email} no more exists");
+                }
+
+                var userOtps = _mealmateContext.UserOtps.Where(p => p.UserId == user.Id && p.IsActive == true);
+                foreach (var item in userOtps)
+                {
+                    item.IsActive = false;
+                    _mealmateContext.UserOtps.Update(item);
+                    await _mealmateContext.SaveChangesAsync();
+                }
+                var otp = new Random().Next(100000, 999999);
+
+                var userOtp = new UserOtp
+                {
+                    UserId = user.Id,
+                    Otp = otp.ToString(),
+                    StartTime = DateTime.Now.TimeOfDay,
+                    EndTime = DateTime.Now.AddMinutes(10).TimeOfDay,
+                    IsActive = true
+                };
+
+                await _mealmateContext.UserOtps.AddAsync(userOtp);
+                if (await _mealmateContext.SaveChangesAsync() > 0)
+                {
+                    var accountId = _config["Twilio:AccountId"];
+                    var token = _config["Twilio:Token"];
+
+                    TwilioClient.Init(accountId, token);
+
+                    var message = MessageResource.Create(
+                        body: $"Your OTP is {otp}",
+                        from: new Twilio.Types.PhoneNumber(_config["Twilio:PhoneNumber"]),
+                        to: new Twilio.Types.PhoneNumber(user.PhoneNumber)
+                    );
+
+                    return Ok(message.Sid);
+                }
+            }
+            catch (Exception)
+            {
+                //TODO: Log errors
+            }
+
+            return BadRequest("Error while processing your request");
+        }
+        #endregion
+
+        #region Verify OTP
+        [HttpPost()]
+        [Route("verifyOTP")]
+        public async Task<ActionResult> VerifyOTP([FromBody] OTPVerifyModel model)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return NotFound($"User with email {model.Email} no more exists");
+                }
+
+                var nowTime = DateTime.Now.TimeOfDay;
+
+                var userOtp = await _mealmateContext
+                                    .UserOtps
+                                    .FirstOrDefaultAsync(p => p.UserId == user.Id
+                                    && p.Otp == model.Otp && p.IsActive == true
+                                    && (p.StartTime.CompareTo(nowTime) < 0 && p.EndTime.CompareTo(nowTime) > 0));
+
+                if (userOtp == null)
+                {
+                    return NotFound($"OTP not matched / expired");
+                }
+
+                userOtp.IsActive = false;
+                _mealmateContext.UserOtps.Update(userOtp);
+                await _mealmateContext.SaveChangesAsync();
+
+                return Ok("OTP matched");
+            }
+            catch (Exception)
+            {
+                //TODO: Log errors
+            }
+
+            return BadRequest("Error while processing your request");
+        }
+        #endregion
+
+        #region Change Password
+        [HttpPost()]
+        [Route("updatepassword")]
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    return NotFound($"User with email {model.Email} no more exists");
+                }
+
+                var result = await _userManager.RemovePasswordAsync(user);
+                if (result.Succeeded)
+                {
+                    result = await _userManager.AddPasswordAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        return Ok("Password changed successfully");
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                //TODO: Log errors
+            }
+
+            return BadRequest("Error while processing your request");
         }
         #endregion
 
