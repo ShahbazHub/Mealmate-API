@@ -39,7 +39,8 @@ namespace Mealmate.Application.Services
                 Created = DateTime.Now,
                 IsActive = model.IsActive,
                 Name = model.Name,
-                Photo = model.Photo
+                Photo = model.Photo,
+                PhotoSelected = model.PhotoSelected
             };
 
             new_dietary = await _dietaryRepository.SaveAsync(new_dietary);
@@ -85,6 +86,7 @@ namespace Mealmate.Application.Services
             existingTable.Name = model.Name;
             existingTable.IsActive = model.IsActive;
             existingTable.Photo = model.Photo;
+            existingTable.PhotoSelected = model.PhotoSelected;
 
             await _dietaryRepository.SaveAsync(existingTable);
 
