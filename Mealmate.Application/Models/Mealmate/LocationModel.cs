@@ -12,9 +12,7 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
         public bool IsActive { get; set; } = true;
         public int BranchId { get; set; }
-        //public BranchModel Branch { get; set; }
-        [JsonIgnore]
-        public ICollection<TableModel> Tables { get; set; }
+        public BranchModel Branch { get; set; }
 
     }
 }

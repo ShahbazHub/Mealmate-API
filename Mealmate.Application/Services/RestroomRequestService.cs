@@ -12,12 +12,16 @@ using Mealmate.Core.Interfaces;
 using Mealmate.Core.Paging;
 using Mealmate.Core.Repositories;
 using Mealmate.Core.Specifications;
+using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Paging;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Mealmate.Application.Services
 {
     public class RestroomRequestService : IRestroomRequestService
     {
+        private readonly MealmateContext _context;
         private readonly IRestroomRequestRepository _restroomRequestRepository;
         private readonly IAppLogger<RestroomRequestService> _logger;
         private readonly IMapper _mapper;
@@ -25,8 +29,10 @@ namespace Mealmate.Application.Services
         public RestroomRequestService(
             IRestroomRequestRepository restroomRequestRepository,
             IAppLogger<RestroomRequestService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            MealmateContext context)
         {
+            _context = context;
             _restroomRequestRepository = restroomRequestRepository ?? throw new ArgumentNullException(nameof(restroomRequestRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
@@ -55,6 +61,26 @@ namespace Mealmate.Application.Services
         #endregion
 
         #region Read
+
+        public async Task<IEnumerable<RestroomRequestModel>> Get(int restaurantId, int restroomRequestStateId)
+        {
+            var result = await _context.RestroomRequests
+                            .Include(s => s.RestRoomRequestState)
+                            .Include(u => u.Customer)
+                            .Include(p => p.Table)
+                            .ThenInclude(l => l.Location)
+                            .ThenInclude(b => b.Branch)
+                            .ThenInclude(r => r.Restaurant)
+                            .ToListAsync();
+            result = result
+                        .Where(p => p.Table.Location.Branch.RestaurantId == restaurantId &&
+                                    p.RestroomRequestStateId == restroomRequestStateId)
+                        .OrderByDescending(p => p.RequestTime)
+                        .ToList();
+
+            return _mapper.Map<IEnumerable<RestroomRequestModel>>(result);
+        }
+
         public async Task<IEnumerable<RestroomRequestModel>> Get()
         {
             var result = await _restroomRequestRepository.ListAllAsync();
@@ -69,9 +95,9 @@ namespace Mealmate.Application.Services
                 model = _mapper.Map<RestroomRequestModel>(result);
             return model;
         }
-        public async Task<IPagedList<RestroomRequestModel>> Search(int customerId, PageSearchArgs args)
+        public async Task<IPagedList<RestroomRequestModel>> Search(int restaurantId, PageSearchArgs args)
         {
-            var TablePagedList = await _restroomRequestRepository.SearchAsync(customerId, args);
+            var TablePagedList = await _restroomRequestRepository.SearchAsync(restaurantId, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var RestroomRequestModels = _mapper.Map<List<RestroomRequestModel>>(TablePagedList.Items);

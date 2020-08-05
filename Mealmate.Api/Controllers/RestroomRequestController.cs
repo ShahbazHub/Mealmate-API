@@ -41,6 +41,22 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
+        [HttpGet("list/{restaurantId}/state/{restroomRequestStateId}")]
+        [ProducesResponseType(typeof(IEnumerable<RestroomRequestModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<RestroomRequestModel>>> Get(
+            int restaurantId, int restroomRequestStateId)
+        {
+            try
+            {
+                var result = await _restroomRequestService.Get(restaurantId, restroomRequestStateId);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
         /// <summary>
         /// List all restroom requests of a specific customer
         /// </summary>
