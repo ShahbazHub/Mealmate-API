@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [Route("api/locations")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

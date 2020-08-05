@@ -11,8 +11,10 @@ using Mealmate.Infrastructure.Data;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -22,6 +24,8 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
 using System.Security.Claims;
 using System.Security.Policy;
 using System.Text;
@@ -37,6 +41,9 @@ namespace Mealmate.Api.Controllers
     /// </summary>
     [Route("api/accounts")]
     [ApiController]
+    [Consumes("application/json")]
+    [Produces("application/json")]
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
     {
@@ -174,14 +181,18 @@ namespace Mealmate.Api.Controllers
             }
         }
         #endregion
-        
+
         #region Register
         /// <summary>
-        /// This Register method can only be used by mealmate admin portal for registering new Reataurant Owners 
+        /// his Register method can only be used by mealmate admin portal for registering new Reataurant Owners 
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
+        /// <returns>A newly created User</returns>
+        /// <response code="201">Returns the newly created User</response>
+        /// <response code="400">If the item is null</response>      
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterRequest model)
         {
@@ -261,7 +272,7 @@ namespace Mealmate.Api.Controllers
                     return BadRequest($"Error registering new user");
                 }
             }
-            return BadRequest(ModelState);
+            return BadRequest();
         }
         #endregion
 
@@ -352,6 +363,10 @@ namespace Mealmate.Api.Controllers
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn([FromBody] LoginRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user != null)
             {
@@ -374,11 +389,11 @@ namespace Mealmate.Api.Controllers
                 }
                 else
                 {
-                    return Unauthorized("UserName of Password is incorrect");
+                    return Unauthorized("UserName/Password is incorrect");
                 }
 
             }
-            return Unauthorized("UserName of Password is incorrect");
+            return Unauthorized("UserName/Password is incorrect");
 
         }
 
@@ -521,7 +536,7 @@ namespace Mealmate.Api.Controllers
             return Unauthorized();
         }
         #endregion
-        
+
         #region Refresh Token
         /// <summary>
         /// To get new token if token has expired by providing Expired token and refresh token
@@ -593,8 +608,6 @@ namespace Mealmate.Api.Controllers
             });
         }
         #endregion
-
-
 
         #region Change Password
         //[HttpPost("changePassword")]
@@ -712,6 +725,7 @@ namespace Mealmate.Api.Controllers
             return BadRequest("Error while processing your request");
         }
         #endregion
+
         #region Reset Password Using OTP
         /// <summary>
         /// Reset Password using OPT

@@ -14,6 +14,8 @@ using Mealmate.Core.Paging;
 
 namespace Mealmate.Api.Controllers
 {
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [Route("api/menuitems")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]

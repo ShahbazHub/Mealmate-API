@@ -19,7 +19,6 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "ancmHostingModel": "OutOfProcess",
       "nativeDebugging": false
     },
     "Mealmate.Api": {

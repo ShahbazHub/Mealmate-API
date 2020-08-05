@@ -15,6 +15,8 @@ using Newtonsoft.Json.Linq;
 
 namespace Mealmate.Api.Controllers
 {
+    [Consumes("application/json")]
+    [Produces("application/json")]
     [Route("api/cuisinetypes")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
