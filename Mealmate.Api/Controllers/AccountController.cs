@@ -654,6 +654,8 @@ namespace Mealmate.Api.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        /// 
+        [AllowAnonymous]
         [HttpPost()]
         [Route("forgot-password")]
         public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
@@ -701,8 +703,9 @@ namespace Mealmate.Api.Controllers
                     return Ok(message.Sid);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                return BadRequest(ex.Message);
                 //TODO: Log errors
             }
 
@@ -715,6 +718,7 @@ namespace Mealmate.Api.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost()]
         [Route("reset-password")]
         public async Task<ActionResult> ResetPasswordUsingOTP([FromBody] ChangePasswordModel model)
@@ -746,7 +750,12 @@ namespace Mealmate.Api.Controllers
                     {
                         result = await _userManager.AddPasswordAsync(user, model.Password);
                         if (result.Succeeded)
+                        {
+                            userOTP.IsActive = false;
+                            _mealmateContext.UserOtps.Update(userOTP);
+                            await _mealmateContext.SaveChangesAsync();
                             return Ok("Password changed successfully");
+                        }
                     }
                 }
                 else
