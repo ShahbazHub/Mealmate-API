@@ -24,6 +24,9 @@ namespace Mealmate.Infrastructure.Configurations
                 .HasColumnType("VARBINARY(MAX)")
                 .IsRequired();
 
+            builder.Property(p => p.PhotoSelected)
+                    .HasColumnType("VARBINARY(MAX)");
+
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()
