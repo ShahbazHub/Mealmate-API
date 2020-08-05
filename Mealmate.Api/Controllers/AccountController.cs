@@ -26,6 +26,7 @@ using System.Security.Claims;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
@@ -173,254 +174,13 @@ namespace Mealmate.Api.Controllers
             }
         }
         #endregion
-
-        #region Login
-        /// <summary>
-        /// Login
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
-        {
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user != null)
-            {
-                var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-
-                if (result.Succeeded)
-                {
-                    var appUser = await _userManager.Users
-                                                    .FirstOrDefaultAsync(
-                                           u => u.Email.ToUpper() == request.Email.ToUpper());
-
-                    var userToReturn = _mapper.Map<UserModel>(appUser);
-                    var authResponse = await GenerateJwtToken(appUser);
-                    return Ok(new
-                    {
-                        token = authResponse.Token,
-                        refreshToken = authResponse.RefreshToken,
-                        user = userToReturn,
-                    });
-                }
-                else
-                {
-                    return Unauthorized("UserName of Password is incorrect");
-                }
-
-            }
-            return Unauthorized("UserName of Password is incorrect");
-
-        }
-
-        [AllowAnonymous]
-        [HttpPost("signin-facebook")]
-        public async Task<IActionResult> LoginWithFacebook([FromBody] FacebookLoginRequest request)
-        {
-            var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(request.AccessToken);
-
-            if (!validatedTokenResult.Data.IsValid)
-            {
-                return BadRequest("your access token is invalid");
-            }
-
-            var userInfo = await _facebookAuthService.GetUserInfoAsync(request.AccessToken);
-
-            var user = await _userManager.FindByEmailAsync(userInfo.Email);
-
-            if (user == null)
-            {
-                var newUser = new User
-                {
-                    Email = userInfo.Email,
-                    UserName = userInfo.Email,
-                    FirstName = userInfo.FirstName,
-                    LastName = userInfo.LastName
-                };
-
-                var createdResult = await _userManager.CreateAsync(newUser);
-                if (!createdResult.Succeeded)
-                {
-                    return BadRequest("something went wrong");
-                }
-
-                var authResponse1 = await GenerateJwtToken(newUser);
-                var newUserToReturn = _mapper.Map<UserModel>(newUser);
-
-                return Ok(new
-                {
-                    token = authResponse1.Token,
-                    refreshToken = authResponse1.RefreshToken,
-                    user = newUserToReturn
-                });
-
-            }
-            var authResponse = await GenerateJwtToken(user);
-            var userToReturn = _mapper.Map<UserModel>(user);
-            return Ok(new
-            {
-                token = authResponse.Token,
-                refreshToken = authResponse.RefreshToken,
-                user = userToReturn
-            });
-        }
-
-
-
-        [AllowAnonymous]
-        [HttpPost("signin-google")]
-        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginRequest request)
-        {
-            var validatedTokenResult = await _googleAuthService.ValidateAccessTokenAsync(request.AccessToken);
-
-            if (validatedTokenResult == null)
-            {
-                return BadRequest("your access token is invalid");
-            }
-
-            var userInfo = await _googleAuthService.GetUserInfoAsync(request.IdToken);
-
-            var user = await _userManager.FindByEmailAsync(userInfo.Email);
-
-            if (user == null)
-            {
-                var newUser = new User
-                {
-                    Email = userInfo.Email,
-                    UserName = userInfo.Email,
-                    FirstName = userInfo.Name,
-                    LastName = userInfo.FamilyName
-                };
-
-                var createdResult = await _userManager.CreateAsync(newUser);
-                if (!createdResult.Succeeded)
-                {
-                    return BadRequest("something went wrong");
-                }
-                var authResponse1 = await GenerateJwtToken(newUser);
-                var newUserToReturn = _mapper.Map<UserModel>(newUser);
-
-                return Ok(new
-                {
-                    token = authResponse1.Token,
-                    refreshToken = authResponse1.RefreshToken,
-                    user = newUserToReturn
-                });
-
-            }
-            var authResponse = await GenerateJwtToken(user);
-            var userToReturn = _mapper.Map<UserModel>(user);
-            return Ok(new
-            {
-                token = authResponse.Token,
-                refreshToken = authResponse.RefreshToken,
-                user = userToReturn
-            });
-        }
-
-        #endregion
-
-        #region Refresh Token
-        [AllowAnonymous]
-        [HttpPost("refresh")]
-        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
-        {
-            var validatedToken = GetPrincipalFromToken(request.Token);
-
-            if (validatedToken == null)
-            {
-                return BadRequest(new[] { "Invalid Token" });
-            }
-
-            var expiryDateUnix =
-                long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-
-            var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                .AddSeconds(expiryDateUnix);
-
-            if (expiryDateTimeUtc > DateTime.UtcNow)
-            {
-                return BadRequest(new[] { "This token hasn't expired yet" });
-            }
-
-            var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
-
-            var storedRefreshToken = await _mealmateContext.RefreshTokens.SingleOrDefaultAsync(x => x.Id == request.RefreshToken);
-
-            if (storedRefreshToken == null)
-            {
-                return BadRequest(new[] { "This refresh token does not exist" });
-            }
-
-            if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
-            {
-                return BadRequest(new[] { "This refresh token has expired" });
-            }
-
-            if (storedRefreshToken.Invalidated)
-            {
-                return BadRequest(new[] { "This refresh token has been invalidated" });
-            }
-
-            if (storedRefreshToken.Used)
-            {
-                return BadRequest(new[] { "This refresh token has been used" });
-            }
-
-            if (storedRefreshToken.JwtId != jti)
-            {
-                return BadRequest(new[] { "This refresh token does not match this JWT" });
-            }
-
-            storedRefreshToken.Used = true;
-            _mealmateContext.RefreshTokens.Update(storedRefreshToken);
-            await _mealmateContext.SaveChangesAsync();
-
-            var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
-            var authResponse = await GenerateJwtToken(user);
-
-            return Ok(new
-            {
-                token = authResponse.Token,
-                refreshToken = authResponse.RefreshToken
-            });
-        }
-        #endregion
-
-        #region Change Password
-        [HttpPost("changepassword")]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
-        {
-            var user = await _userManager.FindByNameAsync(request.UserName);
-            var result = await _signInManager.CheckPasswordSignInAsync(user, request.OldPassword, false);
-            if (result.Succeeded)
-            {
-                var change = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
-                if (change.Succeeded)
-                    return Ok();
-            }
-
-            return Unauthorized();
-        }
-        #endregion
-
-        #region Sign Out
-        [HttpPost("logout")]
-        public async Task<IActionResult> SignOut(string userName)
-        {
-            var user = await _userManager.FindByNameAsync(userName);
-            if (user != null)
-            {
-                await _signInManager.SignOutAsync();
-                return Ok();
-            }
-
-            return Unauthorized();
-        }
-        #endregion
-
+        
         #region Register
+        /// <summary>
+        /// This Register method can only be used by mealmate admin portal for registering new Reataurant Owners 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterRequest model)
@@ -506,8 +266,13 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Register Mobile
+        /// <summary>
+        /// This Register method can only be used by andriod and ios for registering client users
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("mobileregister")]
+        [HttpPost("register-mobile")]
         public async Task<ActionResult> MobileRegister([FromBody] MobileRegisterRequest model)
         {
             //TODO: Add you code here
@@ -577,45 +342,321 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        #region Reset Password
+        #region Login
+        /// <summary>
+        /// signin using email and password
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet("resetpassword")]
-        public async Task<ActionResult> ResetPassword(string email)
+        [HttpPost("signin")]
+        public async Task<IActionResult> SignIn([FromBody] LoginRequest request)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(request.Email);
             if (user != null)
             {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, protocol: HttpContext.Request.Scheme);
-                var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
-                await _emailService.SendEmailAsync(email, "Reset Password", message);
-                return Ok("Check Your email...");
-            }
-            return BadRequest();
-        }
+                var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
-        [AllowAnonymous]
-        [HttpPost("resetpassword")]
-        public async Task<ActionResult> ChangePassword([FromBody] ResetPasswordRequest request)
-        {
-            var user = await _userManager.FindByNameAsync(request.UserName);
-            if (user != null)
-            {
-                var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
                 if (result.Succeeded)
                 {
-                    return Ok("User Password Changed Successfully!");
+                    var appUser = await _userManager.Users
+                                                    .FirstOrDefaultAsync(
+                                           u => u.Email.ToUpper() == request.Email.ToUpper());
+
+                    var userToReturn = _mapper.Map<UserModel>(appUser);
+                    var authResponse = await GenerateJwtToken(appUser);
+                    return Ok(new
+                    {
+                        token = authResponse.Token,
+                        refreshToken = authResponse.RefreshToken,
+                        user = userToReturn,
+                    });
                 }
+                else
+                {
+                    return Unauthorized("UserName of Password is incorrect");
+                }
+
             }
-            return BadRequest();
+            return Unauthorized("UserName of Password is incorrect");
+
+        }
+
+        /// <summary>
+        /// signin with facebook
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("signin-facebook")]
+        public async Task<IActionResult> LoginWithFacebook([FromBody] FacebookLoginRequest request)
+        {
+            var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(request.AccessToken);
+
+            if (!validatedTokenResult.Data.IsValid)
+            {
+                return BadRequest("your access token is invalid");
+            }
+
+            var userInfo = await _facebookAuthService.GetUserInfoAsync(request.AccessToken);
+
+            var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+            if (user == null)
+            {
+                var newUser = new User
+                {
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    FirstName = userInfo.FirstName,
+                    LastName = userInfo.LastName
+                };
+
+                var createdResult = await _userManager.CreateAsync(newUser);
+                if (!createdResult.Succeeded)
+                {
+                    return BadRequest("something went wrong");
+                }
+
+                var authResponse1 = await GenerateJwtToken(newUser);
+                var newUserToReturn = _mapper.Map<UserModel>(newUser);
+
+                return Ok(new
+                {
+                    token = authResponse1.Token,
+                    refreshToken = authResponse1.RefreshToken,
+                    user = newUserToReturn
+                });
+
+            }
+            var authResponse = await GenerateJwtToken(user);
+            var userToReturn = _mapper.Map<UserModel>(user);
+            return Ok(new
+            {
+                token = authResponse.Token,
+                refreshToken = authResponse.RefreshToken,
+                user = userToReturn
+            });
+        }
+
+        /// <summary>
+        /// signin with google
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("signin-google")]
+        public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginRequest request)
+        {
+            var validatedTokenResult = await _googleAuthService.ValidateAccessTokenAsync(request.AccessToken);
+
+            if (validatedTokenResult == null)
+            {
+                return BadRequest("your access token is invalid");
+            }
+
+            var userInfo = await _googleAuthService.GetUserInfoAsync(request.IdToken);
+
+            var user = await _userManager.FindByEmailAsync(userInfo.Email);
+
+            if (user == null)
+            {
+                var newUser = new User
+                {
+                    Email = userInfo.Email,
+                    UserName = userInfo.Email,
+                    FirstName = userInfo.Name,
+                    LastName = userInfo.FamilyName
+                };
+
+                var createdResult = await _userManager.CreateAsync(newUser);
+                if (!createdResult.Succeeded)
+                {
+                    return BadRequest("something went wrong");
+                }
+                var authResponse1 = await GenerateJwtToken(newUser);
+                var newUserToReturn = _mapper.Map<UserModel>(newUser);
+
+                return Ok(new
+                {
+                    token = authResponse1.Token,
+                    refreshToken = authResponse1.RefreshToken,
+                    user = newUserToReturn
+                });
+
+            }
+            var authResponse = await GenerateJwtToken(user);
+            var userToReturn = _mapper.Map<UserModel>(user);
+            return Ok(new
+            {
+                token = authResponse.Token,
+                refreshToken = authResponse.RefreshToken,
+                user = userToReturn
+            });
         }
 
         #endregion
 
-        #region Generate OTP
+        #region Sign Out
+        /// <summary>
+        /// User Signout will signout the user on server side.
+        /// </summary>
+        /// <param name="signOutModel"></param>
+        /// <returns></returns>
+        [HttpPost("signout")]
+        public async Task<IActionResult> SignOut([FromBody] SignOutModel signOutModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userManager.FindByEmailAsync(signOutModel.Email);
+            if (user != null)
+            {
+                await _signInManager.SignOutAsync();
+                return Ok();
+            }
+
+            return Unauthorized();
+        }
+        #endregion
+        
+        #region Refresh Token
+        /// <summary>
+        /// To get new token if token has expired by providing Expired token and refresh token
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        {
+            var validatedToken = GetPrincipalFromToken(request.ExpiredToken);
+
+            if (validatedToken == null)
+            {
+                return BadRequest(new[] { "Invalid Token" });
+            }
+
+            var expiryDateUnix =
+                long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+
+            var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                .AddSeconds(expiryDateUnix);
+
+            if (expiryDateTimeUtc > DateTime.UtcNow)
+            {
+                return BadRequest(new[] { "This token hasn't expired yet" });
+            }
+
+            var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+
+            var storedRefreshToken = await _mealmateContext.RefreshTokens.SingleOrDefaultAsync(x => x.Id == request.RefreshToken);
+
+            if (storedRefreshToken == null)
+            {
+                return BadRequest(new[] { "This refresh token does not exist" });
+            }
+
+            if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
+            {
+                return BadRequest(new[] { "This refresh token has expired" });
+            }
+
+            if (storedRefreshToken.Invalidated)
+            {
+                return BadRequest(new[] { "This refresh token has been invalidated" });
+            }
+
+            if (storedRefreshToken.Used)
+            {
+                return BadRequest(new[] { "This refresh token has been used" });
+            }
+
+            if (storedRefreshToken.JwtId != jti)
+            {
+                return BadRequest(new[] { "This refresh token does not match this JWT" });
+            }
+
+            storedRefreshToken.Used = true;
+            _mealmateContext.RefreshTokens.Update(storedRefreshToken);
+            await _mealmateContext.SaveChangesAsync();
+
+            var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
+            var authResponse = await GenerateJwtToken(user);
+
+            return Ok(new
+            {
+                token = authResponse.Token,
+                refreshToken = authResponse.RefreshToken
+            });
+        }
+        #endregion
+
+
+
+        #region Change Password
+        //[HttpPost("changePassword")]
+        //public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(request.Email);
+        //    var result = await _signInManager.CheckPasswordSignInAsync(user, request.OldPassword, false);
+        //    if (result.Succeeded)
+        //    {
+        //        var change = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+        //        if (change.Succeeded)
+        //            return Ok();
+        //    }
+
+        //    return Unauthorized();
+        //}
+        #endregion
+
+        #region Reset Password
+        //[AllowAnonymous]
+        //[HttpGet("resetpassword")]
+        //public async Task<ActionResult> ResetPassword(string email)
+        //{
+        //    var user = await _userManager.FindByEmailAsync(email);
+        //    if (user != null)
+        //    {
+        //        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        //        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token }, protocol: HttpContext.Request.Scheme);
+        //        var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+        //        await _emailService.SendEmailAsync(email, "Reset Password", message);
+        //        return Ok("Check Your email...");
+        //    }
+        //    return BadRequest();
+        //}
+
+        //[AllowAnonymous]
+        //[HttpPost("resetpassword")]
+        //public async Task<ActionResult> ChangePassword([FromBody] ResetPasswordRequest request)
+        //{
+        //    var user = await _userManager.FindByNameAsync(request.UserName);
+        //    if (user != null)
+        //    {
+        //        var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+        //        if (result.Succeeded)
+        //        {
+        //            return Ok("User Password Changed Successfully!");
+        //        }
+        //    }
+        //    return BadRequest();
+        //}
+
+        #endregion
+
+        #region Forgot Password
+        /// <summary>
+        /// Generates and OPT to Reset the password and sends to the user register mobile number
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost()]
-        [Route("generateOTP")]
-        public async Task<ActionResult> GenerateOTP([FromBody] OTPGenerateModel model)
+        [Route("forgot-password")]
+        public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
         {
             try
             {
@@ -638,8 +679,8 @@ namespace Mealmate.Api.Controllers
                 {
                     UserId = user.Id,
                     Otp = otp.ToString(),
-                    StartTime = DateTime.Now.TimeOfDay,
-                    EndTime = DateTime.Now.AddMinutes(10).TimeOfDay,
+                    StartTime = DateTime.UtcNow.TimeOfDay,
+                    EndTime = DateTime.UtcNow.AddMinutes(10).TimeOfDay,
                     IsActive = true
                 };
 
@@ -668,52 +709,15 @@ namespace Mealmate.Api.Controllers
             return BadRequest("Error while processing your request");
         }
         #endregion
-
-        #region Verify OTP
+        #region Reset Password Using OTP
+        /// <summary>
+        /// Reset Password using OPT
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost()]
-        [Route("verifyOTP")]
-        public async Task<ActionResult> VerifyOTP([FromBody] OTPVerifyModel model)
-        {
-            try
-            {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null)
-                {
-                    return NotFound($"User with email {model.Email} no more exists");
-                }
-
-                var nowTime = DateTime.Now.TimeOfDay;
-
-                var userOtp = await _mealmateContext
-                                    .UserOtps
-                                    .FirstOrDefaultAsync(p => p.UserId == user.Id
-                                    && p.Otp == model.Otp && p.IsActive == true
-                                    && (p.StartTime.CompareTo(nowTime) < 0 && p.EndTime.CompareTo(nowTime) > 0));
-
-                if (userOtp == null)
-                {
-                    return NotFound($"OTP not matched / expired");
-                }
-
-                userOtp.IsActive = false;
-                _mealmateContext.UserOtps.Update(userOtp);
-                await _mealmateContext.SaveChangesAsync();
-
-                return Ok("OTP matched");
-            }
-            catch (Exception)
-            {
-                //TODO: Log errors
-            }
-
-            return BadRequest("Error while processing your request");
-        }
-        #endregion
-
-        #region Change Password
-        [HttpPost()]
-        [Route("updatepassword")]
-        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordModel model)
+        [Route("reset-password")]
+        public async Task<ActionResult> ResetPasswordUsingOTP([FromBody] ChangePasswordModel model)
         {
             try
             {
@@ -728,16 +732,27 @@ namespace Mealmate.Api.Controllers
                     return NotFound($"User with email {model.Email} no more exists");
                 }
 
-                var result = await _userManager.RemovePasswordAsync(user);
-                if (result.Succeeded)
+                var nowTime = DateTime.UtcNow.TimeOfDay;
+
+                var userOTP = await _mealmateContext.UserOtps.FirstOrDefaultAsync(p => p.UserId == user.Id
+                                    && p.Otp == model.OPT
+                                    && p.IsActive == true
+                                    && (p.StartTime.CompareTo(nowTime) < 0 && p.EndTime.CompareTo(nowTime) > 0));
+
+                if (userOTP != null && userOTP.Otp == model.OPT)
                 {
-                    result = await _userManager.AddPasswordAsync(user, model.Password);
+                    var result = await _userManager.RemovePasswordAsync(user);
                     if (result.Succeeded)
                     {
-                        return Ok("Password changed successfully");
+                        result = await _userManager.AddPasswordAsync(user, model.Password);
+                        if (result.Succeeded)
+                            return Ok("Password changed successfully");
                     }
                 }
-
+                else
+                {
+                    return NotFound($"OTP not matched / expired");
+                }
             }
             catch (Exception)
             {
@@ -747,6 +762,47 @@ namespace Mealmate.Api.Controllers
             return BadRequest("Error while processing your request");
         }
         #endregion
+
+        //#region Verify OTP
+        //[HttpPost()]
+        //[Route("verifyOTP")]
+        //public async Task<ActionResult> VerifyOTP([FromBody] OTPVerifyModel model)
+        //{
+        //    try
+        //    {
+        //        var user = await _userManager.FindByEmailAsync(model.Email);
+        //        if (user == null)
+        //        {
+        //            return NotFound($"User with email {model.Email} no more exists");
+        //        }
+
+        //        var nowTime = DateTime.UtcNow.TimeOfDay;
+
+        //        var userOtp = await _mealmateContext
+        //                            .UserOtps
+        //                            .FirstOrDefaultAsync(p => p.UserId == user.Id
+        //                            && p.Otp == model.Otp && p.IsActive == true
+        //                            && (p.StartTime.CompareTo(nowTime) < 0 && p.EndTime.CompareTo(nowTime) > 0));
+
+        //        if (userOtp == null)
+        //        {
+        //            return NotFound($"OTP not matched / expired");
+        //        }
+
+        //        userOtp.IsActive = false;
+        //        _mealmateContext.UserOtps.Update(userOtp);
+        //        await _mealmateContext.SaveChangesAsync();
+
+        //        return Ok("OTP matched");
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //TODO: Log errors
+        //    }
+
+        //    return BadRequest("Error while processing your request");
+        //}
+        //#endregion
 
     }
 }

@@ -1,10 +1,17 @@
-﻿namespace Mealmate.Api.Requests
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Mealmate.Api.Requests
 {
     public class ChangePasswordRequest
     {
-        public string UserName { get; set; }
+        [Required]
+        public string Email { get; set; }
+        [Required]
         public string OldPassword { get; set; }
+        [Required]
         public string NewPassword { get; set; }
-        public string ConfirmPassword { get; internal set; }
+        [Required]
+        [Compare(nameof(NewPassword), ErrorMessage = "Password must matched")]
+        public string ConfirmPassword { get; set; }
     }
 }
