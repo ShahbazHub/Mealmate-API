@@ -1,14 +1,11 @@
 ﻿using Mealmate.Core.Entities;
-using Mealmate.Core.Repositories;
-using System;
-using Mealmate.Core.Repositories.Base;
+using Mealmate.Core.Entities.Lookup;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using System.Linq;
+using System;
 using System.Collections.Generic;
-using Mealmate.Core.Entities.Lookup;
-using Microsoft.AspNetCore.Hosting;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Mealmate.Infrastructure.Data
 {

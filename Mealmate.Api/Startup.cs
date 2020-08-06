@@ -1,21 +1,14 @@
-using System;
-using System.IO;
-
-using Autofac.Core;
-
 using FirebaseAdmin;
-
 using Google.Apis.Auth.OAuth2;
-
 using Mealmate.Api.Application.Middlewares;
 using Mealmate.Api.Installers;
 using Mealmate.Core.Configuration;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using System;
+using System.IO;
 
 namespace Mealmate.Api
 {
