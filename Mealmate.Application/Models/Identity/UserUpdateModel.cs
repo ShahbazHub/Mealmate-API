@@ -13,8 +13,11 @@ namespace Mealmate.Application.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+
+        public List<UserRoleModel> Roles { get; set; }
         public UserUpdateModel()
         {
+            Roles = new List<UserRoleModel>();
         }
     }
 }

@@ -18,10 +18,10 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
+    [ApiController]
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/users")]
-    [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
@@ -31,17 +31,12 @@ namespace Mealmate.Api.Controllers
         private readonly IUserRestaurantService _userRestaurantService;
         private readonly IRestaurantService _restaurantService;
 
-        //private MealmateSettings _mealmateSettings;
-        //private IEmailService _emailService;
-
         public UserController(
                 IUserService userService,
                 UserManager<User> userManager,
                 RoleManager<Role> roleManager,
                 IUserRestaurantService userRestaurantService,
                 IRestaurantService restaurantService
-            //IOptions<MealmateSettings> options,
-            //IEmailService emailService
             )
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
@@ -50,93 +45,160 @@ namespace Mealmate.Api.Controllers
 
             _userManager = userManager;
             _roleManager = roleManager;
-            //_mealmateSettings = options.Value;
-            //_emailService = emailService;
-
         }
 
-
         #region Read
+        /// <summary>
+        /// Get list of users in mealmate
+        /// </summary>
+        /// <returns></returns>
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<UserModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<UserModel>>> Get()
         {
-            var user = this.User;
+            try
+            {
+                var result = await _userService.Get();
+                return Ok(result);
 
-            var result = await _userService.Get();
-            return Ok(result);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest($"Error processing your request");
+            }
         }
 
+        /// <summary>
+        /// Get a specific user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<UserModel>> GetById(int id)
         {
-            var result = await _userService.GetById(id);
-            if (result == null)
+            try
             {
-                return NotFound($"User with id {id} no more exists");
+                var result = await _userService.GetById(id);
+                if (result == null)
+                {
+                    return NotFound($"User with id {id} no more exists");
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (System.Exception)
+            {
+                return BadRequest($"Error processing your request");
+            }
         }
 
+        /// <summary>
+        /// Get list of all users in a specific restaurant
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [Route("restaurant/{id}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<UserModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<UserModel>>> List(int id, [FromQuery] PageSearchArgs request)
         {
-            var result = await _userRestaurantService.List(id, request);
-            JToken _jtoken = TokenService.CreateJToken(result, request.Props);
-            return Ok(_jtoken);
+            try
+            {
+                var result = await _userRestaurantService.List(id, request);
+                JToken _jtoken = TokenService.CreateJToken(result, request.Props);
+                return Ok(_jtoken);
+            }
+            catch (System.Exception)
+            {
+                return BadRequest($"Error processing your request");
+            }
         }
         #endregion
 
         #region Create / Regiaster
-        [HttpPost("create")]
-        public async Task<ActionResult> Create([FromBody] UserModel model)
+        /// <summary>
+        /// Create a new user for a specific restaurant
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        public async Task<ActionResult> Create([FromBody] UserCreateModel model)
         {
-            await _userService.Create(model);
-            //TODO: Add you code here
-
-            if (ModelState.IsValid)
+            try
             {
-                var user = await _userService.Create(model);
-                if (user != null)
+                if (ModelState.IsValid)
+                {
+                    var user = await _userService.Create(model);
+                    if (user != null)
+                    {
+                        return Created($"/api/users/{user.Id}", user);
+                    }
+                }
 
-                    return Created($"/api/users/{user.Id}", user);
+                return BadRequest($"Error registering new user");
             }
-
-            return BadRequest($"Error registering new user");
+            catch (System.Exception)
+            {
+                return BadRequest($"Error processing your request");
+            }
         }
 
         #endregion
 
         #region Update
-        [HttpPost()]
-        public async Task<ActionResult> Update([FromBody] UserModel request)
+        /// <summary>
+        /// Update an existing user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] UserUpdateModel request)
         {
-            //TODO: Add you code here
-            var result = await _userService.GetById(request.Id);
-            if (result == null)
+            try
             {
+                var result = await _userService.GetById(id);
+                if (result == null)
+                {
+                    return NotFound($"User with id {id} no more exists");
+                }
+                var updatedUser = await _userService.Update(id, request);
 
-                return NotFound($"User with id {request.Id} no more exists");
+                return Ok(updatedUser);
             }
-            var updatedUser = await _userService.Update(request);
-
-            return Ok(updatedUser);
+            catch (System.Exception)
+            {
+                return BadRequest("Error processing your request");
+            }
         }
         #endregion
 
         #region Delete
-        [HttpDelete()]
+        /// <summary>
+        /// Delete an existing user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<ActionResult> Delete(int userId)
+        public async Task<ActionResult> Delete(int id)
         {
-            await _userService.Delete(userId);
-
-            return Ok();
+            try
+            {
+                await _userService.Delete(id);
+                return NoContent();
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest($"{ex.Message}");
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error processing your request");
+            }
         }
         #endregion
     }

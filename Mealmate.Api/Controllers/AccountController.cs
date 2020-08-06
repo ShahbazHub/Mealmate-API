@@ -36,14 +36,10 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace Mealmate.Api.Controllers
 {
-    /// <summary>
-    /// Account Controller
-    /// </summary>
-    [Route("api/accounts")]
     [ApiController]
+    [Route("api/accounts")]
     [Consumes("application/json")]
     [Produces("application/json")]
-
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : ControllerBase
     {
@@ -263,7 +259,7 @@ namespace Mealmate.Api.Controllers
                     var restaurants = await _restaurantService.Get(user.Id);
 
                     var owner = _mapper.Map<UserModel>(user);
-                    owner.Restaurants = restaurants;
+                    owner.Restaurants = restaurants.ToList();
 
                     return Created($"/api/users/{user.Id}", owner);
                 }
@@ -786,7 +782,7 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        //#region Verify OTP
+        #region Verify OTP
         //[HttpPost()]
         //[Route("verifyOTP")]
         //public async Task<ActionResult> VerifyOTP([FromBody] OTPVerifyModel model)
@@ -825,7 +821,7 @@ namespace Mealmate.Api.Controllers
 
         //    return BadRequest("Error while processing your request");
         //}
-        //#endregion
+        #endregion
 
     }
 }

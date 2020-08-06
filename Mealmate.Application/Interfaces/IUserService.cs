@@ -11,8 +11,8 @@ namespace Mealmate.Application.Interfaces
     {
         Task<IEnumerable<UserModel>> Get();
         Task<UserModel> GetById(int id);
-        Task<UserModel> Create(UserModel model);
-        Task<UserModel> Update(UserModel model);
+        Task<UserModel> Create(UserCreateModel model);
+        Task<UserModel> Update(int id, UserUpdateModel model);
         Task Delete(int id);
     }
 }
