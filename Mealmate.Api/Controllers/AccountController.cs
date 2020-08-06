@@ -342,7 +342,7 @@ namespace Mealmate.Api.Controllers
                 }
                 else
                 {
-                    return BadRequest($"Error registering new user");
+                    return BadRequest();
                 }
             }
             return BadRequest(ModelState);
