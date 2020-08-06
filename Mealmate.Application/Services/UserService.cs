@@ -78,7 +78,6 @@ namespace Mealmate.Application.Services
                 if (temp != null)
                 {
                     userModel = _mapper.Map<UserModel>(user);
-                    userModel.RestaurantId = userRestaurant.RestaurantId;
 
                     var restaurants = await _restaurantService.Get(userModel.Id);
                     userModel.Restaurants = restaurants.ToList();
@@ -87,11 +86,7 @@ namespace Mealmate.Application.Services
                     foreach (var role in roles)
                     {
                         var tempRole = await _roleManager.FindByNameAsync(role);
-                        userModel.Roles.Add(new UserRoleModel
-                        {
-                            Name = tempRole.Name,
-                            RoleId = tempRole.Id
-                        });
+                        userModel.Roles.Add(tempRole.Name);
                     }
                 }
             }
@@ -114,11 +109,7 @@ namespace Mealmate.Application.Services
                 foreach (var role in roles)
                 {
                     var temp = await _roleManager.FindByNameAsync(role);
-                    user.Roles.Add(new UserRoleModel
-                    {
-                        Name = temp.Name,
-                        RoleId = temp.Id
-                    });
+                    user.Roles.Add(temp.Name);
                 }
             }
 
@@ -138,11 +129,7 @@ namespace Mealmate.Application.Services
             foreach (var role in roles)
             {
                 var temp = await _roleManager.FindByNameAsync(role);
-                user.Roles.Add(new UserRoleModel
-                {
-                    Name = temp.Name,
-                    RoleId = temp.Id
-                });
+                user.Roles.Add(temp.Name);
             }
 
             return user;
@@ -189,11 +176,7 @@ namespace Mealmate.Application.Services
             foreach (var role in rolesTemp)
             {
                 var temp = await _roleManager.FindByNameAsync(role);
-                userModel.Roles.Add(new UserRoleModel
-                {
-                    Name = temp.Name,
-                    RoleId = temp.Id
-                });
+                userModel.Roles.Add(temp.Name);
             }
 
             return userModel;

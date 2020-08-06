@@ -48,7 +48,9 @@ namespace Mealmate.Application.Services
                 CustomerId = model.CustomerId,
                 TableId = model.TableId,
                 RequestTime = DateTime.Now,
-                RestroomRequestStateId = 1
+                RestroomRequestStateId = 1,
+                IsDisabled = model.IsDisabled,
+                Gender = model.Gender
             };
 
             new_dietary = await _restroomRequestRepository.SaveAsync(new_dietary);

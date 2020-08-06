@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "SuperAdmin"
+  },
+  {
+    "Name": "RestaurantAdmin"
+  },
+  {
+    "Name": "FrontDesk"
+  },
+  {
+    "Name": "Waiter"
+  },
+  {
+    "Name": "Client"
+  }
+]

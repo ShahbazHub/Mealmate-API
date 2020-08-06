@@ -13,7 +13,13 @@ namespace Mealmate.Application.Models
 
         [Required]
         public int TableId { get; set; }
-
+        
+        [Required]
+        public int Gender { get; set; }
+        
+        [Required]
+        public bool IsDisabled { get; set; }
+        
         public RestroomRequestCreateModel()
         {
         }

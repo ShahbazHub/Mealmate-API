@@ -17,13 +17,13 @@ namespace Mealmate.Application.Models
         public List<RestaurantModel> Restaurants { get; set; }
         public string PhoneNumber { get; set; }
         //public string Password { get; set; }
-        public int RestaurantId { get; set; }
-        public List<UserRoleModel> Roles { get; set; }
+        //public int RestaurantId { get; set; }
+        public List<string> Roles { get; set; }
 
         public UserModel()
         {
             Restaurants = new List<RestaurantModel>();
-            Roles = new List<UserRoleModel>();
+            Roles = new List<string>();
         }
 
     }

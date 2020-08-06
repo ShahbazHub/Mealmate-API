@@ -23,6 +23,14 @@ namespace Mealmate.Infrastructure.Configurations
                 .HasColumnType("INT")
                 .IsRequired();
 
+            builder.Property(p => p.Gender)
+                .HasColumnType("INT")
+                .IsRequired()
+                .HasDefaultValueSql("1");
+
+            builder.Property(p => p.IsDisabled)
+                .HasColumnType("BIT");
+
             builder.Property(p => p.RequestTime)
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()

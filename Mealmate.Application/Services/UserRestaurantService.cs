@@ -140,8 +140,7 @@ namespace Mealmate.Application.Services
                     FirstName = item.User.FirstName,
                     LastName = item.User.LastName,
                     Id = item.User.Id,
-                    PhoneNumber = item.User.PhoneNumber,
-                    RestaurantId = item.RestaurantId,
+                    PhoneNumber = item.User.PhoneNumber
                 });
             }
 

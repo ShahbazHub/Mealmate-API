@@ -17,6 +17,9 @@ namespace Mealmate.Core.Entities
         public DateTimeOffset? ResponseTime { get; set; }
         public string Remarks { get; set; }
 
+        public int Gender { get; set; }
+        public bool IsDisabled { get; set; }
+
         public int RestroomRequestStateId { get; set; }
         public virtual RestroomRequestState RestRoomRequestState { get; set; }
 
