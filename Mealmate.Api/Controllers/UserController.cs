@@ -40,8 +40,8 @@ namespace Mealmate.Api.Controllers
                 RoleManager<Role> roleManager,
                 IUserRestaurantService userRestaurantService,
                 IRestaurantService restaurantService
-                //IOptions<MealmateSettings> options,
-                //IEmailService emailService
+            //IOptions<MealmateSettings> options,
+            //IEmailService emailService
             )
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));

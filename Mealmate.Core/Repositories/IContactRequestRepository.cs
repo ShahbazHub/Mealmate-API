@@ -9,6 +9,6 @@ namespace Mealmate.Core.Repositories
 {
     public interface IContactRequestRepository : IRepository<ContactRequest>
     {
-        Task<IPagedList<ContactRequest>> SearchAsync(int customerId, PageSearchArgs args);
+        Task<IPagedList<ContactRequest>> SearchAsync(int restaurantId, PageSearchArgs args);
     }
 }

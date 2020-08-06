@@ -13,6 +13,8 @@ namespace Mealmate.Application.Models
         public DateTimeOffset? ResponseTime { get; set; }
         public string Remarks { get; set; }
 
+        public TableModel Table { get; set; }
+        public UserModel Customer { get; set; }
         public int ContactRequestStateId { get; set; }
         public ContactRequestStateModel ContactRequestState { get; set; }
 

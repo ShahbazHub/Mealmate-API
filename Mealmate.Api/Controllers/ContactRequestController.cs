@@ -43,20 +43,42 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         /// <summary>
-        /// List all contact requests of a specific customer
+        /// List all contact requests for a restaurant with specific state
         /// </summary>
-        /// <param name="customerId"></param>
-        /// <param name="request"></param>
+        /// <param name="restaurantId"></param>
+        /// <param name="contactRequestStateId"></param>
         /// <returns></returns>
-
-        [HttpGet("list/{customerId}")]
+        [HttpGet("list/{restaurantId}/state/{contactRequestStateId}")]
         [ProducesResponseType(typeof(IEnumerable<ContactRequestModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<ContactRequestModel>>> Get(
-            int customerId, [FromQuery] PageSearchArgs request)
+            int restaurantId, int contactRequestStateId)
         {
             try
             {
-                var result = await _contactRequestService.Search(customerId, request);
+                var result = await _contactRequestService.Get(restaurantId, contactRequestStateId);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// List all contact requests of a specific customer
+        /// </summary>
+        /// <param name="restaurantId"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+
+        [HttpGet("list/{restaurantId}")]
+        [ProducesResponseType(typeof(IEnumerable<ContactRequestModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<ContactRequestModel>>> Get(
+            int restaurantId, [FromQuery] PageSearchArgs request)
+        {
+            try
+            {
+                var result = await _contactRequestService.Search(restaurantId, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
                 return Ok(_jtoken);
             }

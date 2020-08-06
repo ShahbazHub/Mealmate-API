@@ -14,5 +14,7 @@ namespace Mealmate.Application.Models
         public bool IsActive { get; set; }
         public int RestaurantId { get; set; }
 
+        public RestaurantModel Restaurant { get; set; }
+
     }
 }

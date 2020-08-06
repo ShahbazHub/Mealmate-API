@@ -12,7 +12,7 @@ namespace Mealmate.Application.Models
 
         public bool IsActive { get; set; } = true;
         public int LocationId { get; set; }
-        //public LocationModel Location { get; set; }
+        public LocationModel Location { get; set; }
 
         public ICollection<QRCodeModel> QRCodes { get; set; }
     }

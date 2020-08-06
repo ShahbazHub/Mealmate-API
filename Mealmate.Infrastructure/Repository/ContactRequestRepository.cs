@@ -24,9 +24,16 @@ namespace Mealmate.Infrastructure.Repository
         {
         }
 
-        public Task<IPagedList<ContactRequest>> SearchAsync(int customerId, PageSearchArgs args)
+        public Task<IPagedList<ContactRequest>> SearchAsync(int restaurantId, PageSearchArgs args)
         {
-            var query = Table.Where(p => p.CustomerId == customerId);
+            var query = Table
+                            .Include(u => u.Customer)
+                            .Include(p => p.Table)
+                            .ThenInclude(l => l.Location)
+                            .ThenInclude(b => b.Branch)
+                            .ThenInclude(r => r.Restaurant)
+                            .Where(p => p.Table.Location.Branch.RestaurantId == restaurantId)
+                            .OrderByDescending(p => p.RequestTime);
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<ContactRequest, object>>>>();
 

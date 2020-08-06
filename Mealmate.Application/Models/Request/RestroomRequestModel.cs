@@ -9,6 +9,9 @@ namespace Mealmate.Application.Models
     {
         public int CustomerId { get; set; }
         public int TableId { get; set; }
+        public TableModel Table { get; set; }
+        public UserModel Customer { get; set; }
+
         public DateTimeOffset RequestTime { get; set; }
         public DateTimeOffset? ResponseTime { get; set; }
         public string Remarks { get; set; }

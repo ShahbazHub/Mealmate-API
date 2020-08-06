@@ -12,12 +12,16 @@ using Mealmate.Core.Interfaces;
 using Mealmate.Core.Paging;
 using Mealmate.Core.Repositories;
 using Mealmate.Core.Specifications;
+using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Paging;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Mealmate.Application.Services
 {
     public class ContactRequestService : IContactRequestService
     {
+        private readonly MealmateContext _context;
         private readonly IContactRequestRepository _contactRequestRepository;
         private readonly IAppLogger<ContactRequestService> _logger;
         private readonly IMapper _mapper;
@@ -25,8 +29,10 @@ namespace Mealmate.Application.Services
         public ContactRequestService(
             IContactRequestRepository contactRequestRepository,
             IAppLogger<ContactRequestService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            MealmateContext context)
         {
+            _context = context;
             _contactRequestRepository = contactRequestRepository ?? throw new ArgumentNullException(nameof(contactRequestRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
@@ -62,6 +68,25 @@ namespace Mealmate.Application.Services
             return _mapper.Map<IEnumerable<ContactRequestModel>>(result);
         }
 
+        public async Task<IEnumerable<ContactRequestModel>> Get(int restaurantId, int contactRequestStateId)
+        {
+            var result = await _context.ContactRequests
+                            .Include(s => s.ContactRequestState)
+                            .Include(u => u.Customer)
+                            .Include(p => p.Table)
+                            .ThenInclude(l => l.Location)
+                            .ThenInclude(b => b.Branch)
+                            .ThenInclude(r => r.Restaurant)
+                            .ToListAsync();
+            result = result
+                        .Where(p => p.Table.Location.Branch.RestaurantId == restaurantId &&
+                                    p.ContactRequestStateId == contactRequestStateId)
+                        .OrderByDescending(p => p.RequestTime)
+                        .ToList();
+
+            return _mapper.Map<IEnumerable<ContactRequestModel>>(result);
+        }
+
         public async Task<ContactRequestModel> GetById(int id)
         {
             ContactRequestModel model = null;
@@ -70,9 +95,9 @@ namespace Mealmate.Application.Services
                 model = _mapper.Map<ContactRequestModel>(result);
             return model;
         }
-        public async Task<IPagedList<ContactRequestModel>> Search(int customerId, PageSearchArgs args)
+        public async Task<IPagedList<ContactRequestModel>> Search(int restaurantId, PageSearchArgs args)
         {
-            var TablePagedList = await _contactRequestRepository.SearchAsync(customerId, args);
+            var TablePagedList = await _contactRequestRepository.SearchAsync(restaurantId, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var ContactRequestModels = _mapper.Map<List<ContactRequestModel>>(TablePagedList.Items);
