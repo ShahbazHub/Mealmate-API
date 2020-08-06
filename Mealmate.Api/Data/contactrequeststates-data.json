@@ -1,0 +1,14 @@
+[
+  {
+    "Name": "Initited",
+    "isActive": true
+  },
+  {
+    "Name": "Acknowledged",
+    "isActive": true
+  },
+  {
+    "Name": "Cancelled",
+    "isActive": true
+  }
+]

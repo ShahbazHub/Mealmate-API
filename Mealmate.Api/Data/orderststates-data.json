@@ -1,0 +1,26 @@
+[
+  {
+    "Name": "New",
+    "isActive": true
+  },
+  {
+    "Name": "Acknowledged",
+    "isActive": true
+  },
+  {
+    "Name": "Served",
+    "isActive": true
+  },
+  {
+    "Name": "Bill Generated",
+    "isActive": true
+  },
+  {
+    "Name": "Bill Paid",
+    "isActive": true
+  },
+  {
+    "Name": "Cancelled",
+    "isActive": true
+  }
+]

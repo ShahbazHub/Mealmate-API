@@ -118,8 +118,8 @@ namespace Mealmate.Infrastructure.Data
                 {
                     var contactRequests = new List<string>()
                     {
-                        "Initited",
-                        "Served",
+                        "New",
+                        "Acknowledged",
                         "Cancelled"
                     };
 
@@ -139,9 +139,8 @@ namespace Mealmate.Infrastructure.Data
                 {
                     var restroomRequestStates = new List<string>()
                     {
-                        "Initiated",
+                        "New",
                         "Acknowledged",
-                        "Served",
                         "Cancelled"
                     };
 
@@ -185,12 +184,11 @@ namespace Mealmate.Infrastructure.Data
                 {
                     var orderStates = new List<string>()
                     {
-                        "Cart",
                         "New",
                         "Acknowledged",
-                        "Delivered",
+                        "Served",
                         "Bill Generated",
-                        "Paid",
+                        "Bill Paid",
                         "Cancelled",
                     };
 
