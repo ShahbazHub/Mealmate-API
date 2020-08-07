@@ -4,79 +4,22 @@ using Mealmate.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    partial class MealmateContextModelSnapshot : ModelSnapshot
+    [Migration("20200807121725_BillRequests")]
+    partial class BillRequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Mealmate.Core.Entities.Bill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BillRequestId")
-                        .HasColumnType("INT");
-
-                    b.Property<int>("BillStateId")
-                        .HasColumnType("INT");
-
-                    b.Property<DateTimeOffset>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(50)");
-
-                    b.HasKey("Id")
-                        .HasName("PK_Bill");
-
-                    b.HasIndex("BillRequestId")
-                        .IsUnique();
-
-                    b.HasIndex("BillStateId");
-
-                    b.ToTable("Bill","Sale");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.BillDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BillId")
-                        .HasColumnType("INT");
-
-                    b.Property<DateTimeOffset>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("INT");
-
-                    b.HasKey("Id")
-                        .HasName("PK_BillDetail");
-
-                    b.HasIndex("BillId");
-
-                    b.ToTable("BillDetail","Sale");
-                });
 
             modelBuilder.Entity("Mealmate.Core.Entities.BillRequest", b =>
                 {
@@ -324,31 +267,6 @@ namespace Mealmate.Api.Migrations
                         .HasName("PK_Allergen");
 
                     b.ToTable("Allergen","Lookup");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.Lookup.BillState", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTimeOffset>("Created")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIMEOFFSET")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("BIT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(250)");
-
-                    b.HasKey("Id")
-                        .HasName("PK_BillState");
-
-                    b.ToTable("BillState","Lookup");
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.Lookup.Dietary", b =>
@@ -1308,33 +1226,6 @@ namespace Mealmate.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserToken","Identity");
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.Bill", b =>
-                {
-                    b.HasOne("Mealmate.Core.Entities.BillRequest", "BillRequest")
-                        .WithOne("Bill")
-                        .HasForeignKey("Mealmate.Core.Entities.Bill", "BillRequestId")
-                        .HasConstraintName("FK_Bill_BillRequest")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Mealmate.Core.Entities.Lookup.BillState", "BillState")
-                        .WithMany("Bills")
-                        .HasForeignKey("BillStateId")
-                        .HasConstraintName("FK_Bill_BillState")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Mealmate.Core.Entities.BillDetail", b =>
-                {
-                    b.HasOne("Mealmate.Core.Entities.Bill", "Bill")
-                        .WithMany("BillDetails")
-                        .HasForeignKey("BillId")
-                        .HasConstraintName("FK_BillDetail_Bill")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.BillRequest", b =>

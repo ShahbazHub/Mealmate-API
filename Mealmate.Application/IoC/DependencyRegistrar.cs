@@ -67,9 +67,11 @@ namespace Mealmate.Application.IoC
 
             builder.RegisterType<RestroomRequestService>().As<IRestroomRequestService>().InstancePerLifetimeScope();
             builder.RegisterType<ContactRequestService>().As<IContactRequestService>().InstancePerLifetimeScope();
+            builder.RegisterType<BillRequestService>().As<IBillRequestService>().InstancePerLifetimeScope();
 
             builder.RegisterType<RestroomRequestStateService>().As<IRestroomRequestStateService>().InstancePerLifetimeScope();
             builder.RegisterType<ContactRequestStateService>().As<IContactRequestStateService>().InstancePerLifetimeScope();
+            builder.RegisterType<BillRequestStateService>().As<IBillRequestStateService>().InstancePerLifetimeScope();
 
             builder.RegisterType<MealMateMapper>().As<Profile>();
 

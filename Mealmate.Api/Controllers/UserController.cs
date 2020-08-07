@@ -116,7 +116,7 @@ namespace Mealmate.Api.Controllers
         }
         #endregion
 
-        #region Create / Regiaster
+        #region Create / Register
         /// <summary>
         /// Create a new user for a specific restaurant
         /// </summary>
@@ -137,6 +137,10 @@ namespace Mealmate.Api.Controllers
                 }
 
                 return BadRequest($"Error registering new user");
+            }
+            catch(ApplicationException ex)
+            {
+                return BadRequest($"{ex.Message}");
             }
             catch (System.Exception)
             {

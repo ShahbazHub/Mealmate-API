@@ -45,52 +45,72 @@ namespace Mealmate.Application.Services
         #region Create
         public async Task<UserModel> Create(UserCreateModel model)
         {
-            var userModel = new UserModel();
-            var user = new User
+            try
             {
-                UserName = model.Email,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                PhoneNumber = model.PhoneNumber
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                if (model.Roles.Count > 0)
+                var userTemp = await _userManager.Users
+                                .FirstOrDefaultAsync(p => p.Email.ToLower() == model.Email.ToLower());
+                if (userTemp != null)
                 {
-                    foreach (var role in model.Roles)
-                    {
-                        await _userManager.AddToRoleAsync(user, role.Name);
-                    }
+                    throw new ApplicationException($"User with email {model.Email} already exists");
                 }
 
-                var userRestaurant = new UserRestaurantCreateModel
+                var restaurant = await _restaurantService.GetById(model.RestaurantId);
+                if (restaurant == null)
                 {
-                    UserId = user.Id,
-                    RestaurantId = model.RestaurantId,
-                    IsActive = true,
-                    IsOwner = false
+                    throw new ApplicationException("Restaurant does not exists");
+                }
+
+                var userModel = new UserModel();
+                var user = new User
+                {
+                    UserName = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber
                 };
 
-                var temp = await _userRestaurantService.Create(userRestaurant);
-                if (temp != null)
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
                 {
-                    userModel = _mapper.Map<UserModel>(user);
-
-                    var restaurants = await _restaurantService.Get(userModel.Id);
-                    userModel.Restaurants = restaurants.ToList();
-
-                    var roles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
-                    foreach (var role in roles)
+                    if (model.Roles.Count > 0)
                     {
-                        var tempRole = await _roleManager.FindByNameAsync(role);
-                        userModel.Roles.Add(tempRole.Name);
+                        foreach (var role in model.Roles)
+                        {
+                            await _userManager.AddToRoleAsync(user, role);
+                        }
+                    }
+
+                    var userRestaurant = new UserRestaurantCreateModel
+                    {
+                        UserId = user.Id,
+                        RestaurantId = model.RestaurantId,
+                        IsActive = true,
+                        IsOwner = false
+                    };
+
+                    var temp = await _userRestaurantService.Create(userRestaurant);
+                    if (temp != null)
+                    {
+                        userModel = _mapper.Map<UserModel>(user);
+
+                        var restaurants = await _restaurantService.Get(userModel.Id);
+                        userModel.Restaurants = restaurants.ToList();
+
+                        var roles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
+                        foreach (var role in roles)
+                        {
+                            var tempRole = await _roleManager.FindByNameAsync(role);
+                            userModel.Roles.Add(tempRole.Name);
+                        }
                     }
                 }
+                return userModel;
             }
-            return userModel;
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"{ex.Message}");
+            }
         }
         #endregion
 
@@ -98,7 +118,7 @@ namespace Mealmate.Application.Services
         public async Task<IEnumerable<UserModel>> Get()
         {
             var result = _userManager.Users;
-            var users = _mapper.Map<IEnumerable<UserModel>>(result);
+            var users = _mapper.Map<List<UserModel>>(result);
 
             foreach (var user in users)
             {
@@ -121,17 +141,18 @@ namespace Mealmate.Application.Services
             var result = await _userManager.Users.FirstOrDefaultAsync(p => p.Id == id);
 
             var user = _mapper.Map<UserModel>(result);
-
-            var restaurants = await _restaurantService.Get(user.Id);
-            user.Restaurants = restaurants.ToList();
-
-            var roles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
-            foreach (var role in roles)
+            if (user != null)
             {
-                var temp = await _roleManager.FindByNameAsync(role);
-                user.Roles.Add(temp.Name);
-            }
+                var restaurants = await _restaurantService.Get(user.Id);
+                user.Restaurants = restaurants.ToList();
 
+                var roles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
+                foreach (var role in roles)
+                {
+                    var temp = await _roleManager.FindByNameAsync(role);
+                    user.Roles.Add(temp.Name);
+                }
+            }
             return user;
         }
         #endregion
@@ -139,47 +160,61 @@ namespace Mealmate.Application.Services
         #region Update
         public async Task<UserModel> Update(int id, UserUpdateModel model)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
-            if (user == null)
+            try
             {
-                throw new ApplicationException("this id is not exists");
-            }
-
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.Email = model.Email;
-            user.PhoneNumber = model.PhoneNumber;
-
-            await _userManager.UpdateAsync(user);
-            // _logger.LogInformation("Entity successfully updated - MealmateAppService");
-
-            var roles = await _userManager.GetRolesAsync(user);
-            foreach (var role in roles)
-            {
-                await _userManager.RemoveFromRoleAsync(user, role);
-            }
-
-            if (model.Roles.Count > 0)
-            {
-                foreach (var role in model.Roles)
+                var user = await _userManager.FindByIdAsync(id.ToString());
+                if (user == null)
                 {
-                    await _userManager.AddToRoleAsync(user, role.Name);
+                    throw new ApplicationException("The user does not exists");
                 }
+
+                var userTemp = await _userManager.Users
+                                .FirstOrDefaultAsync(p => p.Id != id && p.Email.ToLower() == model.Email.ToLower());
+                if (userTemp != null)
+                {
+                    throw new ApplicationException($"User with email {model.Email} already exists");
+                }
+
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                user.PhoneNumber = model.PhoneNumber;
+
+                await _userManager.UpdateAsync(user);
+                // _logger.LogInformation("Entity successfully updated - MealmateAppService");
+
+                var roles = await _userManager.GetRolesAsync(user);
+                foreach (var role in roles)
+                {
+                    await _userManager.RemoveFromRoleAsync(user, role);
+                }
+
+                if (model.Roles.Count > 0)
+                {
+                    foreach (var role in model.Roles)
+                    {
+                        await _userManager.AddToRoleAsync(user, role);
+                    }
+                }
+
+                var userModel = _mapper.Map<UserModel>(user);
+
+                var restaurants = await _restaurantService.Get(user.Id);
+                userModel.Restaurants = restaurants.ToList();
+
+                var rolesTemp = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
+                foreach (var role in rolesTemp)
+                {
+                    var temp = await _roleManager.FindByNameAsync(role);
+                    userModel.Roles.Add(temp.Name);
+                }
+
+                return userModel;
             }
-
-            var userModel = _mapper.Map<UserModel>(user);
-
-            var restaurants = await _restaurantService.Get(user.Id);
-            userModel.Restaurants = restaurants.ToList();
-
-            var rolesTemp = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
-            foreach (var role in rolesTemp)
+            catch (Exception ex)
             {
-                var temp = await _roleManager.FindByNameAsync(role);
-                userModel.Roles.Add(temp.Name);
+                throw new ApplicationException($"{ex.Message}");
             }
-
-            return userModel;
         }
         #endregion
 

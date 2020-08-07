@@ -56,6 +56,7 @@ namespace Mealmate.Infrastructure.Data
         public DbSet<OptionItemDietary> OptionItemDietaries { get; set; }
         public DbSet<RestroomRequestState> RestroomRequestStates { get; set; }
         public DbSet<ContactRequestState> ContactRequestStates { get; set; }
+        public DbSet<BillRequestState> BillRequestStates { get; set; }
 
         // Orders
         public DbSet<Order> Orders { get; set; }
@@ -63,9 +64,15 @@ namespace Mealmate.Infrastructure.Data
         public DbSet<OrderItemDetail> OrderItemDetails { get; set; }
         public DbSet<OrderState> OrderStates { get; set; }
 
+        // Bills 
+        public DbSet<Bill> Bills { get; set; }
+        public DbSet<BillDetail> BillDetails { get; set; }
+        public DbSet<BillState> BillStates { get; set; }
+
         // Request
         public DbSet<RestroomRequest> RestroomRequests { get; set; }
         public DbSet<ContactRequest> ContactRequests { get; set; }
+        public DbSet<BillRequest> BillRequests { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -120,15 +127,22 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new MenuItemDietaryConfiguration());
             modelBuilder.ApplyConfiguration(new RestroomRequestStateConfiguration());
             modelBuilder.ApplyConfiguration(new ContactRequestStateConfiguration());
+            modelBuilder.ApplyConfiguration(new BillRequestStateConfiguration());
 
             // Orders
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
             modelBuilder.ApplyConfiguration(new OrderItemDetailConfiguration());
 
+            // Bills
+            modelBuilder.ApplyConfiguration(new BillConfiguration());
+            modelBuilder.ApplyConfiguration(new BillStateConfiguration());
+            modelBuilder.ApplyConfiguration(new BillDetailConfiguration());
+
             // Requests
             modelBuilder.ApplyConfiguration(new RestroomRequestConfiguration());
             modelBuilder.ApplyConfiguration(new ContactRequestConfiguration());
+            modelBuilder.ApplyConfiguration(new BillRequestConfiguration());
 
             // Custom
             modelBuilder.RegisterCustomMappings(typeToRegisters);

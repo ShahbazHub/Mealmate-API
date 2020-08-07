@@ -16,10 +16,11 @@ namespace Mealmate.Core.Entities
         public string OrderNumber { get; set; }
         public DateTimeOffset OrderDate { get; set; }
 
-        public ICollection<OrderItem> OrderItems { get; set; }
+        public virtual ICollection<OrderItem> OrderItems { get; set; }
 
         public int OrderStateId { get; set; }
         public virtual OrderState OrderState { get; set; }
+
 
         public Order()
         {

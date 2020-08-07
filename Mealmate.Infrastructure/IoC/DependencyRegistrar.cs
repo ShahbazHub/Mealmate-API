@@ -32,6 +32,7 @@ namespace Mealmate.Infrastructure.IoC
             builder.RegisterType<TableRepository>().As<ITableRepository>().InstancePerDependency();
 
             // Lookups
+            builder.RegisterType<BillRequestStateRepository>().As<IBillRequestStateRepository>().InstancePerDependency();
             builder.RegisterType<RestroomRequestStateRepository>().As<IRestroomRequestStateRepository>().InstancePerDependency();
             builder.RegisterType<ContactRequestStateRepository>().As<IContactRequestStateRepository>().InstancePerDependency();
             builder.RegisterType<AllergenRepository>().As<IAllergenRepository>().InstancePerDependency();

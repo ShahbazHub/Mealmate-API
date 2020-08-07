@@ -1,22 +1,10 @@
 [
   {
-    "Name": "New",
-    "isActive": true
-  },
-  {
-    "Name": "Acknowledged",
+    "Name": "Placed",
     "isActive": true
   },
   {
     "Name": "Served",
-    "isActive": true
-  },
-  {
-    "Name": "Bill Generated",
-    "isActive": true
-  },
-  {
-    "Name": "Bill Paid",
     "isActive": true
   },
   {

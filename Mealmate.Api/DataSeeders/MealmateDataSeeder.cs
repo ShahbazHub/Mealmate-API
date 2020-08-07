@@ -51,6 +51,7 @@ namespace Mealmate.Api.DataSeeders
             await SeedContactRequestStatesAsync();
             await SeedRestroomRequestStatesAsync();
             await SeedOrderStatesAsync();
+            await SeedBillRequestStatesAsync();
         }
 
         #region Seeding Users
@@ -104,7 +105,16 @@ namespace Mealmate.Api.DataSeeders
                     var result = JsonConvert.DeserializeObject<IEnumerable<Role>>(file);
                     if (result != null)
                     {
-                        await _mealmateContext.AddRangeAsync(result);
+                        foreach (var item in result)
+                        {
+                            var role = new Role
+                            {
+                                Created = DateTime.Now,
+                                Name = item.Name,
+                                NormalizedName = item.Name.ToUpper()
+                            };
+                            await _mealmateContext.AddAsync(role);
+                        }
                     }
                     await _mealmateContext.SaveChangesAsync();
                 }
@@ -258,6 +268,30 @@ namespace Mealmate.Api.DataSeeders
             catch (Exception)
             {
                 throw new InvalidOperationException("Could not create restroom request state in Seeding");
+            }
+        }
+
+        private async Task SeedBillRequestStatesAsync()
+        {
+            try
+            {
+                if (!_mealmateContext.BillRequestStates.Any())
+                {
+
+                    var path = Path.Combine(_env.ContentRootPath, "Data/billrequestststates-data.json");
+                    var file = await File.ReadAllTextAsync(path);
+
+                    var result = JsonConvert.DeserializeObject<IEnumerable<BillRequestState>>(file);
+                    if (result != null)
+                    {
+                        await _mealmateContext.AddRangeAsync(result);
+                    }
+                    await _mealmateContext.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException("Could not create bill request state in Seeding");
             }
         }
         #endregion
