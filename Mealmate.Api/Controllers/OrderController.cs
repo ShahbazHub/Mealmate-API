@@ -56,7 +56,6 @@ namespace Mealmate.Api.Controllers
         /// </summary>
         /// <param name="restaurantId"></param>
         /// <param name="orderStateId"></param>
-        /// <param name="props"></param>
         /// <returns></returns>
         [HttpGet("restaurant/{restaurantId}/state/{orderStateId}")]
         [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
