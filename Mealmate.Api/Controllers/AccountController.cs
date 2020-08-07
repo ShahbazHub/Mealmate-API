@@ -459,14 +459,19 @@ namespace Mealmate.Api.Controllers
         [HttpPost("signin-google")]
         public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginRequest request)
         {
-            var validatedTokenResult = await _googleAuthService.ValidateAccessTokenAsync(request.AccessToken);
+            //var validatedTokenResult = await _googleAuthService.ValidateAccessTokenAsync(request.AccessToken);
 
-            if (validatedTokenResult == null)
-            {
-                return BadRequest("your access token is invalid");
-            }
+            //if (validatedTokenResult == null)
+            //{
+            //    return BadRequest("your access token is invalid");
+            //}
 
             var userInfo = await _googleAuthService.GetUserInfoAsync(request.IdToken);
+            if (userInfo == null)
+            {
+                return BadRequest("your idtoken is invalid");
+            }
+
 
             var user = await _userManager.FindByEmailAsync(userInfo.Email);
 
