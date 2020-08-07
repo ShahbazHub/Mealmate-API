@@ -122,6 +122,22 @@ namespace Mealmate.Application.Services
             return _mapper.Map<IEnumerable<OrderModel>>(result);
         }
 
+        public async Task<IEnumerable<OrderModel>> Get(int restaurantId, int orderStateId)
+        {
+            var result = await _context.Orders
+                                    .Include(p => p.OrderState)
+                                    .Include(p => p.Customer)
+                                    .Include(p => p.Table)
+                                    .ThenInclude(l => l.Location)
+                                    .ThenInclude(b => b.Branch)
+                                    .ThenInclude(r => r.Restaurant)
+                                    .ToListAsync();
+
+            result = result.Where(p => p.Table.Location.Branch.RestaurantId == restaurantId &&
+                                  p.OrderStateId == orderStateId).ToList();
+            return _mapper.Map<IEnumerable<OrderModel>>(result);
+        }
+
         public async Task<OrderModel> GetById(int id)
         {
             return _mapper.Map<OrderModel>(await _orderRepository.GetByIdAsync(id));

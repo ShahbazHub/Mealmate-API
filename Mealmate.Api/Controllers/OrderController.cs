@@ -29,13 +29,19 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet("{customerId}")]
+        /// <summary>
+        /// List all orders in a specific restaurant
+        /// </summary>
+        /// <param name="restaurantId"></param>
+        /// <param name="props"></param>
+        /// <returns></returns>
+        [HttpGet("{restaurantId}")]
         [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OrderModel>>> Get(int customerId, string props)
+        public async Task<ActionResult<IEnumerable<OrderModel>>> Get(int restaurantId, string props)
         {
             try
             {
-                var result = await _orderService.Get(customerId);
+                var result = await _orderService.Get(restaurantId);
                 JToken _jtoken = TokenService.CreateJToken(result, props);
                 return Ok(_jtoken);
             }
@@ -45,6 +51,33 @@ namespace Mealmate.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// List all orders of a specific restaurant in specific state
+        /// </summary>
+        /// <param name="restaurantId"></param>
+        /// <param name="orderStateId"></param>
+        /// <param name="props"></param>
+        /// <returns></returns>
+        [HttpGet("restaurant/{restaurantId}/state/{orderStateId}")]
+        [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<OrderModel>>> GetByRestaurant(int restaurantId, int orderStateId)
+        {
+            try
+            {
+                var result = await _orderService.Get(restaurantId, orderStateId);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// Get a specific order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Route("single/{id}")]
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
@@ -68,6 +101,11 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Create
+        /// <summary>
+        /// Create a new order
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost()]
         public async Task<ActionResult> Create([FromBody] OrderCreateModel model)
         {
@@ -85,6 +123,12 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Update
+        /// <summary>
+        /// Update an existing order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -108,6 +152,11 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Delete
+        /// <summary>
+        /// Delete an existing order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

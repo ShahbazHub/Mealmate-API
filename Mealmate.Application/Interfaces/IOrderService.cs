@@ -8,6 +8,7 @@ namespace Mealmate.Application.Interfaces
     public interface IOrderService
     {
         Task<IEnumerable<OrderModel>> Get(int customerId);
+        Task<IEnumerable<OrderModel>> Get(int restaurantId, int orderStateId);
         Task<OrderModel> GetById(int id);
         Task<OrderModel> Create(OrderCreateModel model);
         Task Update(int id, OrderUpdateModel model);
