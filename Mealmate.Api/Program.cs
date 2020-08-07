@@ -1,4 +1,5 @@
 using System;
+using Mealmate.Api.DataSeeders;
 using Mealmate.Infrastructure.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -19,7 +20,7 @@ namespace Mealmate.Api
                 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
                 try
                 {
-                    var seeder = services.GetRequiredService<MealmateContextSeed>();
+                    var seeder = services.GetRequiredService<MealmateDataSeeder>();
                     seeder.SeedAsync().Wait();
                 }
                 catch (Exception ex)

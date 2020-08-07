@@ -1,6 +1,7 @@
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Mealmate.Api.Application.Middlewares;
+using Mealmate.Api.DataSeeders;
 using Mealmate.Api.Installers;
 using Mealmate.Core.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -41,6 +42,7 @@ namespace Mealmate.Api
         {
 
             services.AddSingleton(_config);
+            services.AddTransient<MealmateDataSeeder>();
 
             services.InstallServicesInAssembly(_config);
             return services
