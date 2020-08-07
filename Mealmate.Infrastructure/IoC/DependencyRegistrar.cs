@@ -59,6 +59,7 @@ namespace Mealmate.Infrastructure.IoC
             // Requests
             builder.RegisterType<RestroomRequestRepository>().As<IRestroomRequestRepository>().InstancePerDependency();
             builder.RegisterType<ContactRequestRepository>().As<IContactRequestRepository>().InstancePerDependency();
+            builder.RegisterType<BillRequestRepository>().As<IBillRequestRepository>().InstancePerDependency();
 
 
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerDependency();

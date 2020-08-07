@@ -8,6 +8,8 @@ namespace Mealmate.Application.Interfaces
     public interface IBillRequestService
     {
         Task<IEnumerable<BillRequestModel>> Get();
+        Task<IEnumerable<BillRequestModel>> Get(int restaurantId, int billRequestStateId);
+
         Task<BillRequestModel> GetById(int id);
         Task<BillRequestModel> Create(BillRequestCreateModel model);
         Task Update(int id, BillRequestUpdateModel model);

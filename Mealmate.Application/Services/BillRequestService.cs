@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -12,12 +13,15 @@ using Mealmate.Core.Interfaces;
 using Mealmate.Core.Paging;
 using Mealmate.Core.Repositories;
 using Mealmate.Core.Specifications;
+using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Paging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mealmate.Application.Services
 {
     public class BillRequestService : IBillRequestService
     {
+        private readonly MealmateContext _context;
         private readonly IBillRequestRepository _billRequestRepository;
         private readonly IAppLogger<BillRequestService> _logger;
         private readonly IMapper _mapper;
@@ -25,8 +29,10 @@ namespace Mealmate.Application.Services
         public BillRequestService(
             IBillRequestRepository billRequestRepository,
             IAppLogger<BillRequestService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            MealmateContext context)
         {
+            _context = context;
             _billRequestRepository = billRequestRepository ?? throw new ArgumentNullException(nameof(billRequestRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
@@ -57,6 +63,25 @@ namespace Mealmate.Application.Services
         public async Task<IEnumerable<BillRequestModel>> Get()
         {
             var result = await _billRequestRepository.ListAllAsync();
+            return _mapper.Map<IEnumerable<BillRequestModel>>(result);
+        }
+
+        public async Task<IEnumerable<BillRequestModel>> Get(int restaurantId, int billRequestStateId)
+        {
+            var result = await _context.BillRequests
+                            .Include(s => s.BillRequestState)
+                            .Include(u => u.Customer)
+                            .Include(p => p.Table)
+                            .ThenInclude(l => l.Location)
+                            .ThenInclude(b => b.Branch)
+                            .ThenInclude(r => r.Restaurant)
+                            .ToListAsync();
+            result = result
+                        .Where(p => p.Table.Location.Branch.RestaurantId == restaurantId &&
+                                    p.BillRequestStateId == billRequestStateId)
+                        .OrderByDescending(p => p.RequestTime)
+                        .ToList();
+
             return _mapper.Map<IEnumerable<BillRequestModel>>(result);
         }
 
