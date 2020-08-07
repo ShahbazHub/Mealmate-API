@@ -64,7 +64,7 @@ namespace Mealmate.Application.Services
 
         #region Read
 
-        public async Task<IEnumerable<RestroomRequestModel>> Get(int restaurantId, int restroomRequestStateId)
+        public async Task<IEnumerable<RestroomRequestModel>> Get(int branchId, int restroomRequestStateId)
         {
             var result = await _context.RestroomRequests
                             .Include(s => s.RestRoomRequestState)
@@ -75,7 +75,7 @@ namespace Mealmate.Application.Services
                             .ThenInclude(r => r.Restaurant)
                             .ToListAsync();
             result = result
-                        .Where(p => p.Table.Location.Branch.RestaurantId == restaurantId &&
+                        .Where(p => p.Table.Location.BranchId == branchId &&
                                     p.RestroomRequestStateId == restroomRequestStateId)
                         .OrderByDescending(p => p.RequestTime)
                         .ToList();

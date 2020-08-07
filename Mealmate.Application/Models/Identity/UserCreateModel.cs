@@ -16,6 +16,7 @@ namespace Mealmate.Application.Models
         public string Password { get; set; }
         public int RestaurantId { get; set; }
         public List<string> Roles { get; set; }
+        public List<int> Branches { get; set; }
         public UserCreateModel()
         {
             Roles = new List<string>();

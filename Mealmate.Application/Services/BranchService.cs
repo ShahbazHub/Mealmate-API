@@ -17,15 +17,18 @@ namespace Mealmate.Application.Services
 {
     public class BranchService : IBranchService
     {
+        private readonly IUserBranchRepository _userBranchRepository;
         private readonly IBranchRepository _branchRepository;
         private readonly IAppLogger<BranchService> _logger;
         private readonly IMapper _mapper;
 
         public BranchService(
+            IUserBranchRepository userBranchRepository,
             IBranchRepository branchRepository,
             IAppLogger<BranchService> logger,
             IMapper mapper)
         {
+            _userBranchRepository = userBranchRepository ?? throw new ArgumentNullException(nameof(userBranchRepository));
             _branchRepository = branchRepository ?? throw new ArgumentNullException(nameof(branchRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
@@ -69,6 +72,19 @@ namespace Mealmate.Application.Services
         {
             var result = await _branchRepository.GetAsync(x => x.RestaurantId == restaurantId);
             return _mapper.Map<IEnumerable<BranchModel>>(result);
+        }
+
+        public async Task<IEnumerable<BranchModel>> GetByEmployee(int employeeId)
+        {
+            List<BranchModel> result = new List<BranchModel>();
+            var model = await _userBranchRepository.SearchAsync(employeeId);
+
+            var data = _mapper.Map<IEnumerable<UserBranchModel>>(model);
+            foreach (var item in data)
+            {
+                result.Add(item.Branch);
+            }
+            return result;
         }
 
         public async Task<BranchModel> GetById(int id)

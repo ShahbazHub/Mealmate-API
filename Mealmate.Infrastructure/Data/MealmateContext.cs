@@ -29,6 +29,7 @@ namespace Mealmate.Infrastructure.Data
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         // User items
+        public DbSet<UserBranch> UserBranches { get; set; }
         public DbSet<UserRestaurant> UserRestaurants { get; set; }
         public DbSet<UserAllergen> UserAllergens { get; set; }
         public DbSet<UserDietary> UserDietaries { get; set; }
@@ -115,6 +116,7 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
 
             modelBuilder.ApplyConfiguration(new UserRestaurantConfiguration());
+            modelBuilder.ApplyConfiguration(new UserBranchConfiguration());
             modelBuilder.ApplyConfiguration(new UserOtpConfiguration());
 
             // Lookups

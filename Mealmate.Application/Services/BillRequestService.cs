@@ -66,7 +66,7 @@ namespace Mealmate.Application.Services
             return _mapper.Map<IEnumerable<BillRequestModel>>(result);
         }
 
-        public async Task<IEnumerable<BillRequestModel>> Get(int restaurantId, int billRequestStateId)
+        public async Task<IEnumerable<BillRequestModel>> Get(int branchId, int billRequestStateId)
         {
             var result = await _context.BillRequests
                             .Include(s => s.BillRequestState)
@@ -77,7 +77,7 @@ namespace Mealmate.Application.Services
                             .ThenInclude(r => r.Restaurant)
                             .ToListAsync();
             result = result
-                        .Where(p => p.Table.Location.Branch.RestaurantId == restaurantId &&
+                        .Where(p => p.Table.Location.BranchId == branchId &&
                                     p.BillRequestStateId == billRequestStateId)
                         .OrderByDescending(p => p.RequestTime)
                         .ToList();
@@ -93,9 +93,10 @@ namespace Mealmate.Application.Services
                 model = _mapper.Map<BillRequestModel>(result);
             return model;
         }
-        public async Task<IPagedList<BillRequestModel>> Search(int isActive, PageSearchArgs args)
+
+        public async Task<IPagedList<BillRequestModel>> Search(int branchId, PageSearchArgs args)
         {
-            var TablePagedList = await _billRequestRepository.SearchAsync(isActive, args);
+            var TablePagedList = await _billRequestRepository.SearchAsync(branchId, args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
             var BillRequestModels = _mapper.Map<List<BillRequestModel>>(TablePagedList.Items);

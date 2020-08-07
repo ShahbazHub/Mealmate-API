@@ -137,7 +137,7 @@ namespace Mealmate.Infrastructure.Repository
         {
             var query = Table.Include(p => p.Restaurant)
                              .Include(p => p.User)
-                              .Where(p => p.RestaurantId == restaurantId);
+                             .Where(p => p.RestaurantId == restaurantId);
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<UserRestaurant, object>>>>();
 

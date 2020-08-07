@@ -41,14 +41,20 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet("list/{restaurantId}/state/{billRequestStateId}")]
+        /// <summary>
+        /// Get list by specific branch and request state
+        /// </summary>
+        /// <param name="branchId"></param>
+        /// <param name="billRequestStateId"></param>
+        /// <returns></returns>
+        [HttpGet("list/{branchId}/state/{billRequestStateId}")]
         [ProducesResponseType(typeof(IEnumerable<BillRequestModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<BillRequestModel>>> Get(
-            int restaurantId, int billRequestStateId)
+            int branchId, int billRequestStateId)
         {
             try
             {
-                var result = await _billRequestService.Get(restaurantId, billRequestStateId);
+                var result = await _billRequestService.Get(branchId, billRequestStateId);
                 return Ok(result);
             }
             catch (Exception)
@@ -58,20 +64,20 @@ namespace Mealmate.Api.Controllers
         }
 
         /// <summary>
-        /// List all bill requests of a specific customer
+        /// List all bill requests of a specific branch
         /// </summary>
-        /// <param name="restaurantId"></param>
+        /// <param name="branchId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
 
-        [HttpGet("list/{restaurantId}")]
+        [HttpGet("list/{branchId}")]
         [ProducesResponseType(typeof(IEnumerable<BillRequestModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<BillRequestModel>>> Get(
-            int restaurantId, [FromQuery] PageSearchArgs request)
+            int branchId, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var result = await _billRequestService.Search(restaurantId, request);
+                var result = await _billRequestService.Search(branchId, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
                 return Ok(_jtoken);
             }

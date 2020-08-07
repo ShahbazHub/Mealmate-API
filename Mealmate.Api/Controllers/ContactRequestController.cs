@@ -43,19 +43,19 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         /// <summary>
-        /// List all contact requests for a restaurant with specific state
+        /// List all contact requests for a branch with specific state
         /// </summary>
-        /// <param name="restaurantId"></param>
+        /// <param name="branchId"></param>
         /// <param name="contactRequestStateId"></param>
         /// <returns></returns>
-        [HttpGet("list/{restaurantId}/state/{contactRequestStateId}")]
+        [HttpGet("list/{branchId}/state/{contactRequestStateId}")]
         [ProducesResponseType(typeof(IEnumerable<ContactRequestModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<ContactRequestModel>>> Get(
-            int restaurantId, int contactRequestStateId)
+            int branchId, int contactRequestStateId)
         {
             try
             {
-                var result = await _contactRequestService.Get(restaurantId, contactRequestStateId);
+                var result = await _contactRequestService.Get(branchId, contactRequestStateId);
                 return Ok(result);
             }
             catch (Exception)
@@ -65,20 +65,20 @@ namespace Mealmate.Api.Controllers
         }
 
         /// <summary>
-        /// List all contact requests of a specific customer
+        /// List all contact requests of a specific branch
         /// </summary>
-        /// <param name="restaurantId"></param>
+        /// <param name="branchId"></param>
         /// <param name="request"></param>
         /// <returns></returns>
 
-        [HttpGet("list/{restaurantId}")]
+        [HttpGet("list/{branchId}")]
         [ProducesResponseType(typeof(IEnumerable<ContactRequestModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<ContactRequestModel>>> Get(
-            int restaurantId, [FromQuery] PageSearchArgs request)
+            int branchId, [FromQuery] PageSearchArgs request)
         {
             try
             {
-                var result = await _contactRequestService.Search(restaurantId, request);
+                var result = await _contactRequestService.Search(branchId, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
                 return Ok(_jtoken);
             }
