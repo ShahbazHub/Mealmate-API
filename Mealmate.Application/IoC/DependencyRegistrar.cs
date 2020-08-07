@@ -33,6 +33,7 @@ namespace Mealmate.Application.IoC
             builder.RegisterType<UserAllergenService>().As<IUserAllergenService>().InstancePerLifetimeScope();
             builder.RegisterType<UserDietaryService>().As<IUserDietaryService>().InstancePerLifetimeScope();
             builder.RegisterType<UserRestaurantService>().As<IUserRestaurantService>().InstancePerLifetimeScope();
+            builder.RegisterType<UserBranchService>().As<IUserBranchService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
 
             builder.RegisterType<RestaurantService>().As<IRestaurantService>().InstancePerLifetimeScope();

@@ -8,12 +8,12 @@ namespace Mealmate.Application.Interfaces
     public interface IContactRequestService
     {
         Task<IEnumerable<ContactRequestModel>> Get();
-        Task<IEnumerable<ContactRequestModel>> Get(int restaurantId, int contactRequestStateId);
+        Task<IEnumerable<ContactRequestModel>> Get(int branchId, int contactRequestStateId);
 
         Task<ContactRequestModel> GetById(int id);
         Task<ContactRequestModel> Create(ContactRequestCreateModel model);
         Task Update(int id, ContactRequestUpdateModel model);
         Task Delete(int id);
-        Task<IPagedList<ContactRequestModel>> Search(int restaurantId, PageSearchArgs args);
+        Task<IPagedList<ContactRequestModel>> Search(int branchId, PageSearchArgs args);
     }
 }

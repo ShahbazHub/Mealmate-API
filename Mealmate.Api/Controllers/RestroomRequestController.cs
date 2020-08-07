@@ -41,14 +41,20 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
-        [HttpGet("list/{restaurantId}/state/{restroomRequestStateId}")]
+        /// <summary>
+        /// Get list by branch and request state
+        /// </summary>
+        /// <param name="branchId"></param>
+        /// <param name="restroomRequestStateId"></param>
+        /// <returns></returns>
+        [HttpGet("list/{branchId}/state/{restroomRequestStateId}")]
         [ProducesResponseType(typeof(IEnumerable<RestroomRequestModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<RestroomRequestModel>>> Get(
-            int restaurantId, int restroomRequestStateId)
+            int branchId, int restroomRequestStateId)
         {
             try
             {
-                var result = await _restroomRequestService.Get(restaurantId, restroomRequestStateId);
+                var result = await _restroomRequestService.Get(branchId, restroomRequestStateId);
                 return Ok(result);
             }
             catch (Exception)

@@ -24,17 +24,23 @@ namespace Mealmate.Application.Services
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IRestaurantService _restaurantService;
+        private readonly IBranchService _branchService;
         private readonly RoleManager<Role> _roleManager;
         private readonly IUserRestaurantService _userRestaurantService;
+        private readonly IUserBranchService _userBranchService;
 
         public UserService(
             UserManager<User> userManager,
             IMapper mapper,
             IRestaurantService restaurantService,
+            IBranchService branchService,
             RoleManager<Role> roleManager,
-            IUserRestaurantService userRestaurantService
+            IUserRestaurantService userRestaurantService,
+            IUserBranchService userBranchService
             )
         {
+            _userBranchService = userBranchService;
+            _branchService = branchService;
             _mapper = mapper;
             _userManager = userManager;
             _restaurantService = restaurantService;
@@ -52,6 +58,13 @@ namespace Mealmate.Application.Services
                 if (userTemp != null)
                 {
                     throw new ApplicationException($"User with email {model.Email} already exists");
+                }
+
+                userTemp = await _userManager.Users
+                               .FirstOrDefaultAsync(p => p.PhoneNumber == model.PhoneNumber);
+                if (userTemp != null)
+                {
+                    throw new ApplicationException($"User with phone {model.PhoneNumber} already exists");
                 }
 
                 var restaurant = await _restaurantService.GetById(model.RestaurantId);
@@ -89,13 +102,37 @@ namespace Mealmate.Application.Services
                         IsOwner = false
                     };
 
+                    if (model.Branches.Count > 0)
+                    {
+                        foreach (var item in model.Branches)
+                        {
+                            var branch = await _branchService.GetById(item);
+                            if (branch != null)
+                            {
+
+                                var userBranch = new UserBranchCreateModel
+                                {
+                                    BranchId = item,
+                                    IsActive = true,
+                                    UserId = user.Id
+                                };
+
+                                var tempUserBranch = await _userBranchService.Create(userBranch);
+                            }
+                        }
+                    }
+
                     var temp = await _userRestaurantService.Create(userRestaurant);
+
                     if (temp != null)
                     {
                         userModel = _mapper.Map<UserModel>(user);
 
                         var restaurants = await _restaurantService.Get(userModel.Id);
                         userModel.Restaurants = restaurants.ToList();
+
+                        var branches = await _branchService.GetByEmployee(userModel.Id);
+                        userModel.Branches = branches.ToList();
 
                         var roles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
                         foreach (var role in roles)
@@ -125,6 +162,9 @@ namespace Mealmate.Application.Services
                 var restaurants = await _restaurantService.Get(user.Id);
                 user.Restaurants = restaurants.ToList();
 
+                var branches = await _branchService.GetByEmployee(user.Id);
+                user.Branches = branches.ToList();
+
                 var roles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
                 foreach (var role in roles)
                 {
@@ -145,6 +185,9 @@ namespace Mealmate.Application.Services
             {
                 var restaurants = await _restaurantService.Get(user.Id);
                 user.Restaurants = restaurants.ToList();
+
+                var branches = await _branchService.GetByEmployee(user.Id);
+                user.Branches = branches.ToList();
 
                 var roles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
                 foreach (var role in roles)
@@ -169,15 +212,14 @@ namespace Mealmate.Application.Services
                 }
 
                 var userTemp = await _userManager.Users
-                                .FirstOrDefaultAsync(p => p.Id != id && p.Email.ToLower() == model.Email.ToLower());
+                               .FirstOrDefaultAsync(p => p.Id != id && p.PhoneNumber== model.PhoneNumber);
                 if (userTemp != null)
                 {
-                    throw new ApplicationException($"User with email {model.Email} already exists");
+                    throw new ApplicationException($"User with phone {model.PhoneNumber} already exists");
                 }
 
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
-                user.Email = model.Email;
                 user.PhoneNumber = model.PhoneNumber;
 
                 await _userManager.UpdateAsync(user);
@@ -189,6 +231,12 @@ namespace Mealmate.Application.Services
                     await _userManager.RemoveFromRoleAsync(user, role);
                 }
 
+                var userBranches = await _userBranchService.Get(id);
+                foreach (var userBranch in userBranches)
+                {
+                    await _userBranchService.Delete(userBranch.Id);
+                }
+
                 if (model.Roles.Count > 0)
                 {
                     foreach (var role in model.Roles)
@@ -197,10 +245,33 @@ namespace Mealmate.Application.Services
                     }
                 }
 
+                if (model.Branches.Count > 0)
+                {
+                    foreach (var item in model.Branches)
+                    {
+                        var branch = await _branchService.GetById(item);
+                        if (branch != null)
+                        {
+
+                            var userBranch = new UserBranchCreateModel
+                            {
+                                BranchId = item,
+                                IsActive = true,
+                                UserId = user.Id
+                            };
+
+                            var tempUserBranch = await _userBranchService.Create(userBranch);
+                        }
+                    }
+                }
+
                 var userModel = _mapper.Map<UserModel>(user);
 
                 var restaurants = await _restaurantService.Get(user.Id);
                 userModel.Restaurants = restaurants.ToList();
+
+                var branches = await _branchService.GetByEmployee(user.Id);
+                userModel.Branches = branches.ToList();
 
                 var rolesTemp = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
                 foreach (var role in rolesTemp)

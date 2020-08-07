@@ -18,12 +18,14 @@ namespace Mealmate.Core.Entities
         public virtual ICollection<Location> Locations { get; set; }
         public virtual ICollection<Menu> Menus { get; set; }
         public virtual ICollection<OptionItem> OptionItems { get; set; }
+        public virtual ICollection<UserBranch> UserBranches { get; set; }
 
         public Branch()
         {
             Locations = new HashSet<Location>();
             Menus = new HashSet<Menu>();
             OptionItems = new HashSet<OptionItem>();
+            UserBranches= new HashSet<UserBranch>();
         }
     }
 }

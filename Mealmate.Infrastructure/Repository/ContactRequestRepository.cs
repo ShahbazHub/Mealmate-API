@@ -24,7 +24,7 @@ namespace Mealmate.Infrastructure.Repository
         {
         }
 
-        public Task<IPagedList<ContactRequest>> SearchAsync(int restaurantId, PageSearchArgs args)
+        public Task<IPagedList<ContactRequest>> SearchAsync(int branchId, PageSearchArgs args)
         {
             var query = Table
                             .Include(u => u.Customer)
@@ -32,7 +32,7 @@ namespace Mealmate.Infrastructure.Repository
                             .ThenInclude(l => l.Location)
                             .ThenInclude(b => b.Branch)
                             .ThenInclude(r => r.Restaurant)
-                            .Where(p => p.Table.Location.Branch.RestaurantId == restaurantId)
+                            .Where(p => p.Table.Location.BranchId == branchId)
                             .OrderByDescending(p => p.RequestTime);
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<ContactRequest, object>>>>();

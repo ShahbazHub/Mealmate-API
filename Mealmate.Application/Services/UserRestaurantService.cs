@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -19,12 +20,18 @@ namespace Mealmate.Application.Services
         private readonly IUserRestaurantRepository _UserRestaurantRepository;
         private readonly IAppLogger<UserRestaurantService> _logger;
         private readonly IMapper _mapper;
+        private readonly IRestaurantService _restaurantService;
+        private readonly IBranchService _branchService;
 
         public UserRestaurantService(
             IUserRestaurantRepository UserRestaurantRepository,
             IAppLogger<UserRestaurantService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            IRestaurantService restaurantService,
+            IBranchService branchService)
         {
+            _restaurantService = restaurantService;
+            _branchService = branchService;
             _UserRestaurantRepository = UserRestaurantRepository ?? throw new ArgumentNullException(nameof(UserRestaurantRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
@@ -133,7 +140,7 @@ namespace Mealmate.Application.Services
 
             foreach (var item in RestaurantModels)
             {
-                temp.Add(new UserModel
+                var user = new UserModel
                 {
                     Created = item.User.Created,
                     Email = item.User.Email,
@@ -141,7 +148,15 @@ namespace Mealmate.Application.Services
                     LastName = item.User.LastName,
                     Id = item.User.Id,
                     PhoneNumber = item.User.PhoneNumber
-                });
+                };
+
+                var restaurants = await _restaurantService.Get(user.Id);
+                user.Restaurants = restaurants.ToList();
+
+                var branches = await _branchService.GetByEmployee(user.Id);
+                user.Branches = branches.ToList();
+
+                temp.Add(user);
             }
 
             var RestaurantModelPagedList = new PagedList<UserModel>(
