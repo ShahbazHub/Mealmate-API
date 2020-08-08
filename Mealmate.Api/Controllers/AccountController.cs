@@ -294,7 +294,11 @@ namespace Mealmate.Api.Controllers
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber
                 };
-
+                var userExists = await _userManager.FindByEmailAsync(model.Email);
+                if (userExists != null)
+                {
+                    return Conflict("This email is already registered");
+                }
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
