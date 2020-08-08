@@ -45,6 +45,7 @@ namespace Mealmate.Api.Controllers
     {
         private readonly MealmateSettings _mealmateSettings;
         private readonly IRestaurantService _restaurantService;
+        private readonly IBranchService _branchService;
         private readonly IUserRestaurantService _userRestaurantService;
         private readonly IEmailService _emailService;
         private readonly RoleManager<Role> _roleManager;
@@ -65,6 +66,7 @@ namespace Mealmate.Api.Controllers
           IOptions<MealmateSettings> options,
           IMapper mapper,
           IRestaurantService restaurantService,
+          IBranchService branchService,
           IUserRestaurantService userRestaurantService,
           IEmailService emailService,
           IUserAllergenService userAllergenService,
@@ -81,6 +83,7 @@ namespace Mealmate.Api.Controllers
             _userManager = userManager;
             _mealmateSettings = options.Value;
             _restaurantService = restaurantService;
+            _branchService = branchService;
             _userRestaurantService = userRestaurantService;
             _emailService = emailService;
             _roleManager = roleManager;
@@ -380,6 +383,14 @@ namespace Mealmate.Api.Controllers
 
                     var userToReturn = _mapper.Map<UserModel>(appUser);
                     var authResponse = await GenerateJwtToken(appUser);
+
+
+                    var restaurants = await _restaurantService.Get(appUser.Id);
+                    userToReturn.Restaurants = restaurants.ToList();
+
+                    var branches = await _branchService.GetByEmployee(appUser.Id);
+                    userToReturn.Branches = branches.ToList();
+
                     return Ok(new
                     {
                         token = authResponse.Token,
