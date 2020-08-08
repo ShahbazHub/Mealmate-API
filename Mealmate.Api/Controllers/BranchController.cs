@@ -31,6 +31,36 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
+        /// <summary>
+        /// List all branches in a restaurant
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(
+            [FromBody] BranchSearchModel model,
+            [FromQuery] PageSearchArgs request)
+        {
+            try
+            {
+                var Branches = await _branchService.Search(model, request);
+                JToken _jtoken = TokenService.CreateJToken(Branches, request.Props);
+                return Ok(_jtoken);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+        /// <summary>
+        /// List all branches in a specific restaurant
+        /// </summary>
+        /// <param name="restaurantId"></param>
+        /// <param name="isActive"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{restaurantId}/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
@@ -49,6 +79,11 @@ namespace Mealmate.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Get a specific branch
+        /// </summary>
+        /// <param name="branchId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("single/{branchId}")]
         [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
@@ -72,25 +107,49 @@ namespace Mealmate.Api.Controllers
         #endregion
 
         #region Create
+        /// <summary>
+        /// Create a new branch
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(BranchModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<BranchModel>> Create(BranchCreateModel request)
         {
-            var commandResult = await _branchService.Create(request);
-
-            return Ok(commandResult);
+            try
+            {
+                var commandResult = await _branchService.Create(request);
+                return Ok(commandResult);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error creating resource");
+            }
         }
         #endregion
 
         #region Update
+        /// <summary>
+        /// Update an existing branch
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(int id, BranchUpdateModel request)
         {
-            await _branchService.Update(id, request);
-            return Ok();
+            try
+            {
+                await _branchService.Update(id, request);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest("Error processing request");
+            }
         }
         #endregion
 

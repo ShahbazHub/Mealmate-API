@@ -12,5 +12,8 @@ namespace Mealmate.Application.Models
         public DateTimeOffset Created { get; set; }
         public int BranchId { get; set; }
         public bool IsActive { get; set; }
+
+        public virtual ICollection<MenuItemModel> MenuItems { get; set; }
+
     }
 }

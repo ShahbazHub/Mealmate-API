@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net.Cache;
 using Mealmate.Core.Entities.Base;
 
 namespace Mealmate.Core.Entities
@@ -15,6 +16,9 @@ namespace Mealmate.Core.Entities
         public int RestaurantId { get; set; }
         public virtual Restaurant Restaurant { get; set; }
 
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+
         public virtual ICollection<Location> Locations { get; set; }
         public virtual ICollection<Menu> Menus { get; set; }
         public virtual ICollection<OptionItem> OptionItems { get; set; }
@@ -25,7 +29,7 @@ namespace Mealmate.Core.Entities
             Locations = new HashSet<Location>();
             Menus = new HashSet<Menu>();
             OptionItems = new HashSet<OptionItem>();
-            UserBranches= new HashSet<UserBranch>();
+            UserBranches = new HashSet<UserBranch>();
         }
     }
 }

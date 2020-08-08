@@ -90,8 +90,13 @@ namespace Mealmate.Infrastructure.Repository
 
         public Task<IPagedList<Branch>> SearchAsync(PageSearchArgs args)
         {
-            var query = Table.Include(p => p.Locations);
+            var query = Table.Include(p => p.Restaurant)
+                             .Include(p => p.Locations)
+                             .Include(p => p.Menus)
+                             .ThenInclude(p => p.MenuItems)
+                             .Where(p => p.IsActive == true);
 
+            
             var orderByList = new List<Tuple<SortingOption, Expression<Func<Branch, object>>>>();
 
             if (args.SortingOptions != null)

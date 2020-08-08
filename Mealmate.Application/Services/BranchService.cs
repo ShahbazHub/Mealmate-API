@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 using AutoMapper;
@@ -11,12 +12,15 @@ using Mealmate.Core.Interfaces;
 using Mealmate.Core.Paging;
 using Mealmate.Core.Repositories;
 using Mealmate.Core.Specifications;
+using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Paging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mealmate.Application.Services
 {
     public class BranchService : IBranchService
     {
+        private readonly MealmateContext _context;
         private readonly IUserBranchRepository _userBranchRepository;
         private readonly IBranchRepository _branchRepository;
         private readonly IAppLogger<BranchService> _logger;
@@ -26,8 +30,10 @@ namespace Mealmate.Application.Services
             IUserBranchRepository userBranchRepository,
             IBranchRepository branchRepository,
             IAppLogger<BranchService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            MealmateContext context)
         {
+            _context = context;
             _userBranchRepository = userBranchRepository ?? throw new ArgumentNullException(nameof(userBranchRepository));
             _branchRepository = branchRepository ?? throw new ArgumentNullException(nameof(branchRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -117,21 +123,97 @@ namespace Mealmate.Application.Services
             _logger.LogInformation("Entity successfully updated - MealmateAppService");
         }
 
-        public async Task<IPagedList<BranchModel>> Search(PageSearchArgs args)
+        public async Task<IPagedList<BranchModel>> Search(BranchSearchModel model, PageSearchArgs args)
         {
-            var TablePagedList = await _branchRepository.SearchAsync(args);
+            var temp = await _branchRepository.SearchAsync(args);
 
             //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-            var AllergenModels = _mapper.Map<List<BranchModel>>(TablePagedList.Items);
+            var result = _mapper.Map<List<BranchModel>>(temp.Items);
 
-            var AllergenModelPagedList = new PagedList<BranchModel>(
-                TablePagedList.PageIndex,
-                TablePagedList.PageSize,
-                TablePagedList.TotalCount,
-                TablePagedList.TotalPages,
-                AllergenModels);
+            // Calculations for:
+            //                  Total dishes
+            //                  Available dishes after applying filter
 
-            return AllergenModelPagedList;
+            foreach (var branch in result)
+            {
+                var totalDishes = branch
+                                    .Menus
+                                    .SelectMany(p => p.MenuItems)
+                                    .Count(p => p.IsActive == true);
+
+                branch.TotalDishes = totalDishes;
+
+                var menuItems = branch.Menus.SelectMany(mi => mi.MenuItems);
+                if (model.CuisineTypes.Count > 0)
+                {
+                    menuItems = menuItems.Where(p => model.CuisineTypes.Contains(p.CuisineTypeId));
+                }
+
+                int filteredMenus = 0;
+
+                foreach (var item in menuItems)
+                {
+                    if (model.Allergens.Count > 0 && model.Dietaries.Count > 0)
+                    {
+                        var allergens = _context.MenuItemAllergens
+                                                .Include(p => p.Allergen)
+                                                .Where(p => p.MenuItemId == item.Id);
+
+                        var resultAllergens = allergens.Where(t => t.IsActive == true &&
+                                                        !model.Allergens.Contains(t.AllergenId));
+                        if (resultAllergens != null)
+                        {
+                            var dietaries = _context.MenuItemDietaries
+                                                .Include(p => p.Dietary)
+                                                .Where(p => p.MenuItemId == item.Id);
+
+                            var resultDietaries = dietaries.Where(t => t.IsActive == true &&
+                                                        model.Dietaries.Contains(t.DietaryId));
+                            if (resultDietaries != null)
+                            {
+                                filteredMenus += 1;
+                            }
+                        }
+                    }
+                    else if (model.Allergens.Count > 0 && model.Dietaries.Count == 0)
+                    {
+                        var allergens = _context.MenuItemAllergens
+                                                .Include(p => p.Allergen)
+                                                .Where(p => p.MenuItemId == item.Id);
+
+                        var resultAllergens = allergens.Where(t => t.IsActive == true &&
+                                                        !model.Allergens.Contains(t.AllergenId));
+                        if (resultAllergens != null)
+                        {
+                            filteredMenus += 1;
+                        }
+                    }
+                    else if (model.Allergens.Count == 0 && model.Dietaries.Count > 0)
+                    {
+                        var dietaries = _context.MenuItemDietaries
+                                                .Include(p => p.Dietary)
+                                                .Where(p => p.MenuItemId == item.Id);
+
+                        var resultDietaries = dietaries.Where(t => t.IsActive == true &&
+                                                    model.Dietaries.Contains(t.DietaryId));
+                        if (resultDietaries != null)
+                        {
+                            filteredMenus += 1;
+                        }
+                    }
+                }
+
+                branch.FilteredDishes = filteredMenus;
+            }
+
+            var pagedList = new PagedList<BranchModel>(
+                temp.PageIndex,
+                temp.PageSize,
+                temp.TotalCount,
+                temp.TotalPages,
+                result);
+
+            return pagedList;
         }
 
         public async Task<IPagedList<BranchModel>> Search(int restaurantId, int isActive, PageSearchArgs args)
