@@ -40,7 +40,7 @@ namespace Mealmate.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<BranchModel>>> Get(
-            [FromBody] BranchSearchModel model,
+            [FromQuery] BranchSearchModel model,
             [FromQuery] PageSearchArgs request)
         {
             try
