@@ -30,18 +30,18 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         /// <summary>
-        /// List all orders in a specific restaurant
+        /// List all orders in a specific customer
         /// </summary>
-        /// <param name="restaurantId"></param>
+        /// <param name="customerId"></param>
         /// <param name="props"></param>
         /// <returns></returns>
-        [HttpGet("{restaurantId}")]
+        [HttpGet("{customerId}")]
         [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OrderModel>>> Get(int restaurantId, string props)
+        public async Task<ActionResult<IEnumerable<OrderModel>>> Get(int customerId, string props)
         {
             try
             {
-                var result = await _orderService.Get(restaurantId);
+                var result = await _orderService.Get(customerId);
                 JToken _jtoken = TokenService.CreateJToken(result, props);
                 return Ok(_jtoken);
             }

@@ -384,7 +384,6 @@ namespace Mealmate.Api.Controllers
                     var userToReturn = _mapper.Map<UserModel>(appUser);
                     var authResponse = await GenerateJwtToken(appUser);
 
-
                     var restaurants = await _restaurantService.Get(appUser.Id);
                     userToReturn.Restaurants = restaurants.ToList();
 
