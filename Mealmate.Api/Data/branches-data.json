@@ -1,0 +1,30 @@
+[
+  {
+    "name": "G-7 Branch",
+    "address": "G-7 Markaz, Islamabad",
+    "isActive": true,
+    "latitude": 33.7044,
+    "longitude": 73.0684
+  },
+  {
+    "name": "G-8 Branch",
+    "address": "G-8 Markaz, Islamabad",
+    "isActive": true,
+    "latitude": 33.6971,
+    "longitude": 73.0505
+  },
+  {
+    "name": "F-7 Branch",
+    "address": "F-7 Markaz, Islamabad",
+    "isActive": true,
+    "latitude": 33.7211,
+    "longitude": 73.0571
+  },
+  {
+    "name": "F-8 Branch",
+    "address": "G-8 Markaz, Islamabad",
+    "isActive": true,
+    "latitude": 33.7116,
+    "longitude": 73.0398
+  }
+]

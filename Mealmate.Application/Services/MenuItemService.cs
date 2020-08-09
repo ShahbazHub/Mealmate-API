@@ -12,12 +12,15 @@ using Mealmate.Core.Interfaces;
 using Mealmate.Core.Paging;
 using Mealmate.Core.Repositories;
 using Mealmate.Core.Specifications;
+using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Paging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mealmate.Application.Services
 {
     public class MenuItemService : IMenuItemService
     {
+        private readonly MealmateContext _context;
         private readonly IMenuItemRepository _menuItemRepository;
         private readonly IMenuItemAllergenRepository _menuItemAllergenRepository;
         private readonly IMenuItemDietaryRepository _menuItemDietaryRepository;
@@ -29,8 +32,10 @@ namespace Mealmate.Application.Services
             IMenuItemAllergenRepository menuItemAllergenRepository,
             IMenuItemDietaryRepository menuItemDietaryRepository,
             IAppLogger<MenuItemService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            MealmateContext context)
         {
+            _context = context;
             _menuItemRepository = menuItemRepository ?? throw new ArgumentNullException(nameof(menuItemRepository));
             _menuItemAllergenRepository = menuItemAllergenRepository ?? throw new ArgumentNullException(nameof(menuItemAllergenRepository));
             _menuItemDietaryRepository = menuItemDietaryRepository ?? throw new ArgumentNullException(nameof(menuItemDietaryRepository));
@@ -325,105 +330,44 @@ namespace Mealmate.Application.Services
 
             return AllergenModelPagedList;
         }
-        //public async Task<IEnumerable<MenuItemModel>> GetMenuItemList()
-        //{
-        //    var MenuItemList = await _menuItemRepository.ListAllAsync();
 
-        //    var MenuItemModels = ObjectMapper.Mapper.Map<IEnumerable<MenuItemModel>>(MenuItemList);
+        public async Task<MenuItemSearchModel> GetDetails(int menuItemId)
+        {
+            var model = new MenuItemSearchModel();
 
-        //    return MenuItemModels;
-        //}
+            var allergens = await _context.MenuItemAllergens
+                                    .Where(p => p.IsActive == true && p.MenuItemId == menuItemId)
+                                    .Select(p => p.AllergenId)
+                                    .ToListAsync();
 
-        //public async Task<IPagedList<MenuItemModel>> SearchMenuItems(PageSearchArgs args)
-        //{
-        //    var MenuItemPagedList = await _menuItemRepository.SearchMenuItemsAsync(args);
+            var dietaries = await _context.MenuItemDietaries
+                                    .Where(p => p.IsActive == true && p.MenuItemId == menuItemId)
+                                    .Select(p => p.DietaryId)
+                                    .ToListAsync();
 
-        //    //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-        //    var MenuItemModels = ObjectMapper.Mapper.Map<List<MenuItemModel>>(MenuItemPagedList.Items);
+            model.Allergens = allergens;
+            model.Dietaries = dietaries;
+            return model;
+        }
 
-        //    var MenuItemModelPagedList = new PagedList<MenuItemModel>(
-        //        MenuItemPagedList.PageIndex,
-        //        MenuItemPagedList.PageSize,
-        //        MenuItemPagedList.TotalCount,
-        //        MenuItemPagedList.TotalPages,
-        //        MenuItemModels);
+        public async Task<List<int>> GetDietaries(int menuItemId)
+        {
+            var dietaries = await _context.MenuItemDietaries
+                                    .Where(p => p.IsActive == true && p.MenuItemId == menuItemId)
+                                    .Select(p => p.DietaryId)
+                                    .ToListAsync();
 
-        //    return MenuItemModelPagedList;
-        //}
+            return dietaries;
+        }
 
-        //public async Task<MenuItemModel> GetMenuItemById(int MenuItemId)
-        //{
-        //    var MenuItem = await _menuItemRepository.GetByIdAsync(MenuItemId);
+        public async Task<List<int>> GetAllergens(int menuItemId)
+        {
+            var allergens = await _context.MenuItemAllergens
+                                    .Where(p => p.IsActive == true && p.MenuItemId == menuItemId)
+                                    .Select(p => p.AllergenId)
+                                    .ToListAsync();
 
-        //    var MenuItemModel = ObjectMapper.Mapper.Map<MenuItemModel>(MenuItem);
-
-        //    return MenuItemModel;
-        //}
-
-        //public async Task<IEnumerable<MenuItemModel>> GetMenuItemsByName(string name)
-        //{
-        //    var spec = new MenuItemWithMenuItemesSpecification(name);
-        //    var MenuItemList = await _menuItemRepository.GetAsync(spec);
-
-        //    var MenuItemModels = ObjectMapper.Mapper.Map<IEnumerable<MenuItemModel>>(MenuItemList);
-
-        //    return MenuItemModels;
-        //}
-
-        //public async Task<IEnumerable<MenuItemModel>> GetMenuItemsByCategoryId(int categoryId)
-        //{
-        //    var spec = new MenuItemWithMenuItemesSpecification(categoryId);
-        //    var MenuItemList = await _menuItemRepository.GetAsync(spec);
-
-        //    var MenuItemModels = ObjectMapper.Mapper.Map<IEnumerable<MenuItemModel>>(MenuItemList);
-
-        //    return MenuItemModels;
-        //}
-
-        //public async Task<MenuItemModel> CreateMenuItem(MenuItemModel MenuItem)
-        //{
-        //    var existingMenuItem = await _menuItemRepository.GetByIdAsync(MenuItem.Id);
-        //    if (existingMenuItem != null)
-        //    {
-        //        throw new ApplicationException("MenuItem with this id already exists");
-        //    }
-
-        //    var newMenuItem = ObjectMapper.Mapper.Map<MenuItem>(MenuItem);
-        //    newMenuItem = await _menuItemRepository.SaveAsync(newMenuItem);
-
-        //    _logger.LogInformation("Entity successfully added - MealmateAppService");
-
-        //    var newMenuItemModel = ObjectMapper.Mapper.Map<MenuItemModel>(newMenuItem);
-        //    return newMenuItemModel;
-        //}
-
-        //public async Task UpdateMenuItem(MenuItemModel MenuItem)
-        //{
-        //    var existingMenuItem = await _menuItemRepository.GetByIdAsync(MenuItem.Id);
-        //    if (existingMenuItem == null)
-        //    {
-        //        throw new ApplicationException("MenuItem with this id is not exists");
-        //    }
-
-        //    existingMenuItem.Name = MenuItem.Name;
-        //    existingMenuItem.Description = MenuItem.Description;
-
-        //    await _menuItemRepository.SaveAsync(existingMenuItem);
-
-        //    _logger.LogInformation("Entity successfully updated - MealmateAppService");
-        //}
-
-        //public async Task DeleteMenuItemById(int MenuItemId)
-        //{
-        //    var existingMenuItem = await _menuItemRepository.GetByIdAsync(MenuItemId);
-        //    if (existingMenuItem == null)
-        //    {
-        //        throw new ApplicationException("MenuItem with this id is not exists");
-        //    }
-
-        //    await _menuItemRepository.DeleteAsync(existingMenuItem);
-
-        //    _logger.LogInformation("Entity successfully deleted - MealmateAppService");
-        //}
+            return allergens;
+        }
     }
 }

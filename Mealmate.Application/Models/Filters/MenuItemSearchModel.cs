@@ -4,17 +4,15 @@ using System.Text;
 
 namespace Mealmate.Application.Models
 {
-    public class BranchSearchModel
+    public class MenuItemSearchModel
     {
         public List<int> Allergens { get; set; }
         public List<int> Dietaries { get; set; }
-        public List<int> CuisineTypes { get; set; }
 
-        public BranchSearchModel()
+        public MenuItemSearchModel()
         {
             Allergens = new List<int>();
             Dietaries = new List<int>();
-            CuisineTypes = new List<int>();
         }
     }
 }

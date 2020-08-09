@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Breakfast",
+    "serviceTime": "10:00:00",
+    "isActive": true
+  },
+  {
+    "name": "Lunch",
+    "serviceTime": "14:00:00",
+    "isActive": true
+  },
+  {
+    "name": "Hi Tea",
+    "serviceTime": "16:00:00",
+    "isActive": true
+  },
+  {
+    "name": "Dinner",
+    "serviceTime": "23:00:00",
+    "isActive": true
+  }
+]

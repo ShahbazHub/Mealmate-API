@@ -14,5 +14,6 @@ namespace Mealmate.Application.Models
 
         public DateTimeOffset Created { get; set; }
         public bool IsActive { get; set; }
+        public bool IsOwner { get; set; }
     }
 }

@@ -20,6 +20,7 @@ namespace Mealmate.Application.Services
 {
     public class BranchService : IBranchService
     {
+        private readonly IMenuItemService _menuItemService;
         private readonly MealmateContext _context;
         private readonly IUserBranchRepository _userBranchRepository;
         private readonly IBranchRepository _branchRepository;
@@ -31,8 +32,10 @@ namespace Mealmate.Application.Services
             IBranchRepository branchRepository,
             IAppLogger<BranchService> logger,
             IMapper mapper,
+            IMenuItemService menuItemService,
             MealmateContext context)
         {
+            _menuItemService = menuItemService;
             _context = context;
             _userBranchRepository = userBranchRepository ?? throw new ArgumentNullException(nameof(userBranchRepository));
             _branchRepository = branchRepository ?? throw new ArgumentNullException(nameof(branchRepository));
@@ -142,6 +145,7 @@ namespace Mealmate.Application.Services
                                     .Count(p => p.IsActive == true);
 
                 branch.TotalDishes = totalDishes;
+                int filteredMenus = 0;
 
                 var menuItems = branch.Menus.SelectMany(mi => mi.MenuItems);
                 if (model.CuisineTypes.Count > 0)
@@ -149,60 +153,114 @@ namespace Mealmate.Application.Services
                     menuItems = menuItems.Where(p => model.CuisineTypes.Contains(p.CuisineTypeId));
                 }
 
-                int filteredMenus = 0;
+                filteredMenus = menuItems.Count();
 
-                foreach (var item in menuItems)
+                if (model.Allergens.Count > 0 || model.Dietaries.Count > 0)
                 {
-                    if (model.Allergens.Count > 0 && model.Dietaries.Count > 0)
+
+                    foreach (var item in menuItems)
                     {
-                        var allergens = _context.MenuItemAllergens
-                                                .Include(p => p.Allergen)
-                                                .Where(p => p.MenuItemId == item.Id);
-
-                        var resultAllergens = allergens.Where(t => t.IsActive == true &&
-                                                        !model.Allergens.Contains(t.AllergenId));
-                        if (resultAllergens != null)
+                        if (model.Allergens.Count > 0 && model.Dietaries.Count > 0)
                         {
-                            var dietaries = _context.MenuItemDietaries
-                                                .Include(p => p.Dietary)
-                                                .Where(p => p.MenuItemId == item.Id);
-
-                            var resultDietaries = dietaries.Where(t => t.IsActive == true &&
-                                                        model.Dietaries.Contains(t.DietaryId));
-                            if (resultDietaries != null)
+                            var status = false;
+                            var detailAllergens = await _menuItemService.GetAllergens(item.Id);
+                            if (detailAllergens != null)
                             {
-                                filteredMenus += 1;
+                                foreach (var detailAllergenId in detailAllergens)
+                                {
+                                    foreach (var allergenId in model.Allergens)
+                                    {
+                                        if (allergenId == detailAllergenId)
+                                        {
+                                            status = true;
+                                            break;
+                                        }
+                                    }
+                                    if (status == true)
+                                    {
+                                        break;
+                                    }
+                                }
+
+                                if (status == true)
+                                {
+                                    filteredMenus -= 1;
+                                }
+                                else
+                                {
+                                    var detailDietaries = await _menuItemService.GetDietaries(item.Id);
+                                    if (detailDietaries != null)
+                                    {
+                                        var dietaryStatus = true;
+                                        foreach (var dietaryId in model.Dietaries)
+                                        {
+                                            if (!detailDietaries.Any(p => p == dietaryId))
+                                            {
+                                                dietaryStatus = false;
+                                                break;
+                                            }
+                                        }
+                                        if (dietaryStatus == false)
+                                        {
+                                            filteredMenus -= 1;
+                                        }
+                                    }
+
+                                }
                             }
                         }
-                    }
-                    else if (model.Allergens.Count > 0 && model.Dietaries.Count == 0)
-                    {
-                        var allergens = _context.MenuItemAllergens
-                                                .Include(p => p.Allergen)
-                                                .Where(p => p.MenuItemId == item.Id);
-
-                        var resultAllergens = allergens.Where(t => t.IsActive == true &&
-                                                        !model.Allergens.Contains(t.AllergenId));
-                        if (resultAllergens != null)
+                        else if (model.Allergens.Count == 0 && model.Dietaries.Count > 0)
                         {
-                            filteredMenus += 1;
+                            var detailDietaries = await _menuItemService.GetDietaries(item.Id);
+                            if (detailDietaries != null)
+                            {
+                                var dietaryStatus = true;
+                                foreach (var dietaryId in model.Dietaries)
+                                {
+                                    if (!detailDietaries.Any(p => p == dietaryId))
+                                    {
+                                        dietaryStatus = false;
+                                        break;
+                                    }
+                                }
+                                if (dietaryStatus == false)
+                                {
+                                    filteredMenus -= 1;
+                                }
+                            }
                         }
-                    }
-                    else if (model.Allergens.Count == 0 && model.Dietaries.Count > 0)
-                    {
-                        var dietaries = _context.MenuItemDietaries
-                                                .Include(p => p.Dietary)
-                                                .Where(p => p.MenuItemId == item.Id);
-
-                        var resultDietaries = dietaries.Where(t => t.IsActive == true &&
-                                                    model.Dietaries.Contains(t.DietaryId));
-                        if (resultDietaries != null)
+                        else if (model.Allergens.Count > 0 && model.Dietaries.Count == 0)
                         {
-                            filteredMenus += 1;
+                            var status = false;
+                            var detailAllergens = await _menuItemService.GetAllergens(item.Id);
+                            if (detailAllergens != null)
+                            {
+                                foreach (var detailAllergenId in detailAllergens)
+                                {
+                                    foreach (var allergenId in model.Allergens)
+                                    {
+                                        if (allergenId == detailAllergenId)
+                                        {
+                                            status = true;
+                                            break;
+                                        }
+                                    }
+                                    if (status == true)
+                                    {
+                                        break;
+                                    }
+                                }
+
+                                if (status == true)
+                                {
+                                    filteredMenus -= 1;
+                                }
+                            }
                         }
+
+                        
                     }
                 }
-
                 branch.FilteredDishes = filteredMenus;
             }
 
@@ -232,106 +290,5 @@ namespace Mealmate.Application.Services
 
             return AllergenModelPagedList;
         }
-
-        //public async Task<IEnumerable<BranchModel>> GetBranchList()
-        //{
-        //    var BranchList = await _branchRepository.ListAllAsync();
-
-        //    var BranchModels = ObjectMapper.Mapper.Map<IEnumerable<BranchModel>>(BranchList);
-
-        //    return BranchModels;
-        //}
-
-        //public async Task<IPagedList<BranchModel>> SearchBranchs(PageSearchArgs args)
-        //{
-        //    var BranchPagedList = await _branchRepository.SearchBranchsAsync(args);
-
-        //    //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
-        //    var BranchModels = ObjectMapper.Mapper.Map<List<BranchModel>>(BranchPagedList.Items);
-
-        //    var BranchModelPagedList = new PagedList<BranchModel>(
-        //        BranchPagedList.PageIndex,
-        //        BranchPagedList.PageSize,
-        //        BranchPagedList.TotalCount,
-        //        BranchPagedList.TotalPages,
-        //        BranchModels);
-
-        //    return BranchModelPagedList;
-        //}
-
-        //public async Task<BranchModel> GetBranchById(int BranchId)
-        //{
-        //    var Branch = await _branchRepository.GetByIdAsync(BranchId);
-
-        //    var BranchModel = ObjectMapper.Mapper.Map<BranchModel>(Branch);
-
-        //    return BranchModel;
-        //}
-
-        //public async Task<IEnumerable<BranchModel>> GetBranchsByName(string name)
-        //{
-        //    var spec = new BranchWithBranchesSpecification(name);
-        //    var BranchList = await _branchRepository.GetAsync(spec);
-
-        //    var BranchModels = ObjectMapper.Mapper.Map<IEnumerable<BranchModel>>(BranchList);
-
-        //    return BranchModels;
-        //}
-
-        //public async Task<IEnumerable<BranchModel>> GetBranchsByCategoryId(int categoryId)
-        //{
-        //    var spec = new BranchWithBranchesSpecification(categoryId);
-        //    var BranchList = await _branchRepository.GetAsync(spec);
-
-        //    var BranchModels = ObjectMapper.Mapper.Map<IEnumerable<BranchModel>>(BranchList);
-
-        //    return BranchModels;
-        //}
-
-        //public async Task<BranchModel> CreateBranch(BranchModel Branch)
-        //{
-        //    var existingBranch = await _branchRepository.GetByIdAsync(Branch.Id);
-        //    if (existingBranch != null)
-        //    {
-        //        throw new ApplicationException("Branch with this id already exists");
-        //    }
-
-        //    var newBranch = ObjectMapper.Mapper.Map<Branch>(Branch);
-        //    newBranch = await _branchRepository.SaveAsync(newBranch);
-
-        //    _logger.LogInformation("Entity successfully added - MealmateAppService");
-
-        //    var newBranchModel = ObjectMapper.Mapper.Map<BranchModel>(newBranch);
-        //    return newBranchModel;
-        //}
-
-        //public async Task UpdateBranch(BranchModel Branch)
-        //{
-        //    var existingBranch = await _branchRepository.GetByIdAsync(Branch.Id);
-        //    if (existingBranch == null)
-        //    {
-        //        throw new ApplicationException("Branch with this id is not exists");
-        //    }
-
-        //    existingBranch.Name = Branch.Name;
-        //    existingBranch.Description = Branch.Description;
-
-        //    await _branchRepository.SaveAsync(existingBranch);
-
-        //    _logger.LogInformation("Entity successfully updated - MealmateAppService");
-        //}
-
-        //public async Task DeleteBranchById(int BranchId)
-        //{
-        //    var existingBranch = await _branchRepository.GetByIdAsync(BranchId);
-        //    if (existingBranch == null)
-        //    {
-        //        throw new ApplicationException("Branch with this id is not exists");
-        //    }
-
-        //    await _branchRepository.DeleteAsync(existingBranch);
-
-        //    _logger.LogInformation("Entity successfully deleted - MealmateAppService");
-        //}
     }
 }

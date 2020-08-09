@@ -108,7 +108,18 @@ namespace Mealmate.Application.Services
             var data = _mapper.Map<IEnumerable<UserRestaurantModel>>(model);
             foreach (var item in data)
             {
-                result.Add(item.Restaurant);
+                var restaurant = new RestaurantModel
+                {
+                    Created = item.Restaurant.Created,
+                    Description = item.Restaurant.Description,
+                    Id = item.Restaurant.Id,
+                    IsActive = item.Restaurant.IsActive,
+                    IsOwner = item.IsOwner,
+                    Name = item.Restaurant.Name,
+                    Photo = item.Restaurant.Photo
+                };
+
+                result.Add(restaurant);
             }
             return result;
         }
@@ -129,6 +140,7 @@ namespace Mealmate.Application.Services
             existingRestaurant.Description = model.Description;
             existingRestaurant.IsActive = model.IsActive;
             existingRestaurant.Name = model.Name;
+            existingRestaurant.Photo = model.Photo;
 
             var restaurantUpdated = await _restaurantRepository.SaveAsync(existingRestaurant);
 

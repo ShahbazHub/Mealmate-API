@@ -4,6 +4,27 @@
     "lastName": "Administrator",
     "email": "admin@gmail.com",
     "userName": "admin@gmail.com",
-    "phoneNumber":  "+923455908781"
+    "phoneNumber": "+923455908781"
+  },
+  {
+    "firstName": "Salman",
+    "lastName": "Taj",
+    "email": "salman1277@gmail.com",
+    "userName": "salman1277@gmail.com",
+    "phoneNumber": "+923308451234"
+  },
+  {
+    "firstName": "Atif",
+    "lastName": "Liaquat",
+    "email": "atifafridi1990@gmail.com",
+    "userName": "atifafridi1990@gmail.com",
+    "phoneNumber": "+923365045082"
+  },
+  {
+    "firstName": "Waseem",
+    "lastName": "Ahmad",
+    "email": "waseem.ahmad.mughal@gmail.com",
+    "userName": "waseem.ahmad.mughal@gmail.com",
+    "phoneNumber": "+923341100830"
   }
 ]

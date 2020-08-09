@@ -7,6 +7,10 @@ namespace Mealmate.Application.Interfaces
 {
     public interface IMenuItemService
     {
+        Task<MenuItemSearchModel> GetDetails(int menuItemId);
+        Task<List<int>> GetDietaries(int menuItemId);
+        Task<List<int>> GetAllergens(int menuItemId);
+
         Task<IEnumerable<MenuItemModel>> Get(int menuId);
         Task<MenuItemModel> GetById(int id);
         Task<IEnumerable<MenuItemModel>> Get(List<int> allergenIds, List<int> dietaryIds);

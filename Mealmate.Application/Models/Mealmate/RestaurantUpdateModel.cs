@@ -14,5 +14,7 @@ namespace Mealmate.Application.Models
         public string Description { get; set; }
         [Required]
         public bool IsActive { get; set; }
+
+        public byte[] Photo { get; set; }
     }
 }
