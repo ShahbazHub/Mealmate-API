@@ -122,7 +122,7 @@ namespace Mealmate.Application.Services
             return _mapper.Map<IEnumerable<OrderModel>>(result);
         }
 
-        public async Task<IEnumerable<OrderModel>> Get(int restaurantId, int orderStateId)
+        public async Task<IEnumerable<OrderModel>> Get(int branchId, int orderStateId)
         {
             var result = await _context.Orders
                                     .Include(p => p.OrderState)
@@ -133,7 +133,7 @@ namespace Mealmate.Application.Services
                                     .ThenInclude(r => r.Restaurant)
                                     .ToListAsync();
 
-            result = result.Where(p => p.Table.Location.Branch.RestaurantId == restaurantId &&
+            result = result.Where(p => p.Table.Location.Branch.Id == branchId &&
                                   p.OrderStateId == orderStateId).ToList();
             return _mapper.Map<IEnumerable<OrderModel>>(result);
         }

@@ -52,18 +52,18 @@ namespace Mealmate.Api.Controllers
         }
 
         /// <summary>
-        /// List all orders of a specific restaurant in specific state
+        /// List all orders of a specific branch in specific state
         /// </summary>
-        /// <param name="restaurantId"></param>
+        /// <param name="branchId"></param>
         /// <param name="orderStateId"></param>
         /// <returns></returns>
-        [HttpGet("restaurant/{restaurantId}/state/{orderStateId}")]
+        [HttpGet("branch/{branchId}/state/{orderStateId}")]
         [ProducesResponseType(typeof(IEnumerable<OrderModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<OrderModel>>> GetByRestaurant(int restaurantId, int orderStateId)
+        public async Task<ActionResult<IEnumerable<OrderModel>>> GetByRestaurant(int branchId, int orderStateId)
         {
             try
             {
-                var result = await _orderService.Get(restaurantId, orderStateId);
+                var result = await _orderService.Get(branchId, orderStateId);
                 return Ok(result);
             }
             catch (Exception)
