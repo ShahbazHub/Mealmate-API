@@ -2,6 +2,7 @@
 using Mealmate.Core.Entities;
 using AutoMapper;
 using Mealmate.Core.Entities.Lookup;
+using Mealmate.Core.Dtos;
 
 namespace Mealmate.Application.Mapper
 {
@@ -9,6 +10,8 @@ namespace Mealmate.Application.Mapper
     {
         public MealMateMapper()
         {
+            CreateMap<BranchListDto, BranchListModel>().ReverseMap();
+            CreateMap<BranchResultDto, BranchResultModel>().ReverseMap();
 
             // Identity
             CreateMap<User, UserModel>().ReverseMap();

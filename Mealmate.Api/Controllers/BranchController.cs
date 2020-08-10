@@ -32,29 +32,6 @@ namespace Mealmate.Api.Controllers
 
         #region Read
         /// <summary>
-        /// List all branches in a restaurant
-        /// </summary>
-        /// <param name="model"></param>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<BranchModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<BranchModel>>> Get(
-            [FromQuery] BranchSearchModel model,
-            [FromQuery] PageSearchArgs request)
-        {
-            try
-            {
-                var Branches = await _branchService.Search(model, request);
-                JToken _jtoken = TokenService.CreateJToken(Branches, request.Props);
-                return Ok(_jtoken);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
-        /// <summary>
         /// List all branches in a specific restaurant
         /// </summary>
         /// <param name="restaurantId"></param>
