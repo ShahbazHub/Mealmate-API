@@ -150,106 +150,54 @@ namespace Mealmate.Infrastructure.Repository
 
         public Task<IPagedList<BranchResultDto>> SearchAsync(List<int> cuisineTypes, List<int> allergens, List<int> dietaries, PageSearchArgs args)
         {
-            //var query1 = Table.Include(p => p.Menu)
-            //                .ThenInclude(u => u.Branch)
-            //                .Include(p => p.MenuItemDietaries)
-            //                .Include(p => p.MenuItemAllergens)
-            //                .Where(p=>p.Menu.BranchId == 1)
-            //                .Select(p => new BranchListDto
-            //                {
-            //                    CuisineTypeId = p.CuisineTypeId,
-            //                    Allergens = p.MenuItemAllergens.Select(t => t.AllergenId),
-            //                    Dietaries = p.MenuItemDietaries.Select(t => t.DietaryId),
-            //                    BranchId = p.Menu.Branch.Id,
-            //                    Branch = p.Menu.Branch.Name
-            //                }).ToList();
+            var query = Table.Include(p => p.Menu).ThenInclude(u => u.Branch)
+                            .Include(p => p.MenuItemDietaries)
+                            .Include(p => p.MenuItemAllergens)
+                            .Select(p => new BranchListDto
+                            {
+                                CuisineTypeId = p.CuisineTypeId,
+                                Allergens = p.MenuItemAllergens.Select(t => t.AllergenId),
+                                Dietaries = p.MenuItemDietaries.Select(t => t.DietaryId),
+                                BranchId = p.Menu.Branch.Id
+                            }).ToList();
 
-            var query = Table.Include(p => p.Menu)
-                             .ThenInclude(u => u.Branch)
-                             .Include(ma => ma.MenuItemAllergens)
-                             .Include(p => p.MenuItemDietaries)
-                             .Select(p => new BranchListDto
-                             {
-                                 CuisineTypeId = p.CuisineTypeId,
-                                 BranchId = p.Menu.Branch.Id,
-                                 Branch = p.Menu.Branch.Name,
-                                 Allergens = p.MenuItemAllergens.Select(t => t.AllergenId),
-                                 Dietaries = p.MenuItemDietaries.Select(t => t.DietaryId)
-                             }).ToList();
+            var grouped = query.GroupBy(p => p.BranchId)
+                                .Select(p => new
+                                {
+                                    BranchId = p.Key,
+                                    TotalDishes = p.Count(),
+                                });
+            // Filter Cuisine Types
+            var menuItems = query.Where(p => cuisineTypes.Contains(p.CuisineTypeId));
 
-            var resultGroup = query.GroupBy(p => p.BranchId).Select(p => new
+            if (allergens.Count > 0)
             {
-                BranchId = p.Key,
-                Total = p.Count(),
-                Filtered = p.ToList().Where(d => cuisineTypes.Contains(d.CuisineTypeId)).Count(),
-                Allergens = p.ToList().Select(d => d.Allergens),
-                Dietaries = p.ToList().Select(d => d.Dietaries),
-            });
-
-            foreach (var item in resultGroup)
-            {
-                Console.WriteLine($"{item}");
+                menuItems = menuItems.Where(p => p.Allergens.Intersect(allergens).Count() > 0);
             }
+            menuItems = menuItems.Where(p => p.Dietaries.Intersect(dietaries).Count() > 0);
 
+            var groupedAfterFiltering = menuItems.GroupBy(p => p.BranchId)
+                                .Select(p => new
+                                {
+                                    BranchId = p.Key,
+                                    FilteredDishes = p.Count()
+                                });
+
+            var joined = from g in grouped
+                         join gaf in groupedAfterFiltering on g.BranchId equals gaf.BranchId
+                         select new BranchResultDto
+                         {
+                             BranchId = g.BranchId,
+                             TotalDishes = g.TotalDishes,
+                             FilteredDishes = gaf.FilteredDishes
+                         };
             //var resultBranch = query.GroupBy(p => p.BranchId);
-            List<BranchResultDto> result = new List<BranchResultDto>();
+            List<BranchResultDto> result = joined.ToList();
 
-            //foreach (var itemBranch in resultBranch)
-            //{
-            //    var entry = new BranchResultDto
-            //    {
-            //        BranchId = itemBranch.Key,
-            //        //BranchId = itemBranch.Key.BranchId,
-            //        //Branch = itemBranch.Key.Branch,
-            //        //Latitude = itemBranch.Key.Latitude,
-            //        //Longitude = itemBranch.Key.Longitude,
-            //        //TotalDishes = itemBranch.Value.Count
-            //    };
+            foreach (var branch in result)
+            {
 
-            //    //var filtered = itemBranch.Value.Where(p => cuisineTypes.Contains(p.CuisineTypeId));
-            //    //entry.FilteredDishes = filtered.Count();
-            //    foreach (var item in itemBranch)
-            //    {
-            //        IEnumerable<int> allergensTemp = item.Allergens;
-            //        IEnumerable<int> dietariesTemp = item.Dietaries;
-
-            //        if (allergens.Count > 0 && dietaries.Count > 0)
-            //        {
-            //            var resultAllergens = allergensTemp.Intersect(allergens);
-            //            if (resultAllergens.Count() == 0)
-            //            {
-            //                var resultDietaries = dietariesTemp.Intersect(dietaries);
-            //                if (resultDietaries.Count() > 0)
-            //                {
-            //                    entry.FilteredDishes += 1;
-            //                    result.Add(entry);
-            //                }
-            //            }
-            //        }
-            //        else if (allergens.Count > 0 && dietaries.Count == 0)
-            //        {
-            //            var resultAllergens = allergensTemp.Intersect(allergens);
-            //            if (resultAllergens.Count() == 0)
-            //            {
-            //                entry.FilteredDishes += 1;
-            //                result.Add(entry);
-            //            }
-            //        }
-            //        else if (allergens.Count == 0 && dietaries.Count > 0)
-            //        {
-            //            var resultDietaries = dietariesTemp.Intersect(dietaries);
-            //            if (resultDietaries.Count() > 0)
-            //            {
-            //                entry.FilteredDishes += 1;
-            //            }
-            //        }
-            //        else if (allergens.Count == 0 && dietaries.Count == 0)
-            //        {
-            //            entry.FilteredDishes += 1;
-            //            result.Add(entry);
-            //        }
-            //    }
-            //}
+            }
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<BranchResultDto, object>>>>();
 
