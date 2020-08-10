@@ -14,5 +14,7 @@ namespace Mealmate.Application.Models
         public int BranchId { get; set; }
         public BranchModel Branch { get; set; }
 
+        public ICollection<TableModel> Tables { get; set; }
+
     }
 }

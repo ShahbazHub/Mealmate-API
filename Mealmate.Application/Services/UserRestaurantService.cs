@@ -12,6 +12,7 @@ using Mealmate.Core.Interfaces;
 using Mealmate.Core.Paging;
 using Mealmate.Core.Repositories;
 using Mealmate.Infrastructure.Paging;
+using Microsoft.AspNetCore.Identity;
 
 namespace Mealmate.Application.Services
 {
@@ -20,6 +21,8 @@ namespace Mealmate.Application.Services
         private readonly IUserRestaurantRepository _UserRestaurantRepository;
         private readonly IAppLogger<UserRestaurantService> _logger;
         private readonly IMapper _mapper;
+        private readonly RoleManager<Role> _roleManager;
+        private readonly UserManager<User> _userManager;
         private readonly IRestaurantService _restaurantService;
         private readonly IBranchService _branchService;
 
@@ -28,8 +31,12 @@ namespace Mealmate.Application.Services
             IAppLogger<UserRestaurantService> logger,
             IMapper mapper,
             IRestaurantService restaurantService,
-            IBranchService branchService)
+            IBranchService branchService,
+            UserManager<User> userManager,
+            RoleManager<Role> roleManager)
         {
+            _roleManager = roleManager;
+            _userManager = userManager;
             _restaurantService = restaurantService;
             _branchService = branchService;
             _UserRestaurantRepository = UserRestaurantRepository ?? throw new ArgumentNullException(nameof(UserRestaurantRepository));
@@ -156,6 +163,13 @@ namespace Mealmate.Application.Services
                 var branches = await _branchService.GetByEmployee(user.Id);
                 user.Branches = branches.ToList();
 
+                var roles = await _userManager.GetRolesAsync(_mapper.Map<User>(user));
+                foreach (var role in roles)
+                {
+                    var userRole = await _roleManager.FindByNameAsync(role);
+                    user.Roles.Add(userRole.Name);
+
+                }
                 temp.Add(user);
             }
 

@@ -51,7 +51,9 @@ namespace Mealmate.Application.Services
                 Created = DateTime.Now,
                 IsActive = true,
                 Name = model.Name,
-                RestaurantId = model.RestaurantId
+                RestaurantId = model.RestaurantId,
+                Latitude = model.Latitude,
+                Longitude = model.Longitude
             };
 
             newbranch = await _branchRepository.SaveAsync(newbranch);
@@ -120,6 +122,8 @@ namespace Mealmate.Application.Services
             existingBranch.Address = model.Address;
             existingBranch.Name = model.Name;
             existingBranch.IsActive = model.IsActive;
+            existingBranch.Latitude = model.Latitude;
+            existingBranch.Longitude = model.Longitude;
 
             await _branchRepository.SaveAsync(existingBranch);
 

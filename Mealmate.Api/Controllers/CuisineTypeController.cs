@@ -30,6 +30,7 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
+        [AllowAnonymous]
         [HttpGet("list/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<CuisineTypeModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<CuisineTypeModel>>> Get(

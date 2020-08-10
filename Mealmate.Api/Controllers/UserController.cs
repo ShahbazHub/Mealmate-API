@@ -25,9 +25,9 @@ namespace Mealmate.Api.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly RoleManager<Role> _roleManager;
         private readonly UserManager<User> _userManager;
+        private readonly IUserService _userService;
         private readonly IUserRestaurantService _userRestaurantService;
         private readonly IRestaurantService _restaurantService;
 

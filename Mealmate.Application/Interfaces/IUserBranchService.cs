@@ -7,6 +7,7 @@ namespace Mealmate.Application.Interfaces
 {
     public interface IUserBranchService
     {
+        Task<IEnumerable<BranchModel>> Get(int restaurantId, int userId);
         Task<IEnumerable<UserBranchModel>> Get(int UserId);
         Task<UserBranchModel> GetById(int id);
         Task<UserBranchModel> Create(UserBranchCreateModel model);

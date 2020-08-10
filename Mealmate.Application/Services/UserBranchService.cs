@@ -10,12 +10,15 @@ using Mealmate.Core.Entities;
 using Mealmate.Core.Interfaces;
 using Mealmate.Core.Paging;
 using Mealmate.Core.Repositories;
+using Mealmate.Infrastructure.Data;
 using Mealmate.Infrastructure.Paging;
-
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 namespace Mealmate.Application.Services
 {
     public class UserBranchService : IUserBranchService
     {
+        private readonly MealmateContext _context;
         private readonly IUserBranchRepository _UserBranchRepository;
         private readonly IAppLogger<UserBranchService> _logger;
         private readonly IMapper _mapper;
@@ -23,8 +26,10 @@ namespace Mealmate.Application.Services
         public UserBranchService(
             IUserBranchRepository UserBranchRepository,
             IAppLogger<UserBranchService> logger,
-            IMapper mapper)
+            IMapper mapper,
+            MealmateContext context)
         {
+            _context = context;
             _UserBranchRepository = UserBranchRepository ?? throw new ArgumentNullException(nameof(UserBranchRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _mapper = mapper;
@@ -66,6 +71,28 @@ namespace Mealmate.Application.Services
         #endregion
 
         #region Read
+        public async Task<IEnumerable<BranchModel>> Get(int restaurantId, int userId)
+        {
+            List<Branch> result = null;
+
+            var userRestaurant = await _context.UserRestaurants
+                        .FirstOrDefaultAsync(p => p.RestaurantId == restaurantId && p.UserId == userId && p.IsActive == true);
+
+            if (userRestaurant.isOwner)
+            {
+                result = await _context.Branches.Where(p => p.RestaurantId == restaurantId).ToListAsync();
+            }
+            else
+            {
+                result = await _context.UserBranches
+                                                    .Include(p => p.Branch)
+                                                    .Where(p => p.UserId == userId && p.Branch.RestaurantId == restaurantId)
+                                                    .Select(p => p.Branch)
+                                                    .ToListAsync();
+            }
+            return _mapper.Map<IEnumerable<BranchModel>>(result);
+        }
+
         public async Task<IEnumerable<UserBranchModel>> Get(int userId)
         {
             var result = await _UserBranchRepository.GetAsync(x => x.UserId == userId);
