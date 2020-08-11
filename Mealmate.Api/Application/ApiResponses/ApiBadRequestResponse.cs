@@ -28,7 +28,7 @@ namespace Mealmate.Api
         {
             Errors.Concat(new[] { error });
         }
-        public ApiBadRequestResponse(IEnumerable<IdentityError> errors): base(StatusCodes.Status400BadRequest)
+        public ApiBadRequestResponse(IEnumerable<IdentityError> errors,string msg): base(StatusCodes.Status400BadRequest,msg)
         {
             Errors = errors.Select(x => x.Description);
         }

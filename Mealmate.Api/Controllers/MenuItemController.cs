@@ -34,7 +34,7 @@ namespace Mealmate.Api.Controllers
         [HttpGet()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(
-           [FromBody] BranchSearchModel model, [FromQuery] PageSearchArgs request)
+           [FromQuery] BranchSearchModel model, [FromQuery] PageSearchArgs request)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<MenuItemModel>>> Get(
-            [FromBody] MenuFilterRequest filterRequest)
+            [FromQuery] MenuFilterRequest filterRequest)
         {
             try
             {

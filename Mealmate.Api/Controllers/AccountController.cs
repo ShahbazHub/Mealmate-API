@@ -263,7 +263,7 @@ namespace Mealmate.Api.Controllers
 
                 return Created($"/api/users/{user.Id}", new ApiCreatedResponse(owner));
             }
-            return BadRequest(new ApiBadRequestResponse(result.Errors));
+            return BadRequest(new ApiBadRequestResponse(result.Errors,"User already exists"));
         }
         #endregion
 
@@ -337,7 +337,7 @@ namespace Mealmate.Api.Controllers
 
                 return Created($"/api/users/{user.Id}", new ApiCreatedResponse(owner));
             }
-            return BadRequest(new ApiBadRequestResponse(result.Errors));
+            return BadRequest(new ApiBadRequestResponse(result.Errors,"test"));
         }
         #endregion
 
@@ -434,7 +434,7 @@ namespace Mealmate.Api.Controllers
                     }));
                 }
 
-                return BadRequest(new ApiBadRequestResponse(createdResult.Errors));
+                return BadRequest(new ApiBadRequestResponse(createdResult.Errors,"test"));
             }
             var authResponse = await GenerateJwtToken(user);
             var userToReturn = _mapper.Map<UserModel>(user);
