@@ -8,7 +8,10 @@ namespace Mealmate.Api
     {
         public object Result { get; }
 
-        public ApiOkResponse(object result): base(StatusCodes.Status200OK)
+        public ApiOkResponse(string message) : base(StatusCodes.Status200OK, message)
+        {
+        }
+        public ApiOkResponse(object result) : base(StatusCodes.Status200OK)
         {
             Result = result;
         }

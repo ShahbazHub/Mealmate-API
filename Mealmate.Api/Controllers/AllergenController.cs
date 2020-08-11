@@ -43,9 +43,9 @@ namespace Mealmate.Api.Controllers
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
                 return Ok(_jtoken);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
         [AllowAnonymous]

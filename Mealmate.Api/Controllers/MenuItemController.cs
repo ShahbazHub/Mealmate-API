@@ -18,7 +18,7 @@ namespace Mealmate.Api.Controllers
     [Produces("application/json")]
     [Route("api/menuitems")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemController : ControllerBase
     {
         private readonly IMenuItemService _menuItemService;

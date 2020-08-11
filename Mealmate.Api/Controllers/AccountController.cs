@@ -36,7 +36,7 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace Mealmate.Api.Controllers
 {
-    [ApiController]
+    [ApiValidationFilter]
     [Route("api/accounts")]
     [Consumes("application/json")]
     [Produces("application/json")]
@@ -190,88 +190,80 @@ namespace Mealmate.Api.Controllers
         /// <response code="201">Returns the newly created User</response>
         /// <response code="400">If the item is null</response>      
         [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserModel))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
         [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiBadRequestResponse))]
         public async Task<ActionResult> Register([FromBody] RegisterRequest model)
         {
-            //TODO: Add you code here
-
-            if (ModelState.IsValid)
+            var user = new User
             {
-                var user = new User
+                UserName = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                bool roleExists = await _roleManager.RoleExistsAsync(ApplicationRoles.RestaurantAdmin);
+                if (!roleExists)
                 {
-                    UserName = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
+                    //Create Role
+                    await _roleManager.CreateAsync(new Role(ApplicationRoles.RestaurantAdmin));
+                }
+                var userIsInRole = await _userManager.IsInRoleAsync(user, ApplicationRoles.RestaurantAdmin);
+                if (!userIsInRole)
                 {
-                    bool roleExists = await _roleManager.RoleExistsAsync(ApplicationRoles.RestaurantAdmin);
-                    if (!roleExists)
-                    {
-                        //Create Role
-                        await _roleManager.CreateAsync(new Role(ApplicationRoles.RestaurantAdmin));
-                    }
-                    var userIsInRole = await _userManager.IsInRoleAsync(user, ApplicationRoles.RestaurantAdmin);
-                    if (!userIsInRole)
-                    {
-                        await _userManager.AddToRoleAsync(user, ApplicationRoles.RestaurantAdmin);
-                    }
+                    await _userManager.AddToRoleAsync(user, ApplicationRoles.RestaurantAdmin);
+                }
 
-                    if (model.IsRestaurantAdmin)
+                if (model.IsRestaurantAdmin)
+                {
+                    var restaurant = new RestaurantCreateModel
                     {
-                        var restaurant = new RestaurantCreateModel
+                        Name = model.RestaurantName,
+                        Description = model.RestaurantDescription,
+                        IsActive = true
+                    };
+
+                    var data = await _restaurantService.Create(restaurant);
+
+                    if (data != null)
+                    {
+
+                        var userRestaurant = new UserRestaurantCreateModel
                         {
-                            Name = model.RestaurantName,
-                            Description = model.RestaurantDescription,
-                            IsActive = true
+                            UserId = user.Id,
+                            RestaurantId = data.Id,
+                            IsActive = true,
+                            IsOwner = true
+
                         };
 
-                        var data = await _restaurantService.Create(restaurant);
+                        await _userRestaurantService.Create(userRestaurant);
 
-                        if (data != null)
-                        {
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                            var userRestaurant = new UserRestaurantCreateModel
-                            {
-                                UserId = user.Id,
-                                RestaurantId = data.Id,
-                                IsActive = true,
-                                IsOwner = true
-
-                            };
-
-                            await _userRestaurantService.Create(userRestaurant);
-
-                            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                            string siteURL = _mealmateSettings.ClientAppUrl;
-                            var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
-                            //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                            var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
-                            await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
-                        }
+                        string siteURL = _mealmateSettings.ClientAppUrl;
+                        var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
+                        //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                        var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                        await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
                     }
-
-                    var restaurants = await _restaurantService.Get(user.Id);
-
-                    var owner = _mapper.Map<UserModel>(user);
-                    owner.Restaurants = restaurants.ToList();
-
-                    return Created($"/api/users/{user.Id}", owner);
                 }
-                else
-                {
-                    return BadRequest($"Error registering new user");
-                }
+
+                var restaurants = await _restaurantService.Get(user.Id);
+
+                var owner = _mapper.Map<UserModel>(user);
+                owner.Restaurants = restaurants.ToList();
+
+                return Created($"/api/users/{user.Id}", new ApiCreatedResponse(owner));
             }
-            return BadRequest();
+            return BadRequest(new ApiBadRequestResponse(result.Errors));
         }
         #endregion
 
@@ -283,76 +275,69 @@ namespace Mealmate.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("register-mobile")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiBadRequestResponse))]
         public async Task<ActionResult> MobileRegister([FromBody] MobileRegisterRequest model)
         {
-            //TODO: Add you code here
-
-            if (ModelState.IsValid)
+            var user = new User
             {
-                var user = new User
-                {
-                    UserName = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber
-                };
-                var userExists = await _userManager.FindByEmailAsync(model.Email);
-                if (userExists != null)
-                {
-                    return Conflict("This email is already registered");
-                }
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                if (result.Succeeded)
-                {
-                    bool roleExists = await _roleManager.RoleExistsAsync(ApplicationRoles.Client);
-                    if (!roleExists)
-                    {
-                        //Create Role
-                        await _roleManager.CreateAsync(new Role(ApplicationRoles.Client));
-                    }
-                    var userIsInRole = await _userManager.IsInRoleAsync(user, ApplicationRoles.Client);
-                    if (!userIsInRole)
-                    {
-                        await _userManager.AddToRoleAsync(user, ApplicationRoles.Client);
-                    }
-
-                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    string siteURL = _mealmateSettings.ClientAppUrl;
-                    var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
-                    //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
-                    await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
-
-
-                    if (model.UserAllergens.Count > 0)
-                    {
-                        foreach (var userAllergen in model.UserAllergens)
-                        {
-                            userAllergen.UserId = user.Id;
-                            await _userAllergenService.Create(userAllergen);
-                        }
-                    }
-
-                    if (model.UserDietaries.Count > 0)
-                    {
-                        foreach (var userDietary in model.UserDietaries)
-                        {
-                            userDietary.UserId = user.Id;
-                            await _userDietaryService.Create(userDietary);
-                        }
-                    }
-                    var owner = _mapper.Map<UserModel>(user);
-
-                    return Created($"/api/users/{user.Id}", owner);
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                UserName = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber
+            };
+            var userExists = await _userManager.FindByEmailAsync(model.Email);
+            if (userExists != null)
+            {
+                return Conflict("This email is already registered");
             }
-            return BadRequest(ModelState);
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                bool roleExists = await _roleManager.RoleExistsAsync(ApplicationRoles.Client);
+                if (!roleExists)
+                {
+                    //Create Role
+                    await _roleManager.CreateAsync(new Role(ApplicationRoles.Client));
+                }
+                var userIsInRole = await _userManager.IsInRoleAsync(user, ApplicationRoles.Client);
+                if (!userIsInRole)
+                {
+                    await _userManager.AddToRoleAsync(user, ApplicationRoles.Client);
+                }
+
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                string siteURL = _mealmateSettings.ClientAppUrl;
+                var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
+                //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
+
+
+                if (model.UserAllergens.Count > 0)
+                {
+                    foreach (var userAllergen in model.UserAllergens)
+                    {
+                        userAllergen.UserId = user.Id;
+                        await _userAllergenService.Create(userAllergen);
+                    }
+                }
+
+                if (model.UserDietaries.Count > 0)
+                {
+                    foreach (var userDietary in model.UserDietaries)
+                    {
+                        userDietary.UserId = user.Id;
+                        await _userDietaryService.Create(userDietary);
+                    }
+                }
+                var owner = _mapper.Map<UserModel>(user);
+
+                return Created($"/api/users/{user.Id}", new ApiCreatedResponse(owner));
+            }
+            return BadRequest(new ApiBadRequestResponse(result.Errors));
         }
         #endregion
 
@@ -364,13 +349,12 @@ namespace Mealmate.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("signin")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiBadRequestResponse))]
         public async Task<IActionResult> SignIn([FromBody] LoginRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             var user = await _userManager.FindByEmailAsync(request.Email);
+
             if (user != null)
             {
                 var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
@@ -379,7 +363,7 @@ namespace Mealmate.Api.Controllers
                 {
                     var appUser = await _userManager.Users
                                                     .FirstOrDefaultAsync(
-                                           u => u.Email.ToUpper() == request.Email.ToUpper());
+                                                    u => u.Email.ToUpper() == request.Email.ToUpper());
 
                     var userToReturn = _mapper.Map<UserModel>(appUser);
                     var authResponse = await GenerateJwtToken(appUser);
@@ -390,21 +374,16 @@ namespace Mealmate.Api.Controllers
                     var branches = await _branchService.GetByEmployee(appUser.Id);
                     userToReturn.Branches = branches.ToList();
 
-                    return Ok(new
-                    {
-                        token = authResponse.Token,
-                        refreshToken = authResponse.RefreshToken,
-                        user = userToReturn,
-                    });
+                    return Ok(new ApiOkResponse(
+                        new
+                        {
+                            token = authResponse.Token,
+                            refreshToken = authResponse.RefreshToken,
+                            user = userToReturn,
+                        }));
                 }
-                else
-                {
-                    return Unauthorized("UserName/Password is incorrect");
-                }
-
             }
-            return Unauthorized("UserName/Password is incorrect");
-
+            return Unauthorized(new ApiUnAuthorizedResponse("UserName/Password is incorrect"));
         }
 
         /// <summary>
@@ -414,13 +393,16 @@ namespace Mealmate.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("signin-facebook")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ApiUnAuthorizedResponse))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginWithFacebook([FromBody] FacebookLoginRequest request)
         {
             var validatedTokenResult = await _facebookAuthService.ValidateAccessTokenAsync(request.AccessToken);
 
             if (!validatedTokenResult.Data.IsValid)
             {
-                return BadRequest("your access token is invalid");
+                return Unauthorized(new ApiUnAuthorizedResponse("your access token is invalid"));
             }
 
             var userInfo = await _facebookAuthService.GetUserInfoAsync(request.AccessToken);
@@ -438,30 +420,30 @@ namespace Mealmate.Api.Controllers
                 };
 
                 var createdResult = await _userManager.CreateAsync(newUser);
-                if (!createdResult.Succeeded)
+                if (createdResult.Succeeded)
                 {
-                    return BadRequest("something went wrong");
+
+                    var authResponse1 = await GenerateJwtToken(newUser);
+                    var newUserToReturn = _mapper.Map<UserModel>(newUser);
+
+                    return Created($"/api/users/{newUser.Id}", new ApiCreatedResponse(new
+                    {
+                        token = authResponse1.Token,
+                        refreshToken = authResponse1.RefreshToken,
+                        user = newUserToReturn
+                    }));
                 }
 
-                var authResponse1 = await GenerateJwtToken(newUser);
-                var newUserToReturn = _mapper.Map<UserModel>(newUser);
-
-                return Ok(new
-                {
-                    token = authResponse1.Token,
-                    refreshToken = authResponse1.RefreshToken,
-                    user = newUserToReturn
-                });
-
+                return BadRequest(new ApiBadRequestResponse(createdResult.Errors));
             }
             var authResponse = await GenerateJwtToken(user);
             var userToReturn = _mapper.Map<UserModel>(user);
-            return Ok(new
+            return Ok(new ApiOkResponse(new
             {
                 token = authResponse.Token,
                 refreshToken = authResponse.RefreshToken,
                 user = userToReturn
-            });
+            }));
         }
 
         /// <summary>
@@ -471,6 +453,9 @@ namespace Mealmate.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("signin-google")]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ApiUnAuthorizedResponse))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> LoginWithGoogle([FromBody] GoogleLoginRequest request)
         {
             //var validatedTokenResult = await _googleAuthService.ValidateAccessTokenAsync(request.AccessToken);
@@ -483,9 +468,8 @@ namespace Mealmate.Api.Controllers
             var userInfo = await _googleAuthService.GetUserInfoAsync(request.IdToken);
             if (userInfo == null)
             {
-                return BadRequest("your idtoken is invalid");
+                return Unauthorized(new ApiUnAuthorizedResponse("your idtoken is invalid"));
             }
-
 
             var user = await _userManager.FindByEmailAsync(userInfo.Email);
 
@@ -507,22 +491,22 @@ namespace Mealmate.Api.Controllers
                 var authResponse1 = await GenerateJwtToken(newUser);
                 var newUserToReturn = _mapper.Map<UserModel>(newUser);
 
-                return Ok(new
+                return Created($"/api/users/{newUser.Id}", new ApiCreatedResponse(new
                 {
                     token = authResponse1.Token,
                     refreshToken = authResponse1.RefreshToken,
                     user = newUserToReturn
-                });
+                }));
 
             }
             var authResponse = await GenerateJwtToken(user);
             var userToReturn = _mapper.Map<UserModel>(user);
-            return Ok(new
+            return Ok(new ApiOkResponse(new
             {
                 token = authResponse.Token,
                 refreshToken = authResponse.RefreshToken,
                 user = userToReturn
-            });
+            }));
         }
 
         #endregion
@@ -536,19 +520,13 @@ namespace Mealmate.Api.Controllers
         [HttpPost("signout")]
         public async Task<IActionResult> SignOut([FromBody] SignOutModel signOutModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var user = await _userManager.FindByEmailAsync(signOutModel.Email);
             if (user != null)
             {
                 await _signInManager.SignOutAsync();
-                return Ok();
+                return Ok(new ApiOkResponse("SignOut Successfull"));
             }
-
-            return Unauthorized();
+            return Unauthorized(new ApiUnAuthorizedResponse("SignOut Failed"));
         }
         #endregion
 
@@ -566,7 +544,7 @@ namespace Mealmate.Api.Controllers
 
             if (validatedToken == null)
             {
-                return BadRequest(new[] { "Invalid Token" });
+                return Unauthorized(new ApiUnAuthorizedResponse("Invalid Token"));
             }
 
             var expiryDateUnix =
@@ -577,7 +555,7 @@ namespace Mealmate.Api.Controllers
 
             if (expiryDateTimeUtc > DateTime.UtcNow)
             {
-                return BadRequest(new[] { "This token hasn't expired yet" });
+                return BadRequest(new ApiBadRequestResponse("This token hasn't expired yet"));
             }
 
             var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
@@ -586,27 +564,27 @@ namespace Mealmate.Api.Controllers
 
             if (storedRefreshToken == null)
             {
-                return BadRequest(new[] { "This refresh token does not exist" });
+                return BadRequest(new ApiBadRequestResponse("This refresh token does not exist"));
             }
 
             if (DateTime.UtcNow > storedRefreshToken.ExpiryDate)
             {
-                return BadRequest(new[] { "This refresh token has expired" });
+                return BadRequest(new ApiBadRequestResponse("This refresh token has expired"));
             }
 
             if (storedRefreshToken.Invalidated)
             {
-                return BadRequest(new[] { "This refresh token has been invalidated" });
+                return BadRequest(new ApiBadRequestResponse("This refresh token has been invalidated"));
             }
 
             if (storedRefreshToken.Used)
             {
-                return BadRequest(new[] { "This refresh token has been used" });
+                return BadRequest(new ApiBadRequestResponse("This refresh token has been used"));
             }
 
             if (storedRefreshToken.JwtId != jti)
             {
-                return BadRequest(new[] { "This refresh token does not match this JWT" });
+                return BadRequest(new ApiBadRequestResponse("This refresh token does not match this JWT"));
             }
 
             storedRefreshToken.Used = true;
@@ -616,11 +594,11 @@ namespace Mealmate.Api.Controllers
             var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
             var authResponse = await GenerateJwtToken(user);
 
-            return Ok(new
+            return Ok(new ApiOkResponse(new
             {
                 token = authResponse.Token,
                 refreshToken = authResponse.RefreshToken
-            });
+            }));
         }
         #endregion
 
@@ -728,16 +706,14 @@ namespace Mealmate.Api.Controllers
                         to: new Twilio.Types.PhoneNumber(user.PhoneNumber)
                     );
 
-                    return Ok(message.Sid);
+                    return Ok(new ApiOkResponse(message.Sid));
                 }
+                return BadRequest(new ApiBadRequestResponse("Error While Generating OTP"));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
-                //TODO: Log errors
+                return BadRequest(new ApiBadRequestResponse(ex.Message));
             }
-
-            return BadRequest("Error while processing your request");
         }
         #endregion
 
@@ -754,15 +730,10 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
-                    return NotFound($"User with email {model.Email} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"User with email {model.Email} no more exists"));
                 }
 
                 var nowTime = DateTime.UtcNow.TimeOfDay;
@@ -783,21 +754,21 @@ namespace Mealmate.Api.Controllers
                             userOTP.IsActive = false;
                             _mealmateContext.UserOtps.Update(userOTP);
                             await _mealmateContext.SaveChangesAsync();
-                            return Ok("Password changed successfully");
+                            return Ok(new ApiOkResponse("Password changed successfully"));
                         }
                     }
+                    return BadRequest(new ApiBadRequestResponse("Error while processing your request"));
                 }
                 else
                 {
-                    return NotFound($"OTP not matched / expired");
+                    return NotFound(new ApiNotFoundResponse($"OTP not matched / expired"));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //TODO: Log errors
+                return BadRequest(new ApiBadRequestResponse(ex.Message));
             }
 
-            return BadRequest("Error while processing your request");
         }
         #endregion
 
