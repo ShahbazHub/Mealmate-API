@@ -9,7 +9,7 @@ namespace Mealmate.Core.Entities
     public class Bill : Entity
     {
         public int BillRequestId { get; set; }
-        public BillRequest BillRequest { get; set; }
+        public virtual BillRequest BillRequest { get; set; }
         
         public string InvoiceNumber { get; set; }
         public DateTimeOffset Created { get; set; }

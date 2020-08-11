@@ -16,7 +16,7 @@ namespace Mealmate.Core.Entities
 
         public DateTimeOffset Created { get; set; }
 
-        public ICollection<OrderItemDetail> OrderItemDetails { get; set; }
+        public virtual ICollection<OrderItemDetail> OrderItemDetails { get; set; }
         public OrderItem()
         {
             OrderItemDetails = new HashSet<OrderItemDetail>();

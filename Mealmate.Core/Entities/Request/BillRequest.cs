@@ -20,7 +20,7 @@ namespace Mealmate.Core.Entities
         public int BillRequestStateId { get; set; }
         public virtual BillRequestState BillRequestState { get; set; }
 
-        public Bill Bill { get; set; }
+        public virtual Bill Bill { get; set; }
 
         public BillRequest()
         {
