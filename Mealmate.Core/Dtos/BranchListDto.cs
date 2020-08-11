@@ -14,6 +14,7 @@ namespace Mealmate.Core.Dtos
         public int BranchId { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+        public byte[] Photo { get; set; }
         public bool IsActive { get; set; } = true;
     }
 }

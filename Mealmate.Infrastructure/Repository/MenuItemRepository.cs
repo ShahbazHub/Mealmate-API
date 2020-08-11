@@ -169,6 +169,7 @@ namespace Mealmate.Infrastructure.Repository
                                 Restaurant = p.Menu.Branch.Restaurant.Name,
                                 Latitude = p.Menu.Branch.Latitude,
                                 Longitude = p.Menu.Branch.Longitude,
+                                Photo = p.Menu.Branch.Restaurant.Photo
                             }).ToList();
 
             // {
@@ -191,7 +192,8 @@ namespace Mealmate.Infrastructure.Repository
                                                 Branch = p.FirstOrDefault().Branch,
                                                 Latitude = p.FirstOrDefault().Latitude,
                                                 Longitude = p.FirstOrDefault().Longitude,
-                                                IsActive = true
+                                                IsActive = true,
+                                                Photo = p.FirstOrDefault().Photo
                                             }).ToList();
             foreach (var item in summary)
             {
@@ -210,6 +212,7 @@ namespace Mealmate.Infrastructure.Repository
             }
 
             //3. Branch dishes which are not having allergens[]
+            //4. Branch dishes which are having dietaries[]
             if (allergens.Count > 0 || dietaries.Count > 0)
             {
                 foreach (var item in query)
@@ -217,14 +220,41 @@ namespace Mealmate.Infrastructure.Repository
                     var menuItemAllergens = item.Allergens;
                     var menuItemDietaries = item.Dietaries;
 
-                    // if menu item allergens contains any of the allergens passed as parameter
-                    if (menuItemAllergens.Any(p => item.Allergens.Contains(p)))
+                    if (allergens.Count > 0 && dietaries.Count > 0)
                     {
-                        item.IsActive = false;
+                        var allergenResult = menuItemAllergens.Intersect(allergens);
+                        if (allergenResult.Count() > 0)
+                        {
+                            item.IsActive = false;
+                        }
+                        if (item.IsActive == true)
+                        {
+                            var dietaryResult = menuItemDietaries.Intersect(dietaries);
+                            if (dietaryResult.Count() == 0)
+                            {
+                                item.IsActive = false;
+                            }
+                        }
+                    }
+                    else if (allergens.Count == 0 && dietaries.Count > 0)
+                    {
+
+                        var dietaryResult = menuItemDietaries.Intersect(dietaries);
+                        if (dietaryResult.Count() == 0)
+                        {
+                            item.IsActive = false;
+                        }
+                    }
+                    else if(allergens.Count > 0 && dietaries.Count == 0)
+                    {
+                        var allergenResult = menuItemAllergens.Intersect(allergens);
+                        if (allergenResult.Count() > 0)
+                        {
+                            item.IsActive = false;
+                        }
                     }
                 }
             }
-            //4. Branch dishes which are having dietaries[]
             //5. Branch total filtered dishes
 
             var summaryFiltered = query.GroupBy(p => p.BranchId)
