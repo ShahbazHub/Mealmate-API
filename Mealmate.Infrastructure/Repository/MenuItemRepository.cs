@@ -20,9 +20,11 @@ namespace Mealmate.Infrastructure.Repository
 {
     public class MenuItemRepository : Repository<MenuItem>, IMenuItemRepository
     {
+        private readonly MealmateContext _context;
         public MenuItemRepository(MealmateContext context)
             : base(context)
         {
+            _context = context;
         }
 
         public async Task<IEnumerable<MenuItem>> GetWithDetailsAsync()
@@ -148,9 +150,13 @@ namespace Mealmate.Infrastructure.Repository
             return Task.FromResult<IPagedList<MenuItem>>(pagedList);
         }
 
-        public Task<IPagedList<BranchResultDto>> SearchAsync(List<int> cuisineTypes, List<int> allergens, List<int> dietaries, PageSearchArgs args)
+        public Task<IPagedList<BranchResultDto>> SearchAsync(
+            List<int> cuisineTypes,
+            List<int> allergens,
+            List<int> dietaries,
+            PageSearchArgs args)
         {
-            var query = Table.Include(p => p.Menu).ThenInclude(u => u.Branch)
+            var query = Table.Include(p => p.Menu).ThenInclude(u => u.Branch).ThenInclude(u => u.Restaurant)
                             .Include(p => p.MenuItemDietaries)
                             .Include(p => p.MenuItemAllergens)
                             .Select(p => new BranchListDto
@@ -158,45 +164,91 @@ namespace Mealmate.Infrastructure.Repository
                                 CuisineTypeId = p.CuisineTypeId,
                                 Allergens = p.MenuItemAllergens.Select(t => t.AllergenId),
                                 Dietaries = p.MenuItemDietaries.Select(t => t.DietaryId),
-                                BranchId = p.Menu.Branch.Id
+                                BranchId = p.Menu.Branch.Id,
+                                Branch = p.Menu.Branch.Name,
+                                Restaurant = p.Menu.Branch.Restaurant.Name,
+                                Latitude = p.Menu.Branch.Latitude,
+                                Longitude = p.Menu.Branch.Longitude,
                             }).ToList();
 
-            var grouped = query.GroupBy(p => p.BranchId)
-                                .Select(p => new
-                                {
-                                    BranchId = p.Key,
-                                    TotalDishes = p.Count(),
-                                });
-            // Filter Cuisine Types
-            var menuItems = query.Where(p => cuisineTypes.Contains(p.CuisineTypeId));
+            // {
+            //      BranchId
+            //      Branch
+            //      Restaurant
+            //      Longitude
+            //      Latitude
+            //      TotalDishes
+            //      FilteredDishes
+            // }
 
-            if (allergens.Count > 0)
+            //1. Branch total dishes
+            List<BranchResultDto> summary = query.GroupBy(p => p.BranchId)
+                                            .Select(p => new BranchResultDto
+                                            {
+                                                BranchId = p.Key,
+                                                TotalDishes = p.Count(),
+                                                Restaurant = p.FirstOrDefault().Restaurant,
+                                                Branch = p.FirstOrDefault().Branch,
+                                                Latitude = p.FirstOrDefault().Latitude,
+                                                Longitude = p.FirstOrDefault().Longitude,
+                                                IsActive = true
+                                            }).ToList();
+            foreach (var item in summary)
             {
-                menuItems = menuItems.Where(p => p.Allergens.Intersect(allergens).Count() > 0);
+                Console.WriteLine($"Id {item.BranchId}, " +
+                    $"Name: {item.Branch}, " +
+                    $"Restaurant: {item.Restaurant} " +
+                    $"Lat: {item.Latitude}, " +
+                    $"Lon: {item.Longitude}, " +
+                    $"Total: {item.TotalDishes}");
             }
-            menuItems = menuItems.Where(p => p.Dietaries.Intersect(dietaries).Count() > 0);
 
-            var groupedAfterFiltering = menuItems.GroupBy(p => p.BranchId)
-                                .Select(p => new
-                                {
-                                    BranchId = p.Key,
-                                    FilteredDishes = p.Count()
-                                });
-
-            var joined = from g in grouped
-                         join gaf in groupedAfterFiltering on g.BranchId equals gaf.BranchId
-                         select new BranchResultDto
-                         {
-                             BranchId = g.BranchId,
-                             TotalDishes = g.TotalDishes,
-                             FilteredDishes = gaf.FilteredDishes
-                         };
-            //var resultBranch = query.GroupBy(p => p.BranchId);
-            List<BranchResultDto> result = joined.ToList();
-
-            foreach (var branch in result)
+            //2. Branch dishes which are having cuisineTypes[]
+            if (cuisineTypes.Count > 0)
             {
+                query = query.Where(p => cuisineTypes.Contains(p.CuisineTypeId)).ToList();
+            }
 
+            //3. Branch dishes which are not having allergens[]
+            if (allergens.Count > 0 || dietaries.Count > 0)
+            {
+                foreach (var item in query)
+                {
+                    var menuItemAllergens = item.Allergens;
+                    var menuItemDietaries = item.Dietaries;
+
+                    // if menu item allergens contains any of the allergens passed as parameter
+                    if (menuItemAllergens.Any(p => item.Allergens.Contains(p)))
+                    {
+                        item.IsActive = false;
+                    }
+                }
+            }
+            //4. Branch dishes which are having dietaries[]
+            //5. Branch total filtered dishes
+
+            var summaryFiltered = query.GroupBy(p => p.BranchId)
+                                       .Select(p => new
+                                       {
+                                           BranchId = p.Key,
+                                           FilteredDishes = p.Count(u => u.IsActive == true)
+                                       }).ToList();
+
+            for (int i = 0; i < summary.Count(); i++)
+            {
+                summary[i].FilteredDishes = summaryFiltered[i].FilteredDishes;
+            }
+
+            Console.WriteLine("After filtering");
+            foreach (var item in summary)
+            {
+                Console.WriteLine($"Id {item.BranchId}, " +
+                    $"Name: {item.Branch}, " +
+                    $"Restaurant: {item.Restaurant} " +
+                    $"Lat: {item.Latitude}, " +
+                    $"Lon: {item.Longitude}, " +
+                    $"Total: {item.TotalDishes}, " +
+                    $"Filtered: {item.FilteredDishes}");
             }
 
             var orderByList = new List<Tuple<SortingOption, Expression<Func<BranchResultDto, object>>>>();
@@ -242,7 +294,7 @@ namespace Mealmate.Infrastructure.Repository
             }
 
             var pagedList = new PagedList<BranchResultDto>(
-                result.AsQueryable(),
+                summary.AsQueryable(),
                 new PagingArgs
                 {
                     PageIndex = args.PageIndex,

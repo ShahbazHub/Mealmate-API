@@ -10,8 +10,10 @@ namespace Mealmate.Core.Dtos
         public IEnumerable<int> Allergens{ get; set; }
         public IEnumerable<int> Dietaries{ get; set; }
         public string Branch { get; set; }
+        public string Restaurant { get; set; }
         public int BranchId { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }
