@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Mealmate.Api.Helpers;
@@ -16,10 +17,10 @@ using Newtonsoft.Json.Linq;
 
 namespace Mealmate.Api.Controllers
 {
+    [ApiValidationFilter()]
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/allergens")]
-    [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AllergenController : ControllerBase
     {
@@ -31,6 +32,40 @@ namespace Mealmate.Api.Controllers
         }
 
         #region Read
+
+        [AllowAnonymous]
+        [HttpGet("list")]
+        [ProducesResponseType(typeof(IEnumerable<AllergenListModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<AllergenListModel>>> Get()
+        {
+            try
+            {
+                IEnumerable<AllergenListModel> data = null;
+                var result = await _allergenService.Get();
+                if (result != null)
+                {
+                    data = result.Select(p => new AllergenListModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        IsActive = p.IsActive
+                    });
+                }
+                return Ok(new ApiOkResponse(new { data }));
+
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
+            }
+        }
+
+        /// <summary>
+        /// List all allergens as per status
+        /// </summary>
+        /// <param name="isActive"></param>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("list/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<AllergenModel>), (int)HttpStatusCode.OK)]
@@ -41,13 +76,21 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _allergenService.Search(isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
-                return Ok(_jtoken);
+
+                return Ok(new ApiOkResponse(new { _jtoken }));
+
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest(ex);
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
+
+        /// <summary>
+        /// Get a single allergen for a specific id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<AllergenModel>), (int)HttpStatusCode.OK)]
@@ -55,16 +98,16 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
-                var temp = await _allergenService.GetById(id);
-                if (temp == null)
+                var data = await _allergenService.GetById(id);
+                if (data == null)
                 {
                     return NotFound($"Resource with id {id} no more exists");
                 }
-                return Ok(temp);
+                return Ok(new ApiOkResponse(new { data }));
             }
             catch (Exception)
             {
-                return BadRequest("Error while processing request");
+                return BadRequest(new ApiBadRequestResponse("Error while processing request"));
             }
         }
         #endregion
@@ -73,16 +116,22 @@ namespace Mealmate.Api.Controllers
         [HttpPost()]
         public async Task<ActionResult> Create([FromBody] AllergenCreateModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
                 var result = await _allergenService.Create(model);
                 if (result != null)
                 {
-                    return Created($"api/allergens/{result.Id}", result);
+                    return Created($"api/allergens/{result.Id}", new ApiCreatedResponse(result));
+                }
+                else
+                {
+                    return BadRequest(new ApiBadRequestResponse($"Error while creating resource"));
                 }
             }
-
-            return BadRequest(ModelState);
+            catch (Exception)
+            {
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
+            }
         }
         #endregion
 
@@ -92,20 +141,16 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(int id, AllergenUpdateModel model)
         {
-            //TODO: Add you code here
             try
             {
-                if (ModelState.IsValid)
-                {
-                    await _allergenService.Update(id, model);
-                }
+                await _allergenService.Update(id, model);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ApiBadRequestResponse(ex.Message));
             }
 
-            return Ok();
+            return Ok(new ApiOkResponse($"Data updated successfully"));
         }
         #endregion
 
