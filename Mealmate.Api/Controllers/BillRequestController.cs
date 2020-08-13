@@ -23,7 +23,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/billrequests")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BillRequestController : ControllerBase
     {
@@ -55,11 +55,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _billRequestService.Get(branchId, billRequestStateId);
-                return Ok(result);
+                return Ok(new ApiOkResponse(new { result }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -79,11 +79,11 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _billRequestService.Search(branchId, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -101,14 +101,13 @@ namespace Mealmate.Api.Controllers
                 var temp = await _billRequestService.GetById(id);
                 if (temp == null)
                 {
-                    return NotFound($"Resource with id {id} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {id} no more exists"));
                 }
-
-                return Ok(temp);
+                return Ok(new ApiOkResponse(new { temp }));
             }
             catch (Exception)
             {
-                return BadRequest("Error while processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -127,23 +126,23 @@ namespace Mealmate.Api.Controllers
                 var customer = await _userManager.Users.FirstOrDefaultAsync(p => p.Id == model.CustomerId);
                 if (customer == null)
                 {
-                    return NotFound($"User does't exist");
+                    return NotFound(new ApiNotFoundResponse($"User does't exist"));
                 }
 
                 var table = await _tableService.GetById(model.TableId);
                 if (table == null)
                 {
-                    return NotFound($"Table doesn't exists");
+                    return NotFound(new ApiNotFoundResponse($"Table doesn't exists"));
                 }
 
                 var result = await _billRequestService.Create(model);
                 if (result != null)
                 {
-                    return Created($"api/billRequests/{result.Id}", result);
+                    return Created($"api/billRequests/{result.Id}", new ApiCreatedResponse(result)); ;
                 }
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request"));
         }
         #endregion
 
@@ -162,17 +161,14 @@ namespace Mealmate.Api.Controllers
             //TODO: Add you code here
             try
             {
-                if (ModelState.IsValid)
-                {
-                    await _billRequestService.Update(id, model);
-                }
+                await _billRequestService.Update(id, model);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
 
-            return Ok();
+            return Ok(new ApiOkResponse("Updated"));
         }
         #endregion
 
@@ -191,12 +187,12 @@ namespace Mealmate.Api.Controllers
             {
                 await _billRequestService.Delete(id);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
 
-            return NoContent();
+            return Ok(new ApiOkResponse("Deleted"));
         }
         #endregion
     }
