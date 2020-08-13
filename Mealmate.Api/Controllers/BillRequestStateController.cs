@@ -48,11 +48,11 @@ namespace Mealmate.Api.Controllers
                 {
                     result = result.Where(p => p.IsActive == true);
                 }
-                return Ok(result);
+                return Ok(new ApiOkResponse(new { result }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -71,11 +71,11 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _billRequestStateService.Search(isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -93,14 +93,14 @@ namespace Mealmate.Api.Controllers
                 var temp = await _billRequestStateService.GetById(id);
                 if (temp == null)
                 {
-                    return NotFound($"Resource with id {id} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource Not Found"));
                 }
 
-                return Ok(temp);
+                return Ok(new ApiOkResponse(new { temp }));
             }
             catch (Exception)
             {
-                return BadRequest("Error while processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -114,16 +114,13 @@ namespace Mealmate.Api.Controllers
         [HttpPost()]
         public async Task<ActionResult> Create([FromBody] BillRequestStateCreateModel model)
         {
-            if (ModelState.IsValid)
+            var result = await _billRequestStateService.Create(model);
+            if (result != null)
             {
-                var result = await _billRequestStateService.Create(model);
-                if (result != null)
-                {
-                    return Created($"api/billRequestStates/{result.Id}", result);
-                }
+                return Created($"api/billRequestStates/{result.Id}", new ApiCreatedResponse(result));
             }
 
-            return BadRequest(ModelState);
+            return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request"));
         }
         #endregion
 
@@ -139,20 +136,16 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(int id, BillRequestStateUpdateModel model)
         {
-            //TODO: Add you code here
             try
             {
-                if (ModelState.IsValid)
-                {
-                    await _billRequestStateService.Update(id, model);
-                }
+                await _billRequestStateService.Update(id, model);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
 
-            return Ok();
+            return Ok(new ApiOkResponse($"Updated"));
         }
         #endregion
 
@@ -173,10 +166,10 @@ namespace Mealmate.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
 
-            return NoContent();
+            return Ok(new ApiOkResponse($"Deleted"));
         }
         #endregion
     }
