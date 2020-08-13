@@ -16,12 +16,15 @@ namespace Mealmate.Api
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Message { get; }
 
-        public ApiResponse(int statusCode, string message = null)
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public object Result { get; }
+      
+        public ApiResponse(int statusCode, string message = null, object result = null)
         {
             StatusCode = statusCode;
             Message = message ?? GetDefaultMessageForStatusCode(statusCode);
+            Result = result;
         }
-
         private static string GetDefaultMessageForStatusCode(int statusCode)
         {
             return ((HttpStatusCode)statusCode).ToString();

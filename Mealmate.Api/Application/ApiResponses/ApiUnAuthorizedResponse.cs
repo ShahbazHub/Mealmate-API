@@ -4,6 +4,6 @@ namespace Mealmate.Api
 {
     public class ApiUnAuthorizedResponse : ApiResponse
     {
-        public ApiUnAuthorizedResponse(string Message) : base(StatusCodes.Status401Unauthorized, Message){}
+        public ApiUnAuthorizedResponse(string message) : base(StatusCodes.Status401Unauthorized, message) {}
     }
 }

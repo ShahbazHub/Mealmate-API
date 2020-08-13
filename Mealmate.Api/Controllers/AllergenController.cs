@@ -17,7 +17,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Mealmate.Api.Controllers
 {
-    [ApiValidationFilter()]
+    [ApiValidationFilter]
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/allergens")]

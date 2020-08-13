@@ -5,8 +5,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mealmate.Api
 {
@@ -15,7 +13,7 @@ namespace Mealmate.Api
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<string> Errors { get; set; }
 
-        public ApiBadRequestResponse(ModelStateDictionary modelState) : base(StatusCodes.Status400BadRequest)
+        public ApiBadRequestResponse(ModelStateDictionary modelState, string message = null) : base(StatusCodes.Status400BadRequest, message)
         {
             if (modelState.IsValid)
             {
@@ -26,13 +24,9 @@ namespace Mealmate.Api
         }
 
 
-        public ApiBadRequestResponse(string message)
-            : base(StatusCodes.Status400BadRequest, message)
-        {
-        }
+        public ApiBadRequestResponse(string message) : base(StatusCodes.Status400BadRequest, message) { }
 
-        public ApiBadRequestResponse(IEnumerable<IdentityError> errors, string msg) 
-            : base(StatusCodes.Status400BadRequest, msg)
+        public ApiBadRequestResponse(IEnumerable<IdentityError> errors, string message = null) : base(StatusCodes.Status400BadRequest, message)
         {
             Errors = errors.Select(x => x.Description);
         }

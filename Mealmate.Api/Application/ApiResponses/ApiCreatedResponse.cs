@@ -5,20 +5,12 @@ namespace Mealmate.Api
 {
     public class ApiCreatedResponse : ApiResponse
     {
-        public object Result { get; }
-
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Url { get; }
 
-        public ApiCreatedResponse(object result) : base(StatusCodes.Status201Created)
-        {
-            Result = result;
-        }
-        public ApiCreatedResponse(string url, object result)
-            : base(StatusCodes.Status201Created)
+        public ApiCreatedResponse(object result, string url = null) : base(StatusCodes.Status201Created, result: result)
         {
             Url = url;
-            Result = result;
         }
     }
 }
