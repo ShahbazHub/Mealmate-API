@@ -20,7 +20,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/qrcodes")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class QRCodeController : ControllerBase
     {
@@ -42,11 +42,11 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _qRCodeService.Get(tableId);
                 JToken _jtoken = TokenService.CreateJToken(result, props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -59,11 +59,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var temp = await _qRCodeService.GetById(qrCodeId);
-                return Ok(temp);
+                 return Ok(new ApiOkResponse(new { temp }));
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                return BadRequest(ex.Message);
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
         }
         #endregion
@@ -86,7 +86,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult> Update(QRCodeModel request)
         {
             await _qRCodeService.Update(request);
-            return Ok();
+             return Ok(new ApiOkResponse());
         }
         #endregion
 
@@ -97,7 +97,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult> Delete(int qrCodeId)
         {
             await _qRCodeService.Delete(qrCodeId);
-            return Ok();
+             return Ok(new ApiOkResponse());
         }
         #endregion
 

@@ -19,7 +19,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/userdietaries")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserDietaryController : ControllerBase
     {
@@ -43,11 +43,11 @@ namespace Mealmate.Api.Controllers
             {
                 var UserDietarys = await _userDietaryService.Search(userId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(UserDietarys, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -59,11 +59,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var temp = await _userDietaryService.Get(userDietaryId);
-                return Ok(temp);
+                 return Ok(new ApiOkResponse(new { temp }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -81,7 +81,7 @@ namespace Mealmate.Api.Controllers
             }
             catch (System.Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -95,11 +95,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _userDietaryService.Update(id, request);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -113,11 +113,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _userDietaryService.Delete(userDietaryId);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (System.Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Controllers
 {
-    [ApiController]
+    [ApiValidationFilter]
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/users")]
@@ -59,12 +59,12 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _userService.Get();
-                return Ok(result);
+                 return Ok(new ApiOkResponse(new { result }));;
 
             }
             catch (System.Exception)
             {
-                return BadRequest($"Error processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -82,13 +82,13 @@ namespace Mealmate.Api.Controllers
                 var result = await _userService.GetById(id);
                 if (result == null)
                 {
-                    return NotFound($"User with id {id} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"User with id {id} no more exists"));
                 }
-                return Ok(result);
+                 return Ok(new ApiOkResponse(new { result }));;
             }
             catch (System.Exception)
             {
-                return BadRequest($"Error processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -107,11 +107,11 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _userRestaurantService.List(id, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (System.Exception)
             {
-                return BadRequest($"Error processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -136,15 +136,11 @@ namespace Mealmate.Api.Controllers
                     }
                 }
 
-                return BadRequest($"Error registering new user");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
-            catch(ApplicationException ex)
+            catch(ApplicationException)
             {
-                return BadRequest($"{ex.Message}");
-            }
-            catch (System.Exception)
-            {
-                return BadRequest($"Error processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -165,15 +161,15 @@ namespace Mealmate.Api.Controllers
                 var result = await _userService.GetById(id);
                 if (result == null)
                 {
-                    return NotFound($"User with id {id} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"User with id {id} no more exists"));
                 }
                 var updatedUser = await _userService.Update(id, request);
 
-                return Ok(updatedUser);
+                return Ok(new ApiOkResponse(new { updatedUser }));
             }
-            catch (System.Exception)
+            catch (Exception)
             {
-                return BadRequest("Error processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -193,15 +189,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _userService.Delete(id);
-                return NoContent();
-            }
-            catch (ApplicationException ex)
-            {
-                return BadRequest($"{ex.Message}");
+                 return Ok(new ApiOkResponse($"Deleted"));
             }
             catch (Exception)
             {
-                return BadRequest("Error processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion

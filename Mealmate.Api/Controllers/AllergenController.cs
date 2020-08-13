@@ -101,7 +101,7 @@ namespace Mealmate.Api.Controllers
                 var data = await _allergenService.GetById(id);
                 if (data == null)
                 {
-                    return NotFound($"Resource with id {id} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {id} no more exists"));
                 }
                 return Ok(new ApiOkResponse(new { data }));
             }
@@ -164,12 +164,12 @@ namespace Mealmate.Api.Controllers
             {
                 await _allergenService.Delete(id);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                return BadRequest(ex.Message);
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
 
-            return NoContent();
+             return Ok(new ApiOkResponse($"Deleted"));
         }
         #endregion
     }

@@ -17,7 +17,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/menuitems")]
-    [ApiController]
+    [ApiValidationFilter]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemController : ControllerBase
     {
@@ -40,11 +40,11 @@ namespace Mealmate.Api.Controllers
             {
                 var MenuItems = await _menuItemService.Search(model, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItems, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest($"{ex.Message}");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -58,11 +58,11 @@ namespace Mealmate.Api.Controllers
             {
                 var MenuItems = await _menuItemService.Search(menuId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItems, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -76,13 +76,13 @@ namespace Mealmate.Api.Controllers
                 var temp = await _menuItemService.GetById(menuItemId);
                 if (temp == null)
                 {
-                    return NotFound($"Resource with id {menuItemId} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {menuItemId} no more exists"));
                 }
-                return Ok(temp);
+                 return Ok(new ApiOkResponse(new { temp }));
             }
             catch (Exception)
             {
-                return BadRequest("Error while processing your request");
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
         }
 
@@ -100,7 +100,7 @@ namespace Mealmate.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -118,7 +118,7 @@ namespace Mealmate.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -134,7 +134,7 @@ namespace Mealmate.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -148,11 +148,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _menuItemService.Update(id, request);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -170,12 +170,12 @@ namespace Mealmate.Api.Controllers
                     await _menuItemService.Update(id, model);
                 }
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                return BadRequest(ex.Message);
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
 
-            return Ok();
+             return Ok(new ApiOkResponse());
         }
         #endregion
 
@@ -188,11 +188,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _menuItemService.Delete(menuItemId);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion

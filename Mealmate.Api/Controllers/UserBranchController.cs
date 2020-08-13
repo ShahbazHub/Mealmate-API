@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mealmate.Api.Controllers
 {
-    [ApiController]
+    [ApiValidationFilter]
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/userbranches")]
@@ -49,12 +49,12 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _userBranchService.Get(restaurantId, userId);
-                return Ok(result);
+                 return Ok(new ApiOkResponse(new { result }));;
 
             }
             catch (System.Exception)
             {
-                return BadRequest($"Error processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
     }

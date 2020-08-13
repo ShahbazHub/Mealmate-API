@@ -19,7 +19,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/optionItemDietaries")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class OptionItemDietaryController : ControllerBase
     {
@@ -74,7 +74,7 @@ namespace Mealmate.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         [Route("{optionItemId}/{isActive}")]
@@ -87,11 +87,11 @@ namespace Mealmate.Api.Controllers
             {
                 var OptionItemDietarys = await _optionItemDietaryService.Search(optionItemId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(OptionItemDietarys, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -105,13 +105,13 @@ namespace Mealmate.Api.Controllers
                 var temp = await _optionItemDietaryService.GetById(optionItemDietaryId);
                 if (temp == null)
                 {
-                    return NotFound($"Resource with id {optionItemDietaryId} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {optionItemDietaryId} no more exists"));
                 }
-                return Ok(temp);
+                 return Ok(new ApiOkResponse(new { temp }));
             }
             catch (Exception)
             {
-                return BadRequest("Error while processing your request");
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
         }
         #endregion
@@ -129,7 +129,7 @@ namespace Mealmate.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -143,11 +143,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _optionItemDietaryService.Update(id, request);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -159,7 +159,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult> Delete(int optionItemDietaryId)
         {
             await _optionItemDietaryService.Delete(optionItemDietaryId);
-            return Ok();
+             return Ok(new ApiOkResponse());
         }
         #endregion
 

@@ -140,7 +140,7 @@ namespace Mealmate.Api.Controllers
             {
                 await _billRequestStateService.Update(id, model);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
@@ -164,7 +164,7 @@ namespace Mealmate.Api.Controllers
             {
                 await _billRequestStateService.Delete(id);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }

@@ -638,7 +638,7 @@ namespace Mealmate.Api.Controllers
         //    {
         //        var change = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
         //        if (change.Succeeded)
-        //            return Ok();
+        //             return Ok(new ApiOkResponse());
         //    }
 
         //    return Unauthorized();
@@ -659,7 +659,7 @@ namespace Mealmate.Api.Controllers
         //        await _emailService.SendEmailAsync(email, "Reset Password", message);
         //        return Ok("Check Your email...");
         //    }
-        //    return BadRequest();
+        //    return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
         //}
 
         //[AllowAnonymous]
@@ -675,7 +675,7 @@ namespace Mealmate.Api.Controllers
         //            return Ok("User Password Changed Successfully!");
         //        }
         //    }
-        //    return BadRequest();
+        //    return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
         //}
 
         #endregion
@@ -697,7 +697,7 @@ namespace Mealmate.Api.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
-                    return NotFound($"User with email {model.Email} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"User with email {model.Email} no more exists"));
                 }
 
                 var userOtps = _mealmateContext.UserOtps.Where(p => p.UserId == user.Id && p.IsActive == true);
@@ -808,7 +808,7 @@ namespace Mealmate.Api.Controllers
         //        var user = await _userManager.FindByEmailAsync(model.Email);
         //        if (user == null)
         //        {
-        //            return NotFound($"User with email {model.Email} no more exists");
+        //            return NotFound(new ApiNotFoundResponse($"User with email {model.Email} no more exists");
         //        }
 
         //        var nowTime = DateTime.UtcNow.TimeOfDay;
@@ -821,7 +821,7 @@ namespace Mealmate.Api.Controllers
 
         //        if (userOtp == null)
         //        {
-        //            return NotFound($"OTP not matched / expired");
+        //            return NotFound(new ApiNotFoundResponse($"OTP not matched / expired");
         //        }
 
         //        userOtp.IsActive = false;
@@ -835,7 +835,7 @@ namespace Mealmate.Api.Controllers
         //        //TODO: Log errors
         //    }
 
-        //    return BadRequest("Error while processing your request");
+        //     return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
         //}
         #endregion
 

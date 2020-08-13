@@ -19,7 +19,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/tables")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class TableController : ControllerBase
     {
@@ -44,11 +44,11 @@ namespace Mealmate.Api.Controllers
             {
                 var Tables = await _tableService.Search(locationId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Tables, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -62,7 +62,7 @@ namespace Mealmate.Api.Controllers
                 var table = await _tableService.GetById(tableId);
                 if (table == null)
                 {
-                    return NotFound($"Resource with id {tableId} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {tableId} no more exists"));
                 }
                 return Ok(table);
             }
@@ -83,11 +83,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _tableService.Create(request);
-                return Ok(result);
+                 return Ok(new ApiOkResponse(new { result }));;
             }
             catch (System.Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
 
         }
@@ -101,11 +101,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _tableService.Create(request);
-                return Ok(result);
+                 return Ok(new ApiOkResponse(new { result }));;
             }
             catch (System.Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
 
         }
@@ -120,11 +120,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _tableService.Update(id, request);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -138,11 +138,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _tableService.Delete(tableId);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion

@@ -19,7 +19,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/menuitemoptions")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemOptionController : ControllerBase
     {
@@ -42,11 +42,11 @@ namespace Mealmate.Api.Controllers
             {
                 var MenuItemOptions = await _menuItemOptionService.Search(menuItemId, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItemOptions, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -60,13 +60,13 @@ namespace Mealmate.Api.Controllers
                 var temp = await _menuItemOptionService.GetById(menuItemOptionId);
                 if (temp == null)
                 {
-                    return NotFound($"Resource with id {menuItemOptionId} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {menuItemOptionId} no more exists"));
                 }
-                return Ok(temp);
+                 return Ok(new ApiOkResponse(new { temp }));
             }
             catch (Exception)
             {
-                return BadRequest("Error while processing your request");
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
         }
         #endregion
@@ -91,7 +91,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult> Update(MenuItemOptionModel request)
         {
             await _menuItemOptionService.Update(request);
-            return Ok();
+             return Ok(new ApiOkResponse());
         }
         #endregion
 
@@ -102,7 +102,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult> Delete(int menuItemOptionId)
         {
             await _menuItemOptionService.Delete(menuItemOptionId);
-            return Ok();
+             return Ok(new ApiOkResponse());
         }
         #endregion
 

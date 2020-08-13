@@ -19,7 +19,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/menuItemAllergens")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuItemAllergenController : ControllerBase
     {
@@ -74,7 +74,7 @@ namespace Mealmate.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         [Route("{menuItemId}/{isActive}")]
@@ -87,11 +87,11 @@ namespace Mealmate.Api.Controllers
             {
                 var MenuItemAllergens = await _menuItemAllergenService.Search(menuItemId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItemAllergens, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -105,13 +105,13 @@ namespace Mealmate.Api.Controllers
                 var temp = await _menuItemAllergenService.GetById(menuItemAllergenId);
                 if (temp == null)
                 {
-                    return NotFound($"Resource with id {menuItemAllergenId} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {menuItemAllergenId} no more exists"));
                 }
-                return Ok(temp);
+                 return Ok(new ApiOkResponse(new { temp }));
             }
             catch (Exception)
             {
-                return BadRequest("Error while processing your request");
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
         }
         #endregion
@@ -129,7 +129,7 @@ namespace Mealmate.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -143,11 +143,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _menuItemAllergenService.Update(id, request);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -161,11 +161,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _menuItemAllergenService.Delete(menuItemAllergenId);
-                return Ok();
+                 return Ok(new ApiOkResponse());
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion

@@ -71,7 +71,7 @@ namespace Mealmate.Api.Controllers
                 var model = await _branchService.GetById(branchId);
                 if (model == null)
                 {
-                    return NotFound($"Resource with id {branchId} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {branchId} no more exists"));
                 }
 
                 return Ok(new ApiOkResponse(new { model }));

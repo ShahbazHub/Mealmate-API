@@ -17,7 +17,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/menus")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MenuController : ControllerBase
     {
@@ -41,11 +41,11 @@ namespace Mealmate.Api.Controllers
             {
                 var Menus = await _menuService.Search(branchId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Menus, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -60,13 +60,13 @@ namespace Mealmate.Api.Controllers
                 var Menu = await _menuService.GetById(menuId);
                 if (Menu == null)
                 {
-                    return NotFound($"Resource with id {menuId} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource Not Found"));
                 }
                 return Ok(Menu);
             }
             catch (Exception)
             {
-                return BadRequest($"Error while processing request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -78,7 +78,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult<MenuModel>> Create([FromBody] MenuCreateModel request)
         {
             var result = await _menuService.Create(request);
-            return Ok(result);
+             return Ok(new ApiOkResponse(new { result }));;
         }
         #endregion
 
@@ -89,7 +89,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult> Update(int id, [FromBody] MenuUpdateModel request)
         {
             await _menuService.Update(id, request);
-            return Ok();
+            return Ok(new ApiOkResponse());
         }
         #endregion
 
@@ -100,7 +100,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult> Delete(int menuId)
         {
             await _menuService.Delete(menuId);
-            return Ok();
+             return Ok(new ApiOkResponse());
         }
         #endregion
     }

@@ -20,7 +20,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/orderstates")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class OrderStateController : ControllerBase
     {
@@ -44,11 +44,11 @@ namespace Mealmate.Api.Controllers
                 {
                     result = result.Where(p => p.IsActive == true);
                 }
-                return Ok(result);
+                 return Ok(new ApiOkResponse(new { result }));;
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -61,11 +61,11 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _orderStateService.Search(isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         [HttpGet("{id}")]
@@ -77,14 +77,14 @@ namespace Mealmate.Api.Controllers
                 var temp = await _orderStateService.GetById(id);
                 if (temp == null)
                 {
-                    return NotFound($"Resource with id {id} no more exists");
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {id} no more exists"));
                 }
 
-                return Ok(temp);
+                 return Ok(new ApiOkResponse(new { temp }));
             }
             catch(Exception)
             {
-                return BadRequest("Error while processing your request");
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
         }
         #endregion
@@ -102,7 +102,7 @@ namespace Mealmate.Api.Controllers
                 }
             }
 
-            return BadRequest(ModelState);
+             return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request"));;
         }
         #endregion
 
@@ -120,12 +120,12 @@ namespace Mealmate.Api.Controllers
                     await _orderStateService.Update(id, model);
                 }
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                return BadRequest(ex.Message);
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
 
-            return Ok();
+             return Ok(new ApiOkResponse());
         }
         #endregion
 
@@ -139,12 +139,12 @@ namespace Mealmate.Api.Controllers
             {
                 await _orderStateService.Delete(id);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
-                return BadRequest(ex.Message);
+                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
             }
 
-            return NoContent();
+             return Ok(new ApiOkResponse($"Deleted"));
         }
         #endregion
     }
