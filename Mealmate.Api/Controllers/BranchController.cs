@@ -19,7 +19,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/branches")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BranchController : ControllerBase
     {
@@ -48,11 +48,11 @@ namespace Mealmate.Api.Controllers
             {
                 var Branches = await _branchService.Search(restaurantId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Branches, request.Props);
-                return Ok(_jtoken);
+                return Ok(new ApiOkResponse(new { _jtoken }));
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
 
@@ -74,11 +74,11 @@ namespace Mealmate.Api.Controllers
                     return NotFound($"Resource with id {branchId} no more exists");
                 }
 
-                return Ok(model);
+                return Ok(new ApiOkResponse(new { model }));
             }
             catch (Exception)
             {
-                return BadRequest("Error processing your request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -96,12 +96,12 @@ namespace Mealmate.Api.Controllers
         {
             try
             {
-                var commandResult = await _branchService.Create(request);
-                return Ok(commandResult);
+                var result = await _branchService.Create(request);
+                return Ok(new ApiOkResponse(new { result }));
             }
             catch (Exception)
             {
-                return BadRequest("Error creating resource");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -121,11 +121,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _branchService.Update(id, request);
-                return Ok();
+                return Ok(new ApiOkResponse($"Updated"));
             }
             catch (Exception)
             {
-                return BadRequest("Error processing request");
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion
@@ -144,11 +144,11 @@ namespace Mealmate.Api.Controllers
             try
             {
                 await _branchService.Delete(branchId);
-                return Ok();
+                return Ok(new ApiOkResponse($"Deleted"));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return NotFound(ex.Message);
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
         #endregion

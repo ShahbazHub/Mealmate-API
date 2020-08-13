@@ -20,7 +20,7 @@ namespace Mealmate.Api.Controllers
     [Consumes("application/json")]
     [Produces("application/json")]
     [Route("api/billRequeststates")]
-    [ApiController]
+    [ApiValidationFilter]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BillRequestStateController : ControllerBase
     {
