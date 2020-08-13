@@ -512,7 +512,7 @@ namespace Mealmate.Api.Controllers
                 var createdResult = await _userManager.CreateAsync(newUser);
                 if (!createdResult.Succeeded)
                 {
-                    return BadRequest("something went wrong");
+                    return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
                 }
                 var authResponse1 = await GenerateJwtToken(newUser);
                 var newUserToReturn = _mapper.Map<UserModel>(newUser);
