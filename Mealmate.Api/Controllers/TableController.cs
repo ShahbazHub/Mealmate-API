@@ -44,7 +44,7 @@ namespace Mealmate.Api.Controllers
             {
                 var Tables = await _tableService.Search(locationId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Tables, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -82,7 +82,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _tableService.Create(request);
-                 return Ok(new ApiOkResponse(new { result }));;
+                 return Ok(new ApiOkResponse(result));;
             }
             catch (System.Exception)
             {
@@ -100,7 +100,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _tableService.Create(request);
-                 return Ok(new ApiOkResponse(new { result }));;
+                 return Ok(new ApiOkResponse(result));;
             }
             catch (System.Exception)
             {

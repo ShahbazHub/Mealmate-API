@@ -87,7 +87,7 @@ namespace Mealmate.Api.Controllers
             {
                 var MenuItemAllergens = await _menuItemAllergenService.Search(menuItemId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItemAllergens, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -107,7 +107,7 @@ namespace Mealmate.Api.Controllers
                 {
                     return NotFound(new ApiNotFoundResponse($"Resource with id {menuItemAllergenId} no more exists"));
                 }
-                 return Ok(new ApiOkResponse(new { temp }));
+                 return Ok(new ApiOkResponse(temp));
             }
             catch (Exception)
             {

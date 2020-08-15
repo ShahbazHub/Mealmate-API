@@ -37,7 +37,7 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _orderItemDetailService.Get(orderItemId);
                 JToken _jtoken = TokenService.CreateJToken(result, props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -57,7 +57,7 @@ namespace Mealmate.Api.Controllers
                 {
                     return NotFound(new ApiNotFoundResponse($"Resource with id {id} no more exists"));
                 }
-                 return Ok(new ApiOkResponse(new { temp }));
+                 return Ok(new ApiOkResponse(temp));
             }
             catch (System.Exception)
             {

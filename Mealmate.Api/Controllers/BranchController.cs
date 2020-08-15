@@ -48,7 +48,7 @@ namespace Mealmate.Api.Controllers
             {
                 var Branches = await _branchService.Search(restaurantId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Branches, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -74,7 +74,7 @@ namespace Mealmate.Api.Controllers
                     return NotFound(new ApiNotFoundResponse($"Resource with id {branchId} no more exists"));
                 }
 
-                return Ok(new ApiOkResponse(new { model }));
+                return Ok(new ApiOkResponse(model));
             }
             catch (Exception)
             {
@@ -97,7 +97,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _branchService.Create(request);
-                return Ok(new ApiOkResponse(new { result }));
+                return Ok(new ApiOkResponse(result));
             }
             catch (Exception)
             {

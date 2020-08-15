@@ -5,9 +5,20 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Application.Firebase
 {
-    public class FirebaseMessagingService
+    public class FCMService
     {
-        internal static async Task SendToTokenAsync()
+        private FirebaseMessaging _fCMDefaultInstance;
+        private Message _message;
+        public FCMService()
+        {
+            _fCMDefaultInstance = FirebaseMessaging.DefaultInstance;
+            _message = new Message()
+            {
+
+            };
+
+        }
+        public async Task SendToTokenAsync()
         {
             // [START send_to_token]
             // This registration token comes from the client FCM SDKs.
@@ -26,13 +37,13 @@ namespace Mealmate.Api.Application.Firebase
 
             // Send a message to the device corresponding to the provided
             // registration token.
-            string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+            string response = await _fCMDefaultInstance.SendAsync(message);
             // Response is a message ID string.
             Console.WriteLine("Successfully sent message: " + response);
             // [END send_to_token]
         }
 
-        internal static async Task SendToTopicAsync()
+        public async Task SendToTopicAsync()
         {
             // [START send_to_topic]
             // The topic name can be optionally prefixed with "/topics/".
@@ -50,13 +61,13 @@ namespace Mealmate.Api.Application.Firebase
             };
 
             // Send a message to the devices subscribed to the provided topic.
-            string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+            string response = await _fCMDefaultInstance.SendAsync(message);
             // Response is a message ID string.
             Console.WriteLine("Successfully sent message: " + response);
             // [END send_to_topic]
         }
 
-        internal static async Task SendToConditionAsync()
+        public async Task SendToConditionAsync()
         {
             // [START send_to_condition]
             // Define a condition which will send to devices which are subscribed
@@ -76,13 +87,13 @@ namespace Mealmate.Api.Application.Firebase
 
             // Send a message to devices subscribed to the combination of topics
             // specified by the provided condition.
-            string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+            string response = await _fCMDefaultInstance.SendAsync(message);
             // Response is a message ID string.
             Console.WriteLine("Successfully sent message: " + response);
             // [END send_to_condition]
         }
 
-        internal static async Task SendDryRunAsync()
+        public async Task SendDryRunAsync()
         {
             var message = new Message()
             {
@@ -96,14 +107,14 @@ namespace Mealmate.Api.Application.Firebase
 
             // [START send_dry_run]
             // Send a message in the dry run mode.
-            string response = await FirebaseMessaging.DefaultInstance.SendAsync(
+            string response = await _fCMDefaultInstance.SendAsync(
                 message, dryRun: true);
             // Response is a message ID string.
             Console.WriteLine("Dry run successful: " + response);
             // [END send_dry_run]
         }
 
-        internal static async Task SendAllAsync()
+        public async Task SendAllAsync()
         {
             var registrationToken = "YOUR_REGISTRATION_TOKEN";
             // [START send_all]
@@ -130,14 +141,14 @@ namespace Mealmate.Api.Application.Firebase
                 },
             };
 
-            var response = await FirebaseMessaging.DefaultInstance.SendAllAsync(messages);
+            var response = await _fCMDefaultInstance.SendAllAsync(messages);
             // See the BatchResponse reference documentation
             // for the contents of response.
             Console.WriteLine($"{response.SuccessCount} messages were sent successfully");
             // [END send_all]
         }
 
-        internal static async Task SendMulticastAsync()
+        public async Task SendMulticastAsync()
         {
             // [START send_multicast]
             // Create a list containing up to 100 registration tokens.
@@ -158,14 +169,14 @@ namespace Mealmate.Api.Application.Firebase
                 },
             };
 
-            var response = await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);
+            var response = await _fCMDefaultInstance.SendMulticastAsync(message);
             // See the BatchResponse reference documentation
             // for the contents of response.
             Console.WriteLine($"{response.SuccessCount} messages were sent successfully");
             // [END send_multicast]
         }
 
-        internal static async Task SendMulticastAndHandleErrorsAsync()
+        public async Task SendMulticastAndHandleErrorsAsync()
         {
             // [START send_multicast_error]
             // These registration tokens come from the client FCM SDKs.
@@ -185,7 +196,7 @@ namespace Mealmate.Api.Application.Firebase
                 },
             };
 
-            var response = await FirebaseMessaging.DefaultInstance.SendMulticastAsync(message);
+            var response = await _fCMDefaultInstance.SendMulticastAsync(message);
             if (response.FailureCount > 0)
             {
                 var failedTokens = new List<string>();
@@ -204,7 +215,7 @@ namespace Mealmate.Api.Application.Firebase
             // [END send_multicast_error]
         }
 
-        internal static Message CreateAndroidMessage()
+        public Message CreateAndroidMessage()
         {
             // [START android_message]
             var message = new Message
@@ -227,7 +238,7 @@ namespace Mealmate.Api.Application.Firebase
             return message;
         }
 
-        internal static Message CreateAPNSMessage()
+        public Message CreateAPNSMessage()
         {
             // [START apns_message]
             var message = new Message
@@ -255,7 +266,7 @@ namespace Mealmate.Api.Application.Firebase
             return message;
         }
 
-        internal static Message CreateWebpushMessage()
+        public Message CreateWebpushMessage()
         {
             // [START webpush_message]
             var message = new Message
@@ -275,7 +286,7 @@ namespace Mealmate.Api.Application.Firebase
             return message;
         }
 
-        internal static Message CreateMultiPlatformsMessage()
+        public Message CreateMultiPlatformsMessage()
         {
             // [START multi_platforms_message]
             var message = new Message
@@ -307,7 +318,7 @@ namespace Mealmate.Api.Application.Firebase
             return message;
         }
 
-        internal static async Task SubscribeToTopicAsync(string topic)
+        public async Task SubscribeToTopicAsync(string topic)
         {
             // [START subscribe_to_topic]
             // These registration tokens come from the client FCM SDKs.
@@ -320,7 +331,7 @@ namespace Mealmate.Api.Application.Firebase
 
             // Subscribe the devices corresponding to the registration tokens to the
             // topic
-            var response = await FirebaseMessaging.DefaultInstance.SubscribeToTopicAsync(
+            var response = await _fCMDefaultInstance.SubscribeToTopicAsync(
                 registrationTokens, topic);
             // See the TopicManagementResponse reference documentation
             // for the contents of response.
@@ -328,7 +339,7 @@ namespace Mealmate.Api.Application.Firebase
             // [END subscribe_to_topic]
         }
 
-        internal static async Task UnsubscribeFromTopicAsync(string topic)
+        public async Task UnsubscribeFromTopicAsync(string topic)
         {
             // [START unsubscribe_from_topic]
             // These registration tokens come from the client FCM SDKs.
@@ -341,7 +352,7 @@ namespace Mealmate.Api.Application.Firebase
 
             // Unsubscribe the devices corresponding to the registration tokens from the
             // topic
-            var response = await FirebaseMessaging.DefaultInstance.UnsubscribeFromTopicAsync(
+            var response = await _fCMDefaultInstance.UnsubscribeFromTopicAsync(
                 registrationTokens, topic);
             // See the TopicManagementResponse reference documentation
             // for the contents of response.

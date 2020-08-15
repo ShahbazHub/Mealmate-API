@@ -43,7 +43,7 @@ namespace Mealmate.Api.Controllers
             {
                 var Locations = await _locationService.Search(branchId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Locations, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -80,7 +80,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _locationService.Create(request);
-                 return Ok(new ApiOkResponse(new { result }));;
+                 return Ok(new ApiOkResponse(result));;
 
             }
             catch (Exception)

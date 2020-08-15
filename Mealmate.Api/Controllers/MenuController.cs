@@ -41,7 +41,7 @@ namespace Mealmate.Api.Controllers
             {
                 var Menus = await _menuService.Search(branchId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(Menus, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -78,7 +78,7 @@ namespace Mealmate.Api.Controllers
         public async Task<ActionResult<MenuModel>> Create([FromBody] MenuCreateModel request)
         {
             var result = await _menuService.Create(request);
-             return Ok(new ApiOkResponse(new { result }));;
+             return Ok(new ApiOkResponse(result));;
         }
         #endregion
 

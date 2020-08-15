@@ -40,7 +40,7 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _cuisineTypeService.Search(isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -60,7 +60,7 @@ namespace Mealmate.Api.Controllers
                     return NotFound(new ApiNotFoundResponse($"Resource with id {id} no more exists"));
                 }
 
-                 return Ok(new ApiOkResponse(new { temp }));
+                 return Ok(new ApiOkResponse(temp));
             }
             catch (Exception)
             {

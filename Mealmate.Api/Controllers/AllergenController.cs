@@ -51,7 +51,7 @@ namespace Mealmate.Api.Controllers
                         IsActive = p.IsActive
                     });
                 }
-                return Ok(new ApiOkResponse(new { data }));
+                return Ok(new ApiOkResponse(data));
 
             }
             catch (Exception)
@@ -77,7 +77,7 @@ namespace Mealmate.Api.Controllers
                 var result = await _allergenService.Search(isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
 
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
 
             }
             catch (Exception)
@@ -103,7 +103,7 @@ namespace Mealmate.Api.Controllers
                 {
                     return NotFound(new ApiNotFoundResponse($"Resource with id {id} no more exists"));
                 }
-                return Ok(new ApiOkResponse(new { data }));
+                return Ok(new ApiOkResponse(data));
             }
             catch (Exception)
             {

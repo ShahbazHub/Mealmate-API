@@ -49,7 +49,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _userBranchService.Get(restaurantId, userId);
-                 return Ok(new ApiOkResponse(new { result }));;
+                 return Ok(new ApiOkResponse(result));;
 
             }
             catch (System.Exception)

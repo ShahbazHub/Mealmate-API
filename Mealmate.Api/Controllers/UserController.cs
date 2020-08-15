@@ -59,7 +59,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _userService.Get();
-                 return Ok(new ApiOkResponse(new { result }));;
+                 return Ok(new ApiOkResponse(result));;
 
             }
             catch (System.Exception)
@@ -84,7 +84,7 @@ namespace Mealmate.Api.Controllers
                 {
                     return NotFound(new ApiNotFoundResponse($"User with id {id} no more exists"));
                 }
-                 return Ok(new ApiOkResponse(new { result }));;
+                 return Ok(new ApiOkResponse(result));;
             }
             catch (System.Exception)
             {
@@ -107,7 +107,7 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _userRestaurantService.List(id, request);
                 JToken _jtoken = TokenService.CreateJToken(result, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (System.Exception)
             {
@@ -165,7 +165,7 @@ namespace Mealmate.Api.Controllers
                 }
                 var updatedUser = await _userService.Update(id, request);
 
-                return Ok(new ApiOkResponse(new { updatedUser }));
+                return Ok(new ApiOkResponse(updatedUser));
             }
             catch (Exception)
             {

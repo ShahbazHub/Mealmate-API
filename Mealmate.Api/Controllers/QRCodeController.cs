@@ -42,7 +42,7 @@ namespace Mealmate.Api.Controllers
             {
                 var result = await _qRCodeService.Get(tableId);
                 JToken _jtoken = TokenService.CreateJToken(result, props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -59,7 +59,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var temp = await _qRCodeService.GetById(qrCodeId);
-                 return Ok(new ApiOkResponse(new { temp }));
+                 return Ok(new ApiOkResponse(temp));
             }
             catch (Exception )
             {

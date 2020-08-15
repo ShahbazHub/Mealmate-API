@@ -43,7 +43,7 @@ namespace Mealmate.Api.Controllers
             {
                 var UserAllergens = await _userAllergenService.Search(userId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(UserAllergens, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -60,7 +60,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var temp = await _userAllergenService.Get(userAllergenId);
-                 return Ok(new ApiOkResponse(new { temp }));
+                 return Ok(new ApiOkResponse(temp));
             }
             catch (Exception)
             {

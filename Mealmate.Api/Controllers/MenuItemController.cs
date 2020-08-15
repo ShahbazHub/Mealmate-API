@@ -40,7 +40,7 @@ namespace Mealmate.Api.Controllers
             {
                 var MenuItems = await _menuItemService.Search(model, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItems, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -58,7 +58,7 @@ namespace Mealmate.Api.Controllers
             {
                 var MenuItems = await _menuItemService.Search(menuId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItems, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -78,7 +78,7 @@ namespace Mealmate.Api.Controllers
                 {
                     return NotFound(new ApiNotFoundResponse($"Resource with id {menuItemId} no more exists"));
                 }
-                 return Ok(new ApiOkResponse(new { temp }));
+                 return Ok(new ApiOkResponse(temp));
             }
             catch (Exception)
             {

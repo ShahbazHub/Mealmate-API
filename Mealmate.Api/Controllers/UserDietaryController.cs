@@ -43,7 +43,7 @@ namespace Mealmate.Api.Controllers
             {
                 var UserDietarys = await _userDietaryService.Search(userId, isActive, request);
                 JToken _jtoken = TokenService.CreateJToken(UserDietarys, request.Props);
-                return Ok(new ApiOkResponse(new { _jtoken }));
+                return Ok(new ApiOkResponse(_jtoken));
             }
             catch (Exception)
             {
@@ -59,7 +59,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var temp = await _userDietaryService.Get(userDietaryId);
-                 return Ok(new ApiOkResponse(new { temp }));
+                 return Ok(new ApiOkResponse(temp));
             }
             catch (Exception)
             {
