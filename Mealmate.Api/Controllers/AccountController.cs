@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-
+using AutoWrapper.Wrappers;
 using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Api.Services;
@@ -266,7 +266,7 @@ namespace Mealmate.Api.Controllers
 
                     return Created($"/api/users/{user.Id}", new ApiCreatedResponse(owner));
                 }
-                return BadRequest(new ApiBadRequestResponse(result.Errors, "User already exists"));
+                return BadRequest(new ApiBadRequestResponse(result.Errors));
             }
             catch (Exception ex)
             {

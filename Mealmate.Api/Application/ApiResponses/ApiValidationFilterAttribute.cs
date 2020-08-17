@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoWrapper.Extensions;
+using AutoWrapper.Wrappers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 using System;
@@ -15,7 +17,7 @@ namespace Mealmate.Api
         {
             if (!context.ModelState.IsValid)
             {
-                context.Result = new BadRequestObjectResult(new ApiBadRequestResponse(context.ModelState));
+                throw new ApiProblemDetailsException(context.ModelState);
             }
 
             base.OnActionExecuting(context);

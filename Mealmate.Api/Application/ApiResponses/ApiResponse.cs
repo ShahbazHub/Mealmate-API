@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AutoWrapper;
+using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Mealmate.Api
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Message { get; }
-
+        [AutoWrapperPropertyMap]
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public object Result { get; }
       

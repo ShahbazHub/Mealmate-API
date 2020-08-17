@@ -1,3 +1,4 @@
+using AutoWrapper;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Mealmate.Api.Application.Middlewares;
@@ -48,7 +49,7 @@ namespace Mealmate.Api
             services.InstallServicesInAssembly(_config);
             return services
                 .AddCustomMvc()
-                
+
                 .AddCustomDbContext(_mealMateSettings)
                 .AddCustomIdentity()
                 .AddCustomSwagger()
@@ -60,7 +61,7 @@ namespace Mealmate.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-           
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -82,6 +83,15 @@ namespace Mealmate.Api
             });
             app.UseMiddleware<LoggingMiddleware>();
             app.UseHttpsRedirection();
+            app.UseApiResponseAndExceptionWrapper<ApiResponse>(new AutoWrapperOptions
+            {
+                ShowStatusCode = true,
+                IsApiOnly = true,
+                ShowApiVersion = true,
+                EnableResponseLogging = false,
+                ShouldLogRequestData = false,
+                UseApiProblemDetailsException = true
+            });
             app.UseRouting();
             app.UseCors("CorsPolicy");
 

@@ -40,7 +40,7 @@ namespace Mealmate.Api.Controllers
             {
                 var MenuItems = await _menuItemService.Search(model, request);
                 JToken _jtoken = TokenService.CreateJToken(MenuItems, request.Props);
-                return Ok(new ApiOkResponse(_jtoken));
+                return Ok(_jtoken);
             }
             catch (Exception)
             {
