@@ -92,7 +92,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(BranchModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<BranchModel>> Create(BranchCreateModel request)
+        public async Task<ActionResult<BranchModel>> Create([FromBody] BranchCreateModel request)
         {
             try
             {
@@ -116,7 +116,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, BranchUpdateModel request)
+        public async Task<ActionResult> Update(int id, [FromBody] BranchUpdateModel request)
         {
             try
             {
