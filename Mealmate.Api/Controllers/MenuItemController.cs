@@ -143,7 +143,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, MenuItemUpdateModel request)
+        public async Task<ActionResult> Update(int id, [FromBody] MenuItemUpdateModel request)
         {
             try
             {
@@ -160,7 +160,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost()]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, MenuItemDetailUpdateModel model)
+        public async Task<ActionResult> Update(int id, [FromBody] MenuItemDetailUpdateModel model)
         {
             //TODO: Add you code here
             try

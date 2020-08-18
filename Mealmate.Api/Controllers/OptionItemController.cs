@@ -60,11 +60,11 @@ namespace Mealmate.Api.Controllers
                 {
                     return NotFound(new ApiNotFoundResponse($"Resource with id {optionItemId} no more exists"));
                 }
-                 return Ok(new ApiOkResponse(temp));
+                return Ok(new ApiOkResponse(temp));
             }
             catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
         }
         #endregion
@@ -84,7 +84,7 @@ namespace Mealmate.Api.Controllers
                 }
             }
 
-             return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request"));;
+            return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request")); ;
         }
         [HttpPost("bulk")]
         [ProducesResponseType(typeof(IEnumerable<OptionItemModel>), (int)HttpStatusCode.OK)]
@@ -100,7 +100,7 @@ namespace Mealmate.Api.Controllers
                 }
             }
 
-             return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request"));;
+            return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request")); ;
         }
         #endregion
 
@@ -108,7 +108,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, OptionItemUpdateModel model)
+        public async Task<ActionResult> Update(int id, [FromBody] OptionItemUpdateModel model)
         {
             //TODO: Add you code here
             try
@@ -118,19 +118,19 @@ namespace Mealmate.Api.Controllers
                     await _optionItemService.Update(id, model);
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
 
-             return Ok(new ApiOkResponse());
+            return Ok(new ApiOkResponse());
         }
 
         [Route("bulk/{id}")]
         [HttpPost()]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, OptionItemDetailUpdateModel model)
+        public async Task<ActionResult> Update(int id, [FromBody] OptionItemDetailUpdateModel model)
         {
             //TODO: Add you code here
             try
@@ -140,12 +140,12 @@ namespace Mealmate.Api.Controllers
                     await _optionItemService.Update(id, model);
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
 
-             return Ok(new ApiOkResponse());
+            return Ok(new ApiOkResponse());
         }
         #endregion
 
@@ -159,12 +159,12 @@ namespace Mealmate.Api.Controllers
             {
                 await _optionItemService.Delete(optionItemId);
             }
-            catch (Exception )
+            catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
 
-             return Ok(new ApiOkResponse($"Deleted"));
+            return Ok(new ApiOkResponse($"Deleted"));
         }
         #endregion
     }

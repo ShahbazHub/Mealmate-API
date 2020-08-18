@@ -77,7 +77,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(TableModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<TableModel>> Create(TableCreateModel request)
+        public async Task<ActionResult<TableModel>> Create([FromBody] TableCreateModel request)
         {
             try
             {
@@ -95,7 +95,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost()]
         [ProducesResponseType(typeof(TableModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<TableModel>> Create(TableBulkCreateModel request)
+        public async Task<ActionResult<TableModel>> Create([FromBody] TableBulkCreateModel request)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, TableUpdateModel request)
+        public async Task<ActionResult> Update(int id, [FromBody] TableUpdateModel request)
         {
             try
             {

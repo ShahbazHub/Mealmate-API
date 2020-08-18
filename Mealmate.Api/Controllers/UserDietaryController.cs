@@ -72,7 +72,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(UserDietaryModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<UserDietaryModel>> Create(UserDietaryCreateModel request)
+        public async Task<ActionResult<UserDietaryModel>> Create([FromBody] UserDietaryCreateModel request)
         {
             try
             {
@@ -90,7 +90,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, UserDietaryUpdateModel request)
+        public async Task<ActionResult> Update(int id, [FromBody] UserDietaryUpdateModel request)
         {
             try
             {

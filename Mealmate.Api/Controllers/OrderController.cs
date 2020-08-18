@@ -131,7 +131,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, OrderUpdateModel model)
+        public async Task<ActionResult> Update(int id, [FromBody] OrderUpdateModel model)
         {
             //TODO: Add you code here
             try

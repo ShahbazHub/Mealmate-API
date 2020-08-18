@@ -75,7 +75,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(MenuItemOptionModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<MenuItemOptionModel>> Create(MenuItemOptionModel request)
+        public async Task<ActionResult<MenuItemOptionModel>> Create([FromBody] MenuItemOptionModel request)
         {
 
             var commandResult = await _menuItemOptionService.Create(request);

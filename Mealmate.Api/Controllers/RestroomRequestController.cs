@@ -157,7 +157,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, RestroomRequestUpdateModel model)
+        public async Task<ActionResult> Update(int id, [FromBody] RestroomRequestUpdateModel model)
         {
             //TODO: Add you code here
             try

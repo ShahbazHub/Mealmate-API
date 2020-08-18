@@ -99,7 +99,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(RestaurantModel), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<RestaurantModel>> Create(RestaurantWithOwnerCreateModel request)
+        public async Task<ActionResult<RestaurantModel>> Create([FromBody] RestaurantWithOwnerCreateModel request)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Mealmate.Api.Controllers
         [HttpPost("{id}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> Update(int id, RestaurantUpdateModel request)
+        public async Task<ActionResult> Update(int id, [FromBody] RestaurantUpdateModel request)
         {
             try
             {
