@@ -30,6 +30,25 @@ namespace Mealmate.Api.Controllers
 
 
         #region Read
+
+        [HttpGet()]
+        [Route("{branchId}")]
+        [ProducesResponseType(typeof(IEnumerable<MenuListModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<MenuListModel>>> Get(
+            int branchId, [FromQuery] MenuItemSearchModel model, [FromQuery] PageSearchArgs request)
+        {
+            try
+            {
+                var menus = await _menuService.Search(branchId, model, request);
+                JToken _jtoken = TokenService.CreateJToken(menus, request.Props);
+                return Ok(new ApiOkResponse(_jtoken));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request {ex.Message}"));
+            }
+        }
+
         [HttpGet()]
         [Route("{branchId}/{isActive}")]
         [ProducesResponseType(typeof(IEnumerable<MenuModel>), (int)HttpStatusCode.OK)]

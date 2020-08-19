@@ -13,6 +13,10 @@ namespace Mealmate.Application.Mapper
             CreateMap<BranchListDto, BranchListModel>().ReverseMap();
             CreateMap<BranchResultDto, BranchResultModel>().ReverseMap();
 
+            CreateMap<MenuDto, MenuListModel>().ReverseMap();
+            CreateMap<MenuItemDto, MenuItemListModel>().ReverseMap();
+
+
             // Identity
             CreateMap<User, UserModel>().ReverseMap();
             CreateMap<UserAllergen, UserAllergenModel>().ReverseMap();
