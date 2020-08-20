@@ -150,6 +150,15 @@ namespace Mealmate.Infrastructure.Repository
                         Id = menu.Id,
                         Name = menu.Name,
                         ServiceTime = menu.ServiceTime,
+                        MenuItems = menu.MenuItems
+                                    .Where(x => x.IsActive == true)
+                                    .Select(x => new MenuItemDto
+                                    {
+                                        Id = x.Id,
+                                        Name = x.Name,
+                                        Photo = x.Photo,
+                                        Price = x.Price
+                                    }).ToList()
                     };
 
                     foreach (var menuItem in menu.MenuItems)
