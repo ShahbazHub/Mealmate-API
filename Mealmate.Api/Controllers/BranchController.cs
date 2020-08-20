@@ -81,6 +81,28 @@ namespace Mealmate.Api.Controllers
                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("Info/{branchId}")]
+        [ProducesResponseType(typeof(IEnumerable<BranchInfoModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<BranchInfoModel>>> GetInfo(int branchId)
+        {
+            try
+            {
+                var model = await _branchService.GetBranchInfoById(branchId);
+                if (model == null)
+                {
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {branchId} no more exists"));
+                }
+
+                return Ok(new ApiOkResponse(model));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
+            }
+        }
         #endregion
 
         #region Create

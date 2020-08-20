@@ -262,7 +262,7 @@ namespace Mealmate.Application.Services
                             }
                         }
 
-                        
+
                     }
                 }
                 branch.FilteredDishes = filteredMenus;
@@ -293,6 +293,24 @@ namespace Mealmate.Application.Services
                 AllergenModels);
 
             return AllergenModelPagedList;
+        }
+
+        public async Task<BranchInfoModel> GetBranchInfoById(int id)
+        {
+            var branchInfo = await _branchRepository
+                            .Table
+                            .Include(b => b.Restaurant)
+                            .Where(b=> b.Id ==id)
+                            .Select(x => new BranchInfoModel
+                            {
+                                Address = x.Address,
+                                ContactNumber =  x.ContactNumber,
+                                ServiceTimeFrom =  x.ServiceTimeFrom,
+                                ServiceTimeTo =  x.ServiceTimeTo,
+                                Description = x.Restaurant.Description
+                            }).FirstOrDefaultAsync();
+
+            return branchInfo;
         }
     }
 }

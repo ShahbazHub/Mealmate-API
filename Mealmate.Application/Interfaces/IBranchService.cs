@@ -10,6 +10,7 @@ namespace Mealmate.Application.Interfaces
         Task<IEnumerable<BranchModel>> Get(int restaurantId);
         Task<IEnumerable<BranchModel>> GetByEmployee(int employeeId);
         Task<BranchModel> GetById(int id);
+        Task<BranchInfoModel> GetBranchInfoById(int id);
         Task<BranchModel> Create(BranchCreateModel model);
         Task Update(int id, BranchUpdateModel model);
         Task Delete(int id);

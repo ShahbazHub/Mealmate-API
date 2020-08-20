@@ -26,10 +26,8 @@ namespace Mealmate.Infrastructure.Repository
         }
         public override async Task<Branch> GetByIdAsync(int id)
         {
-            //_context.Branches.FirstOrDefaultAsync(p)
-            //TODO: should be refactored
-            var temp = await GetAsync(p => p.Id == id);
-            return temp.FirstOrDefault();
+            var result = await Table.FirstOrDefaultAsync(p=> p.Id == id);
+            return result;
         }
 
         public Task<IPagedList<Branch>> SearchAsync(int restaurantId, int isActive, PageSearchArgs args)

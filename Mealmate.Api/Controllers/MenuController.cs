@@ -32,6 +32,7 @@ namespace Mealmate.Api.Controllers
         #region Read
 
         [HttpGet()]
+        [AllowAnonymous]
         [Route("{branchId}")]
         [ProducesResponseType(typeof(IEnumerable<MenuListModel>), (int)HttpStatusCode.OK)]
         public async Task<ActionResult<IEnumerable<MenuListModel>>> Get(
