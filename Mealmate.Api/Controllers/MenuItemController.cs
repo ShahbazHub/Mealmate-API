@@ -86,6 +86,30 @@ namespace Mealmate.Api.Controllers
             }
         }
 
+        [Route("AddToCart/{menuItemId}")]
+        [AllowAnonymous]
+        [HttpGet()]
+        [ProducesResponseType(typeof(OrderItemModel), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<OrderItemModel>> AddToCart(int menuItemId)
+        {
+            try
+            {
+                var temp = await _menuItemService.AddToCart(menuItemId);
+                if (temp == null)
+                {
+                    return NotFound(new ApiNotFoundResponse($"Resource with id {menuItemId} no more exists"));
+                }
+                return Ok(new ApiOkResponse(temp));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
+            }
+        }
+
+
+        
+
         [Route("filter")]
         [HttpPost()]
         [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]

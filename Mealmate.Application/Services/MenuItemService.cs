@@ -385,5 +385,28 @@ namespace Mealmate.Application.Services
 
             return allergens;
         }
+
+        public async Task<OrderItemModel> AddToCart(int menuId)
+        {
+            var orderItemModel = await _menuItemRepository
+                                .Table
+                                .Where(mi => mi.Id == menuId)
+                                .Include(mi => mi.MenuItemOptions)
+                                .Select(mi => new OrderItemModel
+                                {
+                                    MenuItemId = mi.Id,
+                                    MenuItemName = mi.Name,
+                                    Price = mi.Price,
+                                    Quantity = 1,
+                                    OrderItemDetails = mi.MenuItemOptions.Select(mio => new OrderItemDetailModel
+                                    {
+                                        MenuItemOptionId = mio.Id,
+                                        Price = mio.Price,
+                                        Quantity = mio.Quantity
+                                    }).ToList()
+                                })
+                                .FirstOrDefaultAsync();
+            return orderItemModel;
+        }
     }
 }
