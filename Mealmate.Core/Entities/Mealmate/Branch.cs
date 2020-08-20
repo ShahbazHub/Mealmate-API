@@ -10,6 +10,7 @@ namespace Mealmate.Core.Entities
         //public int BranchId { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
+        public string ContactNumber { get; set; }
         public DateTimeOffset Created { get; set; }
         public bool IsActive { get; set; }
 

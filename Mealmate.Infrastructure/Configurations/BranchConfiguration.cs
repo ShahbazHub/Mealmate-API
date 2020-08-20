@@ -27,6 +27,9 @@ namespace Mealmate.Infrastructure.Configurations
                 .HasColumnType("NVARCHAR(250)")
                 .IsRequired();
 
+            builder.Property(p => p.ContactNumber)
+                .HasColumnType("NVARCHAR(50)");
+
             builder.Property(p => p.Address)
                 .HasColumnType("NVARCHAR(1000)");
 
