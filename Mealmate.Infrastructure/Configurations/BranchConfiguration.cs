@@ -46,10 +46,10 @@ namespace Mealmate.Infrastructure.Configurations
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.Property(p => p.ServiceTimeFrom)
-               .HasColumnType("DATETIMEOFFSET");
+               .HasColumnType("TIME");
 
             builder.Property(p => p.ServiceTimeTo)
-               .HasColumnType("DATETIMEOFFSET");
+               .HasColumnType("TIME");
         }
     }
 }

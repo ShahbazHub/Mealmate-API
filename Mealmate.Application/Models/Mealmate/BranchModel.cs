@@ -14,8 +14,8 @@ namespace Mealmate.Application.Models
         public string Description { get; set; }
         public string ContactNumber { get; set; }
         public DateTimeOffset Created { get; set; }
-        public DateTimeOffset ServiceTimeFrom { get; set; }
-        public DateTimeOffset ServiceTimeTo { get; set; }
+        public TimeSpan ServiceTimeFrom { get; set; }
+        public TimeSpan ServiceTimeTo { get; set; }
         public bool IsActive { get; set; }
         public int RestaurantId { get; set; }
         public double? Latitude { get; set; }
