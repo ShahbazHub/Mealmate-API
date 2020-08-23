@@ -250,12 +250,18 @@ namespace Mealmate.Api.Controllers
                             await _userRestaurantService.Create(userRestaurant);
 
                             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                            try
+                            {
+                                string siteURL = _mealmateSettings.ClientAppUrl;
+                                var callbackUrl = string.Format("{0}/verify?userid={1}&token={2}", siteURL, user.Id, token);
+                                var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
+                                await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
 
-                            string siteURL = _mealmateSettings.ClientAppUrl;
-                            var callbackUrl = string.Format("{0}/Account/ConfirmEmail?userId={1}&code={2}", siteURL, user.Id, token);
-                            //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                            var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
-                            await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw ex;
+                            }
                         }
                     }
 
@@ -838,6 +844,18 @@ namespace Mealmate.Api.Controllers
         //     return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
         //}
         #endregion
-
+        [AllowAnonymous]
+        [HttpPost()]
+        [Route("verify-email")]
+        public IActionResult ConfirmEmail([FromBody] ConfirmEmailModel request)
+        {
+            User user = _userManager.FindByIdAsync(request.UserId).Result;
+            IdentityResult result = _userManager.ConfirmEmailAsync(user, request.Token).Result;
+            if (result.Succeeded)
+            {
+                return Ok(new ApiOkResponse("Email confirmed successfully!"));
+            }
+            return BadRequest();
+        }
     }
 }
