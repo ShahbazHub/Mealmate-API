@@ -149,7 +149,8 @@ namespace Mealmate.Infrastructure.Repository
                     {
                         Id = menu.Id,
                         Name = menu.Name,
-                        ServiceTime = menu.ServiceTime,
+                        ServiceTimeFrom = menu.ServiceTimeFrom,
+                        ServiceTimeTo = menu.ServiceTimeTo,
                         MenuItems = menu.MenuItems
                                     .Where(x => x.IsActive == true)
                                     .Select(x => new MenuItemDto

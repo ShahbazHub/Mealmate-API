@@ -39,7 +39,8 @@ namespace Mealmate.Application.Services
                 Created = DateTime.Now,
                 IsActive = model.IsActive,
                 Name = model.Name,
-                ServiceTime = model.ServiceTime
+                ServiceTimeFrom = model.ServiceTimeFrom,
+                ServiceTimeTo =model.ServiceTimeTo
             };
 
             newmenu = await _menuRepository.SaveAsync(newmenu);
@@ -85,7 +86,8 @@ namespace Mealmate.Application.Services
 
             existingMenu.IsActive = model.IsActive;
             existingMenu.Name = model.Name;
-            existingMenu.ServiceTime = model.ServiceTime;
+            existingMenu.ServiceTimeFrom = model.ServiceTimeFrom;
+            existingMenu.ServiceTimeTo = model.ServiceTimeTo;
 
             await _menuRepository.SaveAsync(existingMenu);
 

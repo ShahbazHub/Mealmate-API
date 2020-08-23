@@ -20,6 +20,7 @@ namespace Mealmate.Application.Models
 
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
-
+        public TimeSpan ServiceTimeFrom { get; set; }
+        public TimeSpan ServiceTimeTo { get; set; }
     }
 }

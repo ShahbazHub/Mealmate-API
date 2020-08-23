@@ -12,7 +12,8 @@ namespace Mealmate.Application.Models
         public string Name { get; set; }
 
         [Required]
-        public TimeSpan ServiceTime { get; set; }
+        public TimeSpan ServiceTimeFrom { get; set; }
+        public TimeSpan ServiceTimeTo { get; set; }
 
         [Required]
         public int BranchId { get; set; }

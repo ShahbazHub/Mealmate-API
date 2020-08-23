@@ -8,7 +8,8 @@ namespace Mealmate.Core.Entities
     {
         //public int MenuId { get; set; }
         public string Name { get; set; }
-        public TimeSpan ServiceTime { get; set; }
+        public TimeSpan ServiceTimeFrom { get; set; }
+        public TimeSpan ServiceTimeTo { get; set; }
         public DateTimeOffset Created { get; set; }
         public bool IsActive { get; set; }
         public int BranchId { get; set; }

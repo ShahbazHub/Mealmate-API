@@ -8,7 +8,8 @@ namespace Mealmate.Core.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public TimeSpan ServiceTime { get; set; }
+        public TimeSpan ServiceTimeFrom { get; set; }
+        public TimeSpan ServiceTimeTo { get; set; }
         public List<MenuItemDto> MenuItems { get; set; }
         public MenuDto()
         {

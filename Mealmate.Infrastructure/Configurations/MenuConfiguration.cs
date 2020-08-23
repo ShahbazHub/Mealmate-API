@@ -23,10 +23,12 @@ namespace Mealmate.Infrastructure.Configurations
                 .HasColumnType("NVARCHAR(250)")
                 .IsRequired();
 
-            builder.Property(p => p.ServiceTime)
+            builder.Property(p => p.ServiceTimeFrom)
                 .HasColumnType("TIME(7)")
                 .IsRequired();
-
+            builder.Property(p => p.ServiceTimeTo)
+             .HasColumnType("TIME(7)")
+             .IsRequired();
             builder.Property(p => p.Created)
                 .HasColumnType("DATETIMEOFFSET")
                 .IsRequired()
