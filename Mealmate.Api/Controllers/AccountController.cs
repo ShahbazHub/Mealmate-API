@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
+using UAParser;
 
 namespace Mealmate.Api.Controllers
 {
@@ -369,11 +370,75 @@ namespace Mealmate.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
+        [HttpPost("web-signin")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiBadRequestResponse))]
+        public async Task<IActionResult> WebSignIn([FromBody] LoginRequest request)
+        {
+            //var userAgent = Request.Headers["User-Agent"];
+            //string uaString = Convert.ToString(userAgent[0]);
+            //var uaParser = Parser.GetDefault();
+            //ClientInfo c = uaParser.Parse(uaString);
+
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(request.Email);
+
+                if (user != null)
+                {
+                    var restaurant = await _restaurantService.Get(user.Id);
+                    if (restaurant.Count() == 0)
+                    {
+                        return Unauthorized(new ApiUnAuthorizedResponse("Only Restaurant Owner can login through this portal!"));
+                    }
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+
+                    if (result.Succeeded)
+                    {
+                        var appUser = await _userManager.Users
+                                                        .FirstOrDefaultAsync(
+                                                        u => u.Email.ToUpper() == request.Email.ToUpper());
+
+                        var userToReturn = _mapper.Map<UserModel>(appUser);
+                        var authResponse = await GenerateJwtToken(appUser);
+
+                        var restaurants = await _restaurantService.Get(appUser.Id);
+                        userToReturn.Restaurants = restaurants.ToList();
+
+                        var branches = await _branchService.GetByEmployee(appUser.Id);
+                        userToReturn.Branches = branches.ToList();
+
+                        return Ok(new ApiOkResponse(
+                            new
+                            {
+                                token = authResponse.Token,
+                                refreshToken = authResponse.RefreshToken,
+                                user = userToReturn,
+                            }));
+                    }
+                    else
+                    {
+                        return Unauthorized(new ApiUnAuthorizedResponse("Incorrect username / password"));
+                    }
+                }
+                return Unauthorized(new ApiUnAuthorizedResponse("Incorrect username / password"));
+            }
+            catch (Exception)
+            {
+                return Unauthorized(new ApiBadRequestResponse("Error while processing request"));
+            }
+        }
+        [AllowAnonymous]
         [HttpPost("signin")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiBadRequestResponse))]
         public async Task<IActionResult> SignIn([FromBody] LoginRequest request)
         {
+            //var userAgent = Request.Headers["User-Agent"];
+            //string uaString = Convert.ToString(userAgent[0]);
+            //var uaParser = Parser.GetDefault();
+            //ClientInfo c = uaParser.Parse(uaString);
+
             try
             {
                 var user = await _userManager.FindByEmailAsync(request.Email);

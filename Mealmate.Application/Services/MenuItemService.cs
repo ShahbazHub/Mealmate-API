@@ -405,7 +405,7 @@ namespace Mealmate.Application.Services
                                         MenuItemOptionName = mio.OptionItem.Name,
                                         MenuItemOptionId = mio.Id,
                                         Price = mio.Price,
-                                        Quantity = mio.Quantity
+                                        Quantity = 0
                                     }).ToList()
                                 })
                                 .FirstOrDefaultAsync();
