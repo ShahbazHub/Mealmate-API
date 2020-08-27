@@ -254,7 +254,7 @@ namespace Mealmate.Api.Controllers
                             try
                             {
                                 string siteURL = _mealmateSettings.ClientAppUrl;
-                                var callbackUrl = string.Format("{0}/verify?userid={1}&token={2}", siteURL, user.Id, token);
+                                var callbackUrl = string.Format("{0}/{1}", siteURL, token);
                                 var message = $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>";
                                 await _emailService.SendEmailAsync(model.Email, "Confirm your account", message);
 
