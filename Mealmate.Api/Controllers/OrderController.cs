@@ -64,7 +64,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _orderService.Get(branchId, orderStateId);
-                 return Ok(new ApiOkResponse(result));;
+                return Ok(new ApiOkResponse(result)); ;
             }
             catch (Exception)
             {
@@ -90,7 +90,7 @@ namespace Mealmate.Api.Controllers
                     return NotFound(new ApiNotFoundResponse($"Resource with id {id} no more exists"));
                 }
 
-                 return Ok(new ApiOkResponse(temp));
+                return Ok(new ApiOkResponse(temp));
             }
             catch (Exception)
             {
@@ -113,11 +113,11 @@ namespace Mealmate.Api.Controllers
                 var result = await _orderService.Create(model);
                 if (result != null)
                 {
-                    return Created($"api/orders/{result.Id}", result);
+                    return Created($"api/orders/{result.Id}", new ApiCreatedResponse(result));
                 }
             }
 
-             return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request"));;
+            return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request")); ;
         }
         #endregion
 
@@ -141,12 +141,12 @@ namespace Mealmate.Api.Controllers
                     await _orderService.Update(id, model);
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
 
-             return Ok(new ApiOkResponse());
+            return Ok(new ApiOkResponse());
         }
         #endregion
 
@@ -165,12 +165,12 @@ namespace Mealmate.Api.Controllers
             {
                 await _orderService.Delete(id);
             }
-            catch (Exception )
+            catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
 
-             return Ok(new ApiOkResponse($"Deleted"));
+            return Ok(new ApiOkResponse($"Deleted"));
         }
         #endregion
     }

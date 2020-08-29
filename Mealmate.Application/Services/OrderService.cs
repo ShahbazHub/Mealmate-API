@@ -50,11 +50,6 @@ namespace Mealmate.Application.Services
 
             try
             {
-                var orderItems = new List<OrderItem>();
-                foreach (var orderItem in model.OrderItems)
-                {
-                    orderItems.Add(_mapper.Map<OrderItem>(orderItem));
-                }
                 var orderEntity = new Order
                 {
                     CustomerId = model.CustomerId,
@@ -67,7 +62,7 @@ namespace Mealmate.Application.Services
                         Created = DateTime.UtcNow,
                         MenuItemId = oicm.MenuItemId,
                         Quantity = oicm.Quantity,
-                        Price = oicm.Quantity,
+                        Price = oicm.Price,
                         OrderItemDetails = oicm.OrderItemDetails.Select(oidcm => new OrderItemDetail
                         {
                             Created = DateTime.UtcNow,
@@ -81,7 +76,7 @@ namespace Mealmate.Application.Services
                 };
                 _context.Orders.Add(orderEntity);
                 var result = await _context.SaveChangesAsync();
-                
+
                 var placedOrder = _orderRepository
                                 .Table
                                 .Where(o => o.Id == orderEntity.Id)
