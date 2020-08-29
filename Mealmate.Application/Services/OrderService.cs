@@ -47,77 +47,85 @@ namespace Mealmate.Application.Services
         #region Create
         public async Task<OrderModel> Create(OrderCreateModel model)
         {
-            OrderModel new_model = null;
-            var strategy = _context.Database.CreateExecutionStrategy();
-            strategy.Execute(() =>
+
+            try
             {
-
-                using (var transaction = _context.Database.BeginTransaction())
+                var orderItems = new List<OrderItem>();
+                foreach (var orderItem in model.OrderItems)
                 {
-                    try
-                    {
-                        var orderEntity = new Order
-                        {
-                            CustomerId = model.CustomerId,
-                            OrderDate = DateTime.Now,
-                            OrderNumber = model.OrderNumber,
-                            TableId = model.TableId,
-                            OrderStateId = model.OrderStateId,
-                        };
-
-                        _context.Orders.Add(orderEntity);
-                        if (_context.SaveChanges() > 0)
-                        {
-                            // iterating over all orderitems and process - dishes
-                            foreach (var orderItem in model.OrderItems)
-                            {
-                                var orderItemEntity = new OrderItem
-                                {
-                                    OrderId = orderEntity.Id,   // Primary key of order saved
-                                    Created = DateTime.Now,
-                                    MenuItemId = orderItem.MenuItemId,
-                                    Price = orderItem.Price,
-                                    Quantity = orderItem.Quantity,
-                                };
-
-                                _context.OrderItems.Add(orderItemEntity);
-                                if (_context.SaveChanges() > 0)
-                                {
-                                    // iterating over all orderitemdetails and process - variations
-                                    foreach (var orderItemDetail in orderItem.OrderItemDetails)
-                                    {
-                                        var orderItemDetailEntity = new OrderItemDetail
-                                        {
-                                            OrderItemId = orderItemEntity.Id,  // Primary key of order item saved
-                                            Created = DateTime.Now,
-                                            MenuItemOptionId = orderItemDetail.MenuItemOptionId,
-                                            Price = orderItemDetail.Price,
-                                            Quantity = orderItemDetail.Quantity
-                                        };
-
-                                        _context.OrderItems.Add(orderItemEntity);
-                                        _context.SaveChanges();
-                                    }
-                                }
-                            }
-                        }
-
-                        // Commit transaction if all commands succeed, transaction will auto-rollback
-                        // when disposed if either commands fails
-                        transaction.Commit();
-
-                        new_model = _mapper.Map<OrderModel>(orderEntity);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new Exception("Error has occured while processing");
-                    }
+                    orderItems.Add(_mapper.Map<OrderItem>(orderItem));
                 }
-            });
-            _logger.LogInformation("entity successfully added - mealmateappservice");
-          
-            return new_model;
+                var orderEntity = new Order
+                {
+                    CustomerId = model.CustomerId,
+                    OrderDate = DateTime.UtcNow,
+                    OrderNumber = model.OrderNumber,
+                    TableId = model.TableId,
+                    OrderStateId = model.OrderStateId,
+                    OrderItems = model.OrderItems.Select(oicm => new OrderItem
+                    {
+                        Created = DateTime.UtcNow,
+                        MenuItemId = oicm.MenuItemId,
+                        Quantity = oicm.Quantity,
+                        Price = oicm.Quantity,
+                        OrderItemDetails = oicm.OrderItemDetails.Select(oidcm => new OrderItemDetail
+                        {
+                            Created = DateTime.UtcNow,
+                            MenuItemOptionId = oidcm.MenuItemOptionId,
+                            Price = oidcm.Price,
+                            Quantity = oidcm.Quantity
+                        }).ToList<OrderItemDetail>()
 
+
+                    }).ToList<OrderItem>()
+                };
+                _context.Orders.Add(orderEntity);
+                var result = await _context.SaveChangesAsync();
+                
+                var placedOrder = _orderRepository
+                                .Table
+                                .Where(o => o.Id == orderEntity.Id)
+                                .Include(o => o.OrderItems)
+                                .ThenInclude(oi => oi.OrderItemDetails)
+                                .Select(o => new OrderModel
+                                {
+                                    Id = o.Id,
+                                    CustomerId = o.CustomerId,
+                                    OrderDate = o.OrderDate,
+                                    OrderNumber = o.OrderNumber,
+                                    TableId = o.TableId,
+                                    OrderStateId = o.OrderStateId,
+                                    OrderItems = o.OrderItems.Select(oi => new OrderItemModel
+                                    {
+                                        Id = oi.Id,
+                                        MenuItemId = oi.MenuItemId,
+                                        Created = oi.Created,
+                                        Price = oi.Price,
+                                        Quantity = oi.Quantity,
+                                        OrderId = oi.OrderId,
+                                        MenuItemName = oi.MenuItem.Name,
+                                        MenuItemDescription = oi.MenuItem.Description,
+                                        OrderItemDetails = oi.OrderItemDetails.Select(oid => new OrderItemDetailModel
+                                        {
+                                            Id = oid.Id,
+                                            OrderItemId = oid.OrderItemId,
+                                            Price = oid.Price,
+                                            Quantity = oid.Quantity,
+                                            Created = oid.Created,
+                                            MenuItemOptionId = oid.MenuItemOptionId,
+                                            MenuItemOptionName = oid.MenuItemOption.OptionItem.Name
+
+                                        }).ToList()
+                                    }).ToList()
+                                }).FirstOrDefault();
+
+                return placedOrder;
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception("Error has occured while processing");
+            }
         }
         #endregion
 
