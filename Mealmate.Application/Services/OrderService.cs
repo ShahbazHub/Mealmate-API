@@ -122,7 +122,7 @@ namespace Mealmate.Application.Services
                 return placedOrder;
             }
 
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("Error has occured while processing");
             }

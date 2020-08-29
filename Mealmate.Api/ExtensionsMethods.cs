@@ -10,7 +10,6 @@ using Mealmate.Infrastructure.Misc;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 
-using FluentValidation.AspNetCore;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -50,10 +49,7 @@ namespace Mealmate.Api
                 //{
                 //    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 //})
-                .AddFluentValidation(fv =>
-                {
-                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
-                })
+               
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
