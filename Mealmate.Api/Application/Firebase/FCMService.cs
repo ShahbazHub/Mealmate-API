@@ -8,15 +8,9 @@ namespace Mealmate.Api.Application.Firebase
     public class FCMService
     {
         private FirebaseMessaging _fCMDefaultInstance;
-        private Message _message;
         public FCMService()
         {
             _fCMDefaultInstance = FirebaseMessaging.DefaultInstance;
-            _message = new Message()
-            {
-
-            };
-
         }
         public async Task SendToTokenAsync()
         {
@@ -32,7 +26,7 @@ namespace Mealmate.Api.Application.Firebase
                     { "score", "850" },
                     { "time", "2:45" },
                 },
-                Token = registrationToken,
+                Token = registrationToken
             };
 
             // Send a message to the device corresponding to the provided
