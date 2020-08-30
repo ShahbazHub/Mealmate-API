@@ -28,6 +28,9 @@ namespace Mealmate.Infrastructure.Data
         // For Referesh Token...
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+        // For FCM Registration Token...
+        public DbSet<FCMRegistrationToken> FCMRegistrationTokens { get; set; }
+
         // User items
         public DbSet<UserBranch> UserBranches { get; set; }
         public DbSet<UserRestaurant> UserRestaurants { get; set; }
