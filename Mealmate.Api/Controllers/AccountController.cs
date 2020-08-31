@@ -476,7 +476,7 @@ namespace Mealmate.Api.Controllers
                 }
                 return Unauthorized(new ApiUnAuthorizedResponse("Incorrect username / password"));
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return Unauthorized(new ApiBadRequestResponse("Error while processing request"));
             }
