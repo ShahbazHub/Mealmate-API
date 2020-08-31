@@ -204,8 +204,7 @@ namespace Mealmate.Api.Controllers
                     UserName = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    Email = model.Email,
-                    PhoneNumber = model.PhoneNumber
+                    Email = model.Email
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
