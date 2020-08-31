@@ -151,5 +151,22 @@ namespace Mealmate.Application.Services
 
             return AllergenModelPagedList;
         }
+
+        public async Task<IPagedList<MenuModel>> SearchLazy(int branchId, int isActive, PageSearchArgs args)
+        {
+            var TablePagedList = await _menuRepository.SearchAsyncLazy(branchId, isActive, args);
+
+            //TODO: PagedList<TSource> will be mapped to PagedList<TDestination>;
+            var AllergenModels = _mapper.Map<List<MenuModel>>(TablePagedList.Items);
+
+            var AllergenModelPagedList = new PagedList<MenuModel>(
+                TablePagedList.PageIndex,
+                TablePagedList.PageSize,
+                TablePagedList.TotalCount,
+                TablePagedList.TotalPages,
+                AllergenModels);
+
+            return AllergenModelPagedList;
+        }
     }
 }

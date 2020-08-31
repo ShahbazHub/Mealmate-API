@@ -25,5 +25,6 @@ namespace Mealmate.Application.Interfaces
         Task<IPagedList<MenuItemModel>> Search(PageSearchArgs args);
         Task<IPagedList<BranchResultModel>> Search(BranchSearchModel model, PageSearchArgs args);
         Task<IPagedList<MenuItemModel>> Search(int menuId, int isActive, PageSearchArgs args);
+        Task<IPagedList<MenuItemModel>> SearchLazy(int menuId, int isActive, PageSearchArgs args);
     }
 }

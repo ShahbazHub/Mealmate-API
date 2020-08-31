@@ -42,6 +42,7 @@ namespace Mealmate.Application.Services
             {
                 Created = DateTime.Now,
                 TableId = model.TableId
+
             };
 
             newqrCode = await _qrCodeRepository.SaveAsync(newqrCode);

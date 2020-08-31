@@ -13,5 +13,6 @@ namespace Mealmate.Core.Repositories
         Task<IPagedList<BranchResultDto>> SearchAsync(List<int> cuisineTypes, List<int> allergens, List<int> dietaries, PageSearchArgs args);
         Task<IPagedList<MenuItem>> SearchAsync(PageSearchArgs args);
         Task<IPagedList<MenuItem>> SearchAsync(int menuId, int isActive, PageSearchArgs args);
+        Task<IPagedList<MenuItem>> SearchLazyAsync(int menuId, int isActive, PageSearchArgs args);
     }
 }
