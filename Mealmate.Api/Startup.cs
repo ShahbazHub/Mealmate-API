@@ -1,5 +1,6 @@
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Mealmate.Api.Application.Firebase;
 using Mealmate.Api.Application.Middlewares;
 using Mealmate.Api.DataSeeders;
 using Mealmate.Api.Installers;
@@ -44,11 +45,13 @@ namespace Mealmate.Api
 
             services.AddSingleton(_config);
             services.AddTransient<MealmateDataSeeder>();
-
+            
+            //Injected FCMService
+            services.AddSingleton<IFCMService, FCMService>();
             services.InstallServicesInAssembly(_config);
             return services
                 .AddCustomMvc()
-                
+
                 .AddCustomDbContext(_mealMateSettings)
                 .AddCustomIdentity()
                 .AddCustomSwagger()
@@ -60,7 +63,7 @@ namespace Mealmate.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-           
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

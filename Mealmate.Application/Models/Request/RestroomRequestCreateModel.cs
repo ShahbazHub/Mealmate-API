@@ -20,9 +20,6 @@ namespace Mealmate.Application.Models
         [Required]
         public bool IsDisabled { get; set; }
         
-        public RestroomRequestCreateModel()
-        {
-        }
 
     }
 }

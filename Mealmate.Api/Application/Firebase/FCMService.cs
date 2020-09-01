@@ -5,36 +5,22 @@ using System.Threading.Tasks;
 
 namespace Mealmate.Api.Application.Firebase
 {
-    public class FCMService
+    public class FCMService : IFCMService
     {
         private FirebaseMessaging _fCMDefaultInstance;
         public FCMService()
         {
             _fCMDefaultInstance = FirebaseMessaging.DefaultInstance;
         }
-        public async Task SendToTokenAsync()
+        public async Task<string> SendToTokenAsync(string registrationToken, Notification notification)
         {
-            // [START send_to_token]
-            // This registration token comes from the client FCM SDKs.
-            var registrationToken = "YOUR_REGISTRATION_TOKEN";
-
-            // See documentation on defining a message payload.
             var message = new Message()
             {
-                Data = new Dictionary<string, string>()
-                {
-                    { "score", "850" },
-                    { "time", "2:45" },
-                },
+                Notification = notification,
                 Token = registrationToken
             };
 
-            // Send a message to the device corresponding to the provided
-            // registration token.
-            string response = await _fCMDefaultInstance.SendAsync(message);
-            // Response is a message ID string.
-            Console.WriteLine("Successfully sent message: " + response);
-            // [END send_to_token]
+            return await _fCMDefaultInstance.SendAsync(message);
         }
 
         public async Task SendToTopicAsync()
@@ -142,32 +128,16 @@ namespace Mealmate.Api.Application.Firebase
             // [END send_all]
         }
 
-        public async Task SendMulticastAsync()
+        public async Task<BatchResponse> SendMulticastAsync(List<string> registrationTokens,Notification notification)
         {
-            // [START send_multicast]
-            // Create a list containing up to 100 registration tokens.
-            // These registration tokens come from the client FCM SDKs.
-            var registrationTokens = new List<string>()
-            {
-                "YOUR_REGISTRATION_TOKEN_1",
-                // ...
-                "YOUR_REGISTRATION_TOKEN_n",
-            };
+        
             var message = new MulticastMessage()
             {
                 Tokens = registrationTokens,
-                Data = new Dictionary<string, string>()
-                {
-                    { "score", "850" },
-                    { "time", "2:45" },
-                },
+                Notification = notification
             };
 
-            var response = await _fCMDefaultInstance.SendMulticastAsync(message);
-            // See the BatchResponse reference documentation
-            // for the contents of response.
-            Console.WriteLine($"{response.SuccessCount} messages were sent successfully");
-            // [END send_multicast]
+            return await _fCMDefaultInstance.SendMulticastAsync(message);
         }
 
         public async Task SendMulticastAndHandleErrorsAsync()

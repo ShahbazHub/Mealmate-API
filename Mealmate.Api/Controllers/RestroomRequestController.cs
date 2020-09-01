@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Mealmate.Api.Application.Firebase;
 using Mealmate.Api.Helpers;
 using Mealmate.Api.Requests;
 using Mealmate.Application.Interfaces;
@@ -10,7 +12,7 @@ using Mealmate.Application.Models;
 using Mealmate.Core.Entities;
 using Mealmate.Core.Entities.Lookup;
 using Mealmate.Core.Paging;
-
+using Mealmate.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -30,13 +32,20 @@ namespace Mealmate.Api.Controllers
         private readonly IRestroomRequestService _restroomRequestService;
         private readonly UserManager<User> _userManager;
         private readonly ITableService _tableService;
+        private readonly IFCMService _fCMService;
+        private readonly MealmateContext _mealmateContext;
+
         public RestroomRequestController(
             UserManager<User> userManager,
             IRestroomRequestService restroomRequestService,
-            ITableService tableService)
+            ITableService tableService,
+            IFCMService fCMService,
+            MealmateContext mealmateContext)
         {
             _userManager = userManager;
             _tableService = tableService ?? throw new ArgumentNullException(nameof(tableService));
+            _fCMService = fCMService;
+            _mealmateContext = mealmateContext;
             _restroomRequestService = restroomRequestService ?? throw new ArgumentNullException(nameof(restroomRequestService));
         }
 
@@ -55,7 +64,7 @@ namespace Mealmate.Api.Controllers
             try
             {
                 var result = await _restroomRequestService.Get(branchId, restroomRequestStateId);
-                 return Ok(new ApiOkResponse(result));;
+                return Ok(new ApiOkResponse(result)); ;
             }
             catch (Exception)
             {
@@ -104,11 +113,11 @@ namespace Mealmate.Api.Controllers
                     return NotFound(new ApiNotFoundResponse($"Resource with id {id} no more exists"));
                 }
 
-                 return Ok(new ApiOkResponse(temp));
+                return Ok(new ApiOkResponse(temp));
             }
             catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
         }
         #endregion
@@ -139,11 +148,39 @@ namespace Mealmate.Api.Controllers
                 var result = await _restroomRequestService.Create(model);
                 if (result != null)
                 {
+                    //Todo: find the relevant FrontDesk User to send push notification
+                    var tableResult = _mealmateContext.Tables.First(x => x.Id == model.TableId);
+                    var locationId = table.LocationId;
+                    var branchId = _mealmateContext.Locaations.First(x => x.Id == locationId)?.BranchId;
+
+                    var RegistrationTokens = _mealmateContext
+                                            .UserRoles.Join(_mealmateContext.UserBranches,
+                                             userRole => userRole.UserId,
+                                             userbranch => userbranch.UserId,
+                                             (ur, ub) => new { ur, ub })
+                                            .Join(_mealmateContext.FCMRegistrationTokens,
+                                             outer => outer.ur.UserId,
+                                             fcmRT => fcmRT.UserId,
+                                             (outer, fcmRT) => new { outer, fcmRT }
+                                            )
+                                            .Where(x => x.outer.ub.BranchId == branchId && x.outer.ur.Role.Name == ApplicationRoles.FrontDesk)
+                                            .Select(x => x.fcmRT.RegistrationToken).ToList<string>();
+                    
+                    if(RegistrationTokens.Count >0)
+                        await _fCMService.SendMulticastAsync(RegistrationTokens,
+                            new FirebaseAdmin.Messaging.Notification
+                            {
+                                Title = "New RestRoom Request",
+                                Body = $"Table {tableResult.Name} requested for Rest Room",
+                                ImageUrl = ""
+                            });
+
+
                     return Created($"api/restroomRequests/{result.Id}", result);
                 }
             }
 
-             return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request"));;
+            return BadRequest(new ApiBadRequestResponse(ModelState, $"Error while processing request")); ;
         }
         #endregion
 
@@ -167,12 +204,12 @@ namespace Mealmate.Api.Controllers
                     await _restroomRequestService.Update(id, model);
                 }
             }
-            catch (Exception )
+            catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
 
-             return Ok(new ApiOkResponse());
+            return Ok(new ApiOkResponse());
         }
         #endregion
 
@@ -191,12 +228,12 @@ namespace Mealmate.Api.Controllers
             {
                 await _restroomRequestService.Delete(id);
             }
-            catch (Exception )
+            catch (Exception)
             {
-                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));;
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request")); ;
             }
 
-             return Ok(new ApiOkResponse($"Deleted"));
+            return Ok(new ApiOkResponse($"Deleted"));
         }
         #endregion
     }
