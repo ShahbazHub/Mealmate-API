@@ -66,6 +66,23 @@ namespace Mealmate.Api.Controllers
             }
         }
 
+        [Route("menuitemslazy/{menuId}/{isActive}")]
+        [HttpGet()]
+        [ProducesResponseType(typeof(IEnumerable<MenuItemModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<MenuItemModel>>> GetLazy(
+            int menuId, int isActive, [FromQuery] PageSearchArgs request)
+        {
+            try
+            {
+                var MenuItems = await _menuItemService.SearchLazy(menuId, isActive, request);
+                JToken _jtoken = TokenService.CreateJToken(MenuItems, request.Props);
+                return Ok(new ApiOkResponse(_jtoken));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
+            }
+        }
         [Route("single/{menuItemId}")]
         [HttpGet()]
         [ProducesResponseType(typeof(MenuItemModel), (int)HttpStatusCode.OK)]

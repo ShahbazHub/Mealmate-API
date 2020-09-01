@@ -79,6 +79,8 @@ namespace Mealmate.Infrastructure.Repository
         {
             var query = Table.Include(p => p.Orders)
                             .Include(p => p.QRCodes)
+                            .Include(p => p.Location)
+                            .Include(p => p.Location.Branch)
                             .Where(p => p.LocationId == locationId);
 
             if (isActive == 1 || isActive == 0)

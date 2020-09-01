@@ -68,7 +68,24 @@ namespace Mealmate.Api.Controllers
                 return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
             }
         }
-
+        [HttpGet()]
+        [Route("lazymenu/{branchId}/{isActive}")]
+        [ProducesResponseType(typeof(IEnumerable<MenuModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<IEnumerable<MenuModel>>> GetLazy(
+            int branchId, int isActive, [FromQuery] PageSearchArgs request)
+        {
+            try
+            {
+                var Menus = await _menuService.SearchLazy(branchId, isActive, request);
+                JToken _jtoken = TokenService.CreateJToken(Menus, request.Props);
+                return Ok(new ApiOkResponse(_jtoken));
+            }
+            catch (Exception)
+            {
+                return BadRequest(new ApiBadRequestResponse($"Error while processing request"));
+            }
+        }
         [Route("single/{menuId}")]
         [HttpGet()]
         [ProducesResponseType(typeof(MenuModel), (int)HttpStatusCode.OK)]

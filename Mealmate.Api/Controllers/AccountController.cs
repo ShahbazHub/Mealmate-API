@@ -467,8 +467,6 @@ namespace Mealmate.Api.Controllers
                         var userToReturn = _mapper.Map<UserModel>(appUser);
                         var authResponse = await GenerateJwtToken(appUser);
 
-                        var restaurants = await _restaurantService.Get(appUser.Id);
-                        userToReturn.Restaurants = restaurants.ToList();
 
                         var branches = await _branchService.GetByEmployee(appUser.Id);
                         userToReturn.Branches = branches.ToList();
@@ -499,7 +497,7 @@ namespace Mealmate.Api.Controllers
                 }
                 return Unauthorized(new ApiUnAuthorizedResponse("Incorrect username / password"));
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return Unauthorized(new ApiBadRequestResponse("Error while processing request"));
             }
@@ -848,18 +846,25 @@ namespace Mealmate.Api.Controllers
                 await _mealmateContext.UserOtps.AddAsync(userOtp);
                 if (await _mealmateContext.SaveChangesAsync() > 0)
                 {
-                    var accountId = _config["Twilio:AccountId"];
-                    var token = _config["Twilio:Token"];
-
-                    TwilioClient.Init(accountId, token);
-
-                    var message = MessageResource.Create(
-                        body: $"Your OTP is {otp}",
-                        from: new Twilio.Types.PhoneNumber(_config["Twilio:PhoneNumber"]),
-                        to: new Twilio.Types.PhoneNumber(user.PhoneNumber)
-                    );
-
-                    return Ok(new ApiOkResponse(message.Sid));
+                    if (!string.IsNullOrEmpty(user.PhoneNumber))
+                    {
+                        var accountId = _config["Twilio:AccountId"];
+                        var token = _config["Twilio:Token"];
+                        TwilioClient.Init(accountId, token);
+                        var message = MessageResource.Create(
+                            body: $"Your OTP is {otp}",
+                            from: new Twilio.Types.PhoneNumber(_config["Twilio:PhoneNumber"]),
+                            to: new Twilio.Types.PhoneNumber(user.PhoneNumber)
+                        );
+                        return Ok(new ApiOkResponse(message.Sid));
+                    }
+                    if (!string.IsNullOrEmpty(user.Email))
+                    {
+                        var message = $"Your OTP is {otp}";
+                        await _emailService.SendEmailAsync(model.Email, "Meal Mate OTP", message);
+                        return Ok(new ApiOkResponse(model.Email));
+                    }
+                    
                 }
                 return BadRequest(new ApiBadRequestResponse("Error While Generating OTP"));
             }
