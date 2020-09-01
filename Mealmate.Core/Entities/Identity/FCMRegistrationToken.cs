@@ -5,9 +5,10 @@ namespace Mealmate.Core.Entities
 {
     public class FCMRegistrationToken
     {
-       
+
         public string Id { get; set; }
 
+        public string ClientId { get; set; }
         public string RegistrationToken { get; set; }
 
         public DateTime CreationDate { get; set; }

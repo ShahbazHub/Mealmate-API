@@ -406,6 +406,18 @@ namespace Mealmate.Api.Controllers
                         var branches = await _branchService.GetByEmployee(appUser.Id);
                         userToReturn.Branches = branches.ToList();
 
+                        //Saving Client FCM registration token
+                        if (request.RegistrationToken != null)
+                        {
+                            _mealmateContext.FCMRegistrationTokens.Add(new FCMRegistrationToken
+                            {
+                                UserId = user.Id,
+                                RegistrationToken = request.RegistrationToken,
+                                ClientId = request.ClientId
+                            });
+                            _mealmateContext.SaveChanges();
+                        }
+
                         return Ok(new ApiOkResponse(
                             new
                             {
@@ -459,7 +471,18 @@ namespace Mealmate.Api.Controllers
 
                         var branches = await _branchService.GetByEmployee(appUser.Id);
                         userToReturn.Branches = branches.ToList();
-
+                       
+                        //Saving Client FCM registration token
+                        if (request.RegistrationToken != null)
+                        {
+                            _mealmateContext.FCMRegistrationTokens.Add(new FCMRegistrationToken
+                            {
+                                UserId = user.Id,
+                                RegistrationToken = request.RegistrationToken,
+                                ClientId = request.ClientId
+                            });
+                            _mealmateContext.SaveChanges();
+                        }
                         return Ok(new ApiOkResponse(
                             new
                             {
@@ -520,7 +543,18 @@ namespace Mealmate.Api.Controllers
 
                     var authResponse1 = await GenerateJwtToken(newUser);
                     var newUserToReturn = _mapper.Map<UserModel>(newUser);
-
+                  
+                    //Saving Client FCM registration token
+                    if (request.RegistrationToken != null)
+                    {
+                        _mealmateContext.FCMRegistrationTokens.Add(new FCMRegistrationToken
+                        {
+                            UserId = user.Id,
+                            RegistrationToken = request.RegistrationToken,
+                            ClientId = request.ClientId
+                        });
+                        _mealmateContext.SaveChanges();
+                    }
                     return Created($"/api/users/{newUser.Id}", new ApiCreatedResponse(new
                     {
                         token = authResponse1.Token,
@@ -586,6 +620,17 @@ namespace Mealmate.Api.Controllers
                 var authResponse1 = await GenerateJwtToken(newUser);
                 var newUserToReturn = _mapper.Map<UserModel>(newUser);
 
+                //Saving Client FCM registration token
+                if (request.RegistrationToken != null)
+                {
+                    _mealmateContext.FCMRegistrationTokens.Add(new FCMRegistrationToken
+                    {
+                        UserId = user.Id,
+                        RegistrationToken = request.RegistrationToken,
+                        ClientId = request.ClientId
+                    });
+                    _mealmateContext.SaveChanges();
+                }
                 return Created($"/api/users/{newUser.Id}", new ApiCreatedResponse(new
                 {
                     token = authResponse1.Token,
@@ -619,6 +664,18 @@ namespace Mealmate.Api.Controllers
             if (user != null)
             {
                 await _signInManager.SignOutAsync();
+
+                //Removing user FCM registration token for device signing out
+
+                if (signOutModel.ClientId != null)
+                {
+                    var fcmToken = _mealmateContext.FCMRegistrationTokens.First(x => x.ClientId == signOutModel.ClientId);
+                    if (fcmToken != null)
+                    {
+                        _mealmateContext.FCMRegistrationTokens.Remove(fcmToken);
+                        _mealmateContext.SaveChanges();
+                    }
+                }
                 return Ok(new ApiOkResponse("SignOut Successfull"));
             }
             return Unauthorized(new ApiUnAuthorizedResponse("SignOut Failed"));

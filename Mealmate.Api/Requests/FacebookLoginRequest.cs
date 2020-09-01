@@ -6,5 +6,7 @@ namespace Mealmate.Api.Requests
     {
         [Required]
         public string AccessToken { get; set; }
+        public string RegistrationToken { get; set; }
+        public string ClientId { get; set; }
     }
 }
