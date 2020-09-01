@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mealmate.Api.Migrations
 {
     [DbContext(typeof(MealmateContext))]
-    [Migration("20200830143636_FCMRegistrationTokentableadded")]
-    partial class FCMRegistrationTokentableadded
+    [Migration("20200901171012_fcmregistraiontableadded")]
+    partial class fcmregistraiontableadded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -283,23 +283,33 @@ namespace Mealmate.Api.Migrations
 
             modelBuilder.Entity("Mealmate.Core.Entities.FCMRegistrationToken", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(250)");
+
+                    b.Property<DateTimeOffset>("CreationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIMEOFFSET")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("RegistrationToken")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(1000)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_FCMRegistrationToken");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FCMRegistrationToken");
+                    b.ToTable("FCMRegistrationToken","Identity");
                 });
 
             modelBuilder.Entity("Mealmate.Core.Entities.Location", b =>

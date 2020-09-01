@@ -17,6 +17,14 @@ namespace Mealmate.Infrastructure.Configurations
             builder.Property(p => p.Id)
                 .ValueGeneratedOnAdd();
 
+            builder.Property(p => p.RegistrationToken)
+                .HasColumnType("NVARCHAR(1000)")
+                .IsRequired();
+
+            builder.Property(p => p.ClientId)
+                .HasColumnType("NVARCHAR(250)")
+                .IsRequired();
+
             builder.Property(p => p.CreationDate)
                .HasColumnType("DATETIMEOFFSET")
                .IsRequired()

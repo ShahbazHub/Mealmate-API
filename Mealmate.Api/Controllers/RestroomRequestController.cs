@@ -165,14 +165,14 @@ namespace Mealmate.Api.Controllers
                                             )
                                             .Where(x => x.outer.ub.BranchId == branchId && x.outer.ur.Role.Name == ApplicationRoles.FrontDesk)
                                             .Select(x => x.fcmRT.RegistrationToken).ToList<string>();
-                    
-                    if(RegistrationTokens.Count >0)
+
+                    if (RegistrationTokens.Count > 0)
                         await _fCMService.SendMulticastAsync(RegistrationTokens,
                             new FirebaseAdmin.Messaging.Notification
                             {
                                 Title = "New RestRoom Request",
                                 Body = $"Table {tableResult.Name} requested for Rest Room",
-                                ImageUrl = ""
+                                ImageUrl = "https://localhost/images/abc.jpg"
                             });
 
 
@@ -196,12 +196,30 @@ namespace Mealmate.Api.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> Update(int id, [FromBody] RestroomRequestUpdateModel model)
         {
-            //TODO: Add you code here
             try
             {
                 if (ModelState.IsValid)
                 {
                     await _restroomRequestService.Update(id, model);
+
+                    if (model.RestroomRequestStateId == 2)
+                    {
+                        var ClientToken = _mealmateContext
+                                            .FCMRegistrationTokens
+                                            .Join(_mealmateContext.RestroomRequests,
+                                            fcmRT => fcmRT.UserId,
+                                            RRR => RRR.CustomerId,
+                                            (fcm, rrrn) => new { fcm, rrrn })
+                                            .Where(x => x.rrrn.Id == id)
+                                            .Select(x => x.fcm.RegistrationToken).First<string>();
+
+                        await _fCMService.SendToTokenAsync(ClientToken, new FirebaseAdmin.Messaging.Notification
+                        {
+                            Title = "Alert",
+                            Body = $"You RestRoom Rest has been accepted",
+                            ImageUrl = "https://localhost/images/abc.jpg"
+                        });
+                    }
                 }
             }
             catch (Exception)

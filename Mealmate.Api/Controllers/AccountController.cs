@@ -411,6 +411,7 @@ namespace Mealmate.Api.Controllers
                         {
                             _mealmateContext.FCMRegistrationTokens.Add(new FCMRegistrationToken
                             {
+                                CreationDate = DateTime.UtcNow,
                                 UserId = user.Id,
                                 RegistrationToken = request.RegistrationToken,
                                 ClientId = request.ClientId
@@ -433,7 +434,7 @@ namespace Mealmate.Api.Controllers
                 }
                 return Unauthorized(new ApiUnAuthorizedResponse("Incorrect username / password"));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Unauthorized(new ApiBadRequestResponse("Error while processing request"));
             }

@@ -117,6 +117,7 @@ namespace Mealmate.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokenConfiguration());
             modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new FCMRegistrationTokenConfiguration());
 
             modelBuilder.ApplyConfiguration(new UserRestaurantConfiguration());
             modelBuilder.ApplyConfiguration(new UserBranchConfiguration());

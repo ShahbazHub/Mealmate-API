@@ -8,14 +8,9 @@ namespace Mealmate.Application.Models
 {
     public class RestroomRequestUpdateModel
     {
-        public string Remarks { get; set; }
 
         [Required]
         public int RestroomRequestStateId { get; set; }
-
-        public RestroomRequestUpdateModel()
-        {
-        }
-
+        public string Remarks { get; set; }
     }
 }
